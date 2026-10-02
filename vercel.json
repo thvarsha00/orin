@@ -3,12 +3,15 @@
   "services": {
     "orin-frontend": {
       "root": "frontend/",
-      "framework": "vite"
+      "framework": "vite",
+      "buildCommand": "npm ci && npm run build",
+      "outputDirectory": "dist"
     },
     "orin-api": {
       "root": "backend/",
       "framework": "fastapi",
-      "entrypoint": "app.main:app"
+      "entrypoint": "app.main:app",
+      "buildCommand": "pip install -r requirements.txt"
     }
   },
   "rewrites": [
