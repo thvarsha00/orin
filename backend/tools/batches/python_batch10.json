@@ -1,0 +1,321 @@
+[
+  {
+    "title": "Longest Substring With K Distinct",
+    "topic": "Python Sliding Window",
+    "difficulty": "medium",
+    "description": "Given a string s and an integer k, return the length of the longest substring that contains at most k distinct characters. If k is 0, return 0.",
+    "examples": [
+      {"input": "s = 'eceba', k = 2", "output": "3", "explanation": "The longest valid substring is 'ece'."},
+      {"input": "s = 'aa', k = 1", "output": "2", "explanation": "The whole string has only one distinct character."}
+    ],
+    "constraints": "0 <= len(s) <= 10^5; 0 <= k <= 26; s has lowercase letters only",
+    "starter_code": "def solve(s, k):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time, O(k) space",
+    "tags": ["sliding window", "hash map", "strings"],
+    "hints": [
+      "Keep a window [left, right] and a dictionary counting each character inside it.",
+      "Move right one step at a time. If the dictionary has more than k keys, the window is too big.",
+      "Shrink from the left until it is valid again, removing a key when its count reaches 0. Track the best length after each step."
+    ],
+    "reference_solution": "def solve(s, k):\n    if k == 0:\n        return 0\n    counts = {}\n    left = 0\n    best = 0\n    for right, ch in enumerate(s):\n        counts[ch] = counts.get(ch, 0) + 1\n        while len(counts) > k:\n            counts[s[left]] -= 1\n            if counts[s[left]] == 0:\n                del counts[s[left]]\n            left += 1\n        best = max(best, right - left + 1)\n    return best\n",
+    "tests": [
+      {"input": ["eceba", 2], "output": 3, "hidden": false},
+      {"input": ["aa", 1], "output": 2, "hidden": false},
+      {"input": ["abcadcacacaca", 3], "output": 11, "hidden": true},
+      {"input": ["abc", 0], "output": 0, "hidden": true},
+      {"input": ["abaccc", 2], "output": 4, "hidden": true},
+      {"input": ["abcde", 10], "output": 5, "hidden": true}
+    ]
+  },
+  {
+    "title": "Remove Nth Node From End",
+    "topic": "Python Linked Lists",
+    "difficulty": "medium",
+    "description": "A linked list is given as a plain list of node values, from head to tail. Remove the n-th node from the end of the list and return the remaining values as a list. n is always between 1 and the length of the list. Try to solve it in one pass using two pointers (indexes) that are n steps apart.",
+    "examples": [
+      {"input": "values = [1, 2, 3, 4, 5], n = 2", "output": "[1, 2, 3, 5]", "explanation": "The 2nd node from the end is 4, so it is removed."},
+      {"input": "values = [1], n = 1", "output": "[]", "explanation": "The only node is removed."}
+    ],
+    "constraints": "1 <= len(values) <= 30; 1 <= n <= len(values); 0 <= values[i] <= 100",
+    "starter_code": "def solve(values, n):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time, O(n) space for the returned list",
+    "tags": ["linked list", "two pointers"],
+    "hints": [
+      "Let a lead pointer move n steps ahead of a follow pointer.",
+      "Now move both pointers together until the lead pointer reaches the end.",
+      "The follow pointer is now at the node to remove. Build the answer without that index."
+    ],
+    "reference_solution": "def solve(values, n):\n    lead = n\n    follow = 0\n    while lead < len(values):\n        lead += 1\n        follow += 1\n    return values[:follow] + values[follow + 1:]\n",
+    "tests": [
+      {"input": [[1, 2, 3, 4, 5], 2], "output": [1, 2, 3, 5], "hidden": false},
+      {"input": [[1], 1], "output": [], "hidden": false},
+      {"input": [[1, 2], 1], "output": [1], "hidden": true},
+      {"input": [[1, 2], 2], "output": [2], "hidden": true},
+      {"input": [[10, 20, 30], 3], "output": [20, 30], "hidden": true},
+      {"input": [[7, 7, 8, 7], 2], "output": [7, 7, 7], "hidden": true}
+    ]
+  },
+  {
+    "title": "Trapping Rain Water",
+    "topic": "Python Two Pointers",
+    "difficulty": "hard",
+    "description": "Given a list height of non-negative integers, where each value is the height of a bar of width 1, return how many units of rain water are trapped between the bars after it rains. Water above a bar is limited by the shorter of the tallest bar to its left and the tallest bar to its right.",
+    "examples": [
+      {"input": "height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]", "output": "6", "explanation": "6 units of water are trapped in the gaps between the bars."},
+      {"input": "height = [4, 2, 0, 3, 2, 5]", "output": "9", "explanation": "Water fills the valley between the bars of height 4 and 5."}
+    ],
+    "constraints": "0 <= len(height) <= 2 * 10^4; 0 <= height[i] <= 10^5",
+    "starter_code": "def solve(height):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time, O(1) space",
+    "tags": ["two pointers", "arrays"],
+    "hints": [
+      "Water above index i equals min(tallest on left, tallest on right) - height[i].",
+      "You can compute this with two prefix/suffix max lists first. Then try to remove the extra lists.",
+      "Use two pointers from both ends. Always move the pointer with the smaller height, and track the max seen on that side."
+    ],
+    "reference_solution": "def solve(height):\n    lo, hi = 0, len(height) - 1\n    left_max = right_max = 0\n    total = 0\n    while lo < hi:\n        if height[lo] < height[hi]:\n            left_max = max(left_max, height[lo])\n            total += left_max - height[lo]\n            lo += 1\n        else:\n            right_max = max(right_max, height[hi])\n            total += right_max - height[hi]\n            hi -= 1\n    return total\n",
+    "tests": [
+      {"input": [[0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]], "output": 6, "hidden": false},
+      {"input": [[4, 2, 0, 3, 2, 5]], "output": 9, "hidden": false},
+      {"input": [[1, 2, 3, 4]], "output": 0, "hidden": true},
+      {"input": [[2, 0, 2]], "output": 2, "hidden": true},
+      {"input": [[3, 0, 0, 2, 0, 4]], "output": 10, "hidden": true},
+      {"input": [[5, 4, 1, 2]], "output": 1, "hidden": true}
+    ]
+  },
+  {
+    "title": "Equal Zeros and Ones",
+    "topic": "Python Prefix Sums",
+    "difficulty": "medium",
+    "description": "Given a list nums that contains only 0s and 1s, return the length of the longest contiguous subarray that has the same number of 0s and 1s. If there is no such subarray, return 0.",
+    "examples": [
+      {"input": "nums = [0, 1]", "output": "2", "explanation": "The whole list has one 0 and one 1."},
+      {"input": "nums = [0, 1, 0]", "output": "2", "explanation": "[0, 1] and [1, 0] both work. The longest length is 2."}
+    ],
+    "constraints": "1 <= len(nums) <= 10^5; nums[i] is 0 or 1",
+    "starter_code": "def solve(nums):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time, O(n) space",
+    "tags": ["prefix sum", "hash map", "subarray"],
+    "hints": [
+      "Treat every 0 as -1. Then a subarray with equal 0s and 1s has sum 0.",
+      "Keep a running prefix sum. If the same prefix sum appears at two positions, the part between them sums to 0.",
+      "Store the first index where each prefix sum appeared (start with {0: -1}) and keep the largest gap."
+    ],
+    "reference_solution": "def solve(nums):\n    first = {0: -1}\n    prefix = 0\n    best = 0\n    for i, x in enumerate(nums):\n        prefix += 1 if x == 1 else -1\n        if prefix in first:\n            best = max(best, i - first[prefix])\n        else:\n            first[prefix] = i\n    return best\n",
+    "tests": [
+      {"input": [[0, 1]], "output": 2, "hidden": false},
+      {"input": [[0, 1, 0]], "output": 2, "hidden": false},
+      {"input": [[0, 0, 1, 0, 0, 0, 1, 1]], "output": 6, "hidden": true},
+      {"input": [[1, 1, 1]], "output": 0, "hidden": true},
+      {"input": [[0]], "output": 0, "hidden": true},
+      {"input": [[1, 0, 1, 1, 0, 0, 1, 1]], "output": 6, "hidden": true}
+    ]
+  },
+  {
+    "title": "String Contains Permutation",
+    "topic": "Python Sliding Window",
+    "difficulty": "medium",
+    "description": "Given two strings s1 and s2, return True if s2 contains a permutation of s1 as a substring. In other words, return True if some substring of s2 uses exactly the same letters as s1, in any order, with the same counts. Otherwise return False.",
+    "examples": [
+      {"input": "s1 = 'ab', s2 = 'eidbaooo'", "output": "True", "explanation": "s2 contains 'ba', which is a permutation of 'ab'."},
+      {"input": "s1 = 'ab', s2 = 'eidboaoo'", "output": "False", "explanation": "No substring of s2 has exactly one 'a' and one 'b' side by side."}
+    ],
+    "constraints": "1 <= len(s1), len(s2) <= 10^4; lowercase letters only",
+    "starter_code": "def solve(s1, s2):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time, O(1) space (26 letters)",
+    "tags": ["sliding window", "hash map", "strings"],
+    "hints": [
+      "Any valid substring must have length len(s1). So use a window of that fixed size.",
+      "Count the letters of s1 once. Then count the letters in the first window of s2.",
+      "Slide the window one step at a time: add the new letter, remove the old one, and compare the counts."
+    ],
+    "reference_solution": "from collections import Counter\n\ndef solve(s1, s2):\n    k = len(s1)\n    if k > len(s2):\n        return False\n    need = Counter(s1)\n    window = Counter(s2[:k])\n    if window == need:\n        return True\n    for i in range(k, len(s2)):\n        window[s2[i]] += 1\n        out = s2[i - k]\n        window[out] -= 1\n        if window[out] == 0:\n            del window[out]\n        if window == need:\n            return True\n    return False\n",
+    "tests": [
+      {"input": ["ab", "eidbaooo"], "output": true, "hidden": false},
+      {"input": ["ab", "eidboaoo"], "output": false, "hidden": false},
+      {"input": ["a", "a"], "output": true, "hidden": true},
+      {"input": ["abc", "ab"], "output": false, "hidden": true},
+      {"input": ["adc", "dcda"], "output": true, "hidden": true},
+      {"input": ["hello", "ooolleoooleh"], "output": false, "hidden": true}
+    ]
+  },
+  {
+    "title": "Container With Most Water",
+    "topic": "Python Two Pointers",
+    "difficulty": "medium",
+    "description": "You are given a list height. Each value is the height of a vertical line, and the lines stand at positions 0, 1, 2, ... Choose two lines that, together with the x-axis, form a container. The water it holds is (distance between the lines) * (the shorter line's height). Return the largest amount of water any container can hold.",
+    "examples": [
+      {"input": "height = [1, 8, 6, 2, 5, 4, 8, 3, 7]", "output": "49", "explanation": "The lines of height 8 (index 1) and 7 (index 8) are 7 apart: 7 * 7 = 49."},
+      {"input": "height = [1, 1]", "output": "1", "explanation": "Only one container: 1 * 1 = 1."}
+    ],
+    "constraints": "2 <= len(height) <= 10^5; 0 <= height[i] <= 10^4",
+    "starter_code": "def solve(height):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time, O(1) space",
+    "tags": ["two pointers", "greedy", "arrays"],
+    "hints": [
+      "Start with the widest container: one pointer at each end.",
+      "The water is limited by the shorter line. Moving the taller line inward can never help.",
+      "After each area calculation, move the pointer at the shorter line inward, and keep the best area."
+    ],
+    "reference_solution": "def solve(height):\n    lo, hi = 0, len(height) - 1\n    best = 0\n    while lo < hi:\n        best = max(best, min(height[lo], height[hi]) * (hi - lo))\n        if height[lo] < height[hi]:\n            lo += 1\n        else:\n            hi -= 1\n    return best\n",
+    "tests": [
+      {"input": [[1, 8, 6, 2, 5, 4, 8, 3, 7]], "output": 49, "hidden": false},
+      {"input": [[1, 1]], "output": 1, "hidden": false},
+      {"input": [[4, 3, 2, 1, 4]], "output": 16, "hidden": true},
+      {"input": [[1, 2, 1]], "output": 2, "hidden": true},
+      {"input": [[2, 3, 4, 5, 18, 17, 6]], "output": 17, "hidden": true},
+      {"input": [[5, 0, 0, 0, 5]], "output": 20, "hidden": true}
+    ]
+  },
+  {
+    "title": "Add Two Numbers as Lists",
+    "topic": "Python Linked Lists",
+    "difficulty": "medium",
+    "description": "Two non-negative numbers are given as lists of digits in reverse order (the first item is the ones digit). Each list is a linked list written as a plain list. Add the two numbers and return the sum in the same format: a list of digits in reverse order. Do not convert the lists into integers. Add digit by digit with a carry.",
+    "examples": [
+      {"input": "a = [2, 4, 3], b = [5, 6, 4]", "output": "[7, 0, 8]", "explanation": "342 + 465 = 807, written in reverse as [7, 0, 8]."},
+      {"input": "a = [0], b = [0]", "output": "[0]", "explanation": "0 + 0 = 0."}
+    ],
+    "constraints": "1 <= len(a), len(b) <= 100; 0 <= digit <= 9; no leading zeros except the number 0 itself",
+    "starter_code": "def solve(a, b):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(max(m, n)) time, O(max(m, n)) space",
+    "tags": ["linked list", "math", "carry"],
+    "hints": [
+      "Walk both lists at the same position. A missing digit counts as 0.",
+      "At each step add the two digits and the carry. The new digit is total % 10 and the new carry is total // 10.",
+      "Keep going while there are digits left or a carry is left. A final carry adds one extra digit."
+    ],
+    "reference_solution": "def solve(a, b):\n    result = []\n    carry = 0\n    i = 0\n    while i < len(a) or i < len(b) or carry:\n        total = carry\n        if i < len(a):\n            total += a[i]\n        if i < len(b):\n            total += b[i]\n        result.append(total % 10)\n        carry = total // 10\n        i += 1\n    return result\n",
+    "tests": [
+      {"input": [[2, 4, 3], [5, 6, 4]], "output": [7, 0, 8], "hidden": false},
+      {"input": [[0], [0]], "output": [0], "hidden": false},
+      {"input": [[9, 9, 9, 9, 9, 9, 9], [9, 9, 9, 9]], "output": [8, 9, 9, 9, 0, 0, 0, 1], "hidden": true},
+      {"input": [[5], [5]], "output": [0, 1], "hidden": true},
+      {"input": [[1, 8], [0]], "output": [1, 8], "hidden": true},
+      {"input": [[9, 9], [1]], "output": [0, 0, 1], "hidden": true}
+    ]
+  },
+  {
+    "title": "Median of Two Sorted Lists",
+    "topic": "Python Searching",
+    "difficulty": "hard",
+    "description": "You are given two sorted lists of numbers a and b (either one may be empty, but not both). Return the median of all the numbers together, as a float. If the total count is odd, the median is the middle value. If it is even, the median is the average of the two middle values. The best solution uses binary search and runs in O(log(min(m, n))) time.",
+    "examples": [
+      {"input": "a = [1, 3], b = [2]", "output": "2.0", "explanation": "Merged: [1, 2, 3]. The middle value is 2."},
+      {"input": "a = [1, 2], b = [3, 4]", "output": "2.5", "explanation": "Merged: [1, 2, 3, 4]. The middle values are 2 and 3, so the median is 2.5."}
+    ],
+    "constraints": "0 <= len(a), len(b) <= 1000; len(a) + len(b) >= 1; -10^6 <= value <= 10^6",
+    "starter_code": "def solve(a, b):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(log(min(m, n))) time for the best solution",
+    "tags": ["binary search", "partition", "median"],
+    "hints": [
+      "First get a simple version working by merging both lists and reading the middle.",
+      "For the fast version, binary search on how many items to take from the shorter list for the left half.",
+      "A split is correct when the largest value on the left side is not bigger than the smallest value on the right side, in both lists."
+    ],
+    "reference_solution": "def solve(a, b):\n    c = sorted(a + b)\n    n = len(c)\n    mid = n // 2\n    if n % 2 == 1:\n        return float(c[mid])\n    return (c[mid - 1] + c[mid]) / 2\n",
+    "tests": [
+      {"input": [[1, 3], [2]], "output": 2.0, "hidden": false},
+      {"input": [[1, 2], [3, 4]], "output": 2.5, "hidden": false},
+      {"input": [[0, 0], [0, 0]], "output": 0.0, "hidden": true},
+      {"input": [[], [1]], "output": 1.0, "hidden": true},
+      {"input": [[2], []], "output": 2.0, "hidden": true},
+      {"input": [[1, 3, 5, 7], [2, 4, 6, 8, 10]], "output": 5.0, "hidden": true}
+    ]
+  },
+  {
+    "title": "Binary Tree Cameras",
+    "topic": "Python Trees",
+    "difficulty": "hard",
+    "description": "A binary tree is given as a level-order list where null (None) marks a missing child. You can place a camera on any node. A camera watches its own node, its parent, and its children. Return the minimum number of cameras needed so that every node is watched. The value stored in each node does not matter (all nodes are 0).",
+    "examples": [
+      {"input": "tree = [0, 0, null, 0, 0]", "output": "1", "explanation": "One camera on the first child of the root watches all 4 nodes."},
+      {"input": "tree = [0, 0, null, 0, null, 0, null, null, 0]", "output": "2", "explanation": "This tree is a chain of 5 nodes, and it needs 2 cameras."}
+    ],
+    "constraints": "1 <= number of nodes <= 1000; every node value is 0",
+    "starter_code": "def solve(tree):\n    # tree is a level-order list; None means no node\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time, O(h) recursion space",
+    "tags": ["binary tree", "greedy", "dfs"],
+    "hints": [
+      "First turn the level-order list into left/right child indexes (use a queue).",
+      "Do a DFS from the bottom up. Give each node a state: 0 = not watched, 1 = has a camera, 2 = watched by a child.",
+      "If any child is not watched (0), put a camera here. Otherwise if any child has a camera, this node is watched. At the end, if the root is not watched, add one more camera."
+    ],
+    "reference_solution": "def solve(tree):\n    if not tree or tree[0] is None:\n        return 0\n    n = len(tree)\n    left = [-1] * n\n    right = [-1] * n\n    queue = [0]\n    pos = 1\n    head = 0\n    while head < len(queue) and pos < n:\n        node = queue[head]\n        head += 1\n        if pos < n and tree[pos] is not None:\n            left[node] = pos\n            queue.append(pos)\n        pos += 1\n        if pos < n and tree[pos] is not None:\n            right[node] = pos\n            queue.append(pos)\n        pos += 1\n    cameras = [0]\n\n    def dfs(i):\n        if i == -1:\n            return 2\n        l = dfs(left[i])\n        r = dfs(right[i])\n        if l == 0 or r == 0:\n            cameras[0] += 1\n            return 1\n        if l == 1 or r == 1:\n            return 2\n        return 0\n\n    if dfs(0) == 0:\n        cameras[0] += 1\n    return cameras[0]\n",
+    "tests": [
+      {"input": [[0, 0, null, 0, 0]], "output": 1, "hidden": false},
+      {"input": [[0, 0, null, 0, null, 0, null, null, 0]], "output": 2, "hidden": false},
+      {"input": [[0]], "output": 1, "hidden": true},
+      {"input": [[0, 0, 0]], "output": 1, "hidden": true},
+      {"input": [[0, 0, 0, 0, 0, 0, 0]], "output": 2, "hidden": true},
+      {"input": [[0, 0, 0, null, 0, null, 0]], "output": 2, "hidden": true}
+    ]
+  },
+  {
+    "title": "Wildcard Pattern Matching",
+    "topic": "Python Dynamic Programming",
+    "difficulty": "hard",
+    "description": "Given a string s and a pattern p, return True if the pattern matches the whole string, otherwise False. In the pattern, '?' matches any single character, and '*' matches any sequence of characters (including an empty sequence). Every other character must match itself exactly.",
+    "examples": [
+      {"input": "s = 'aa', p = '*'", "output": "True", "explanation": "'*' matches any sequence, including 'aa'."},
+      {"input": "s = 'cb', p = '?a'", "output": "False", "explanation": "'?' matches 'c', but 'a' does not match 'b'."}
+    ],
+    "constraints": "0 <= len(s), len(p) <= 200; s has lowercase letters only; p has lowercase letters, '?' and '*'",
+    "starter_code": "def solve(s, p):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(m * n) time, O(m * n) space",
+    "tags": ["dynamic programming", "strings", "pattern matching"],
+    "hints": [
+      "Let dp[i][j] be True if the first i letters of s match the first j characters of p.",
+      "If p[j-1] is '*', then dp[i][j] = dp[i][j-1] (star matches nothing) or dp[i-1][j] (star eats one more letter).",
+      "If p[j-1] is '?' or equals s[i-1], then dp[i][j] = dp[i-1][j-1]. Row 0 is True only for a pattern made of stars."
+    ],
+    "reference_solution": "def solve(s, p):\n    m, n = len(s), len(p)\n    dp = [[False] * (n + 1) for _ in range(m + 1)]\n    dp[0][0] = True\n    for j in range(1, n + 1):\n        if p[j - 1] == '*':\n            dp[0][j] = dp[0][j - 1]\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if p[j - 1] == '*':\n                dp[i][j] = dp[i][j - 1] or dp[i - 1][j]\n            elif p[j - 1] == '?' or p[j - 1] == s[i - 1]:\n                dp[i][j] = dp[i - 1][j - 1]\n    return dp[m][n]\n",
+    "tests": [
+      {"input": ["aa", "a"], "output": false, "hidden": false},
+      {"input": ["aa", "*"], "output": true, "hidden": false},
+      {"input": ["cb", "?a"], "output": false, "hidden": true},
+      {"input": ["adceb", "*a*b"], "output": true, "hidden": true},
+      {"input": ["acdcb", "a*c?b"], "output": false, "hidden": true},
+      {"input": ["", "***"], "output": true, "hidden": true}
+    ]
+  },
+  {
+    "title": "Running Median",
+    "topic": "Python Heaps",
+    "difficulty": "hard",
+    "description": "Numbers arrive one at a time. Given a list nums, return a list of floats where item i is the median of the first i + 1 numbers. For an odd count the median is the middle value. For an even count it is the average of the two middle values. Use two heaps (a max-heap for the lower half and a min-heap for the upper half) instead of sorting every time.",
+    "examples": [
+      {"input": "nums = [5, 15, 1, 3]", "output": "[5.0, 10.0, 5.0, 4.0]", "explanation": "After [5]: 5. After [5, 15]: 10. After [1, 5, 15]: 5. After [1, 3, 5, 15]: (3 + 5) / 2 = 4."},
+      {"input": "nums = [2, 1]", "output": "[2.0, 1.5]", "explanation": "After [2]: 2. After [1, 2]: 1.5."}
+    ],
+    "constraints": "1 <= len(nums) <= 10^4; -10^5 <= nums[i] <= 10^5",
+    "starter_code": "import heapq\n\ndef solve(nums):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n) time, O(n) space",
+    "tags": ["heap", "two heaps", "median"],
+    "hints": [
+      "Keep the smaller half in a max-heap (store negative numbers in heapq) and the larger half in a min-heap.",
+      "For each new number, push it into the lower half, then move the top of the lower half to the upper half.",
+      "If the upper half becomes bigger, move its smallest back. The lower half is never smaller than the upper half, so read the median from the two tops."
+    ],
+    "reference_solution": "import heapq\n\ndef solve(nums):\n    low = []\n    high = []\n    result = []\n    for x in nums:\n        heapq.heappush(low, -x)\n        heapq.heappush(high, -heapq.heappop(low))\n        if len(high) > len(low):\n            heapq.heappush(low, -heapq.heappop(high))\n        if len(low) > len(high):\n            result.append(float(-low[0]))\n        else:\n            result.append((-low[0] + high[0]) / 2)\n    return result\n",
+    "tests": [
+      {"input": [[5, 15, 1, 3]], "output": [5.0, 10.0, 5.0, 4.0], "hidden": false},
+      {"input": [[2, 1]], "output": [2.0, 1.5], "hidden": false},
+      {"input": [[1, 2, 3, 4, 5]], "output": [1.0, 1.5, 2.0, 2.5, 3.0], "hidden": true},
+      {"input": [[7]], "output": [7.0], "hidden": true},
+      {"input": [[-1, -2, -3]], "output": [-1.0, -1.5, -2.0], "hidden": true},
+      {"input": [[3, 3, 3, 3]], "output": [3.0, 3.0, 3.0, 3.0], "hidden": true}
+    ]
+  }
+]

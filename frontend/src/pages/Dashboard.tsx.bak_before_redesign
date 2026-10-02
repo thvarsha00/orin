@@ -1,0 +1,180 @@
+import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  ArrowRight, ArrowUpRight, Calendar, Code2, Flame, FileText, GraduationCap, History, Languages,
+  MessageSquare, Sparkles, Target, TrendingUp,
+} from "lucide-react";
+import { AiStatusCard } from "../components/dashboard/AiStatusCard";
+import { EmptyState } from "../components/dashboard/EmptyState";
+import { MetricCard, type MetricState } from "../components/dashboard/MetricCard";
+import { useAuth } from "../context/AuthContext";
+import { initials, sessionStreak, sessionsInLastDays, timeAgo } from "../lib/activity";
+import { LANGUAGES } from "../lib/languages";
+import { api } from "../services/api";
+import type { Conversation, DocumentItem, Health } from "../types";
+
+function greeting() {
+  const h = new Date().getHours();
+  return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+}
+
+const QUICK = [
+  { to: "/tutor", title: "AI Tutor", text: "Ask questions and understand concepts.", icon: GraduationCap, soon: false },
+  { to: "/code", title: "Orin Code", text: "Learn programming and get coding assistance.", icon: Sparkles, soon: true },
+  { to: "/practice", title: "Practice", text: "Test your knowledge with interactive exercises.", icon: Code2, soon: true },
+  { to: "/documents", title: "Documents", text: "Ask questions about your uploaded learning materials.", icon: FileText, soon: false },
+];
+
+export default function Dashboard() {
+  const { user } = useAuth();
+  const [health, setHealth] = useState<Health | null>(null);
+  const [healthErr, setHealthErr] = useState("");
+  const [convs, setConvs] = useState<Conversation[] | null>(null);
+  const [convsErr, setConvsErr] = useState("");
+  const [docCount, setDocCount] = useState<number | null>(null);
+  const [docsErr, setDocsErr] = useState(false);
+
+  const loadHealth = useCallback(() => {
+    setHealth(null); setHealthErr("");
+    api<Health>("/health").then(setHealth).catch((e: Error) => setHealthErr(e.message));
+  }, []);
+  const loadConvs = useCallback(() => {
+    setConvsErr("");
+    api<Conversation[]>("/tutor/conversations").then(setConvs).catch((e: Error) => setConvsErr(e.message));
+  }, []);
+  useEffect(() => { loadHealth(); loadConvs(); }, [loadHealth, loadConvs]);
+  useEffect(() => {
+    api<DocumentItem[]>("/documents").then((d) => setDocCount(d.length)).catch(() => setDocsErr(true));
+  }, []);
+
+  const name = user?.profile.display_name ?? "";
+  const today = new Date().toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
+  const convState: MetricState = convsErr ? "error" : convs === null ? "loading" : "ok";
+  const week = convs ? sessionsInLastDays(convs, 7) : 0;
+  const streak = convs ? sessionStreak(convs) : 0;
+
+  return (
+    <div className="mx-auto max-w-6xl space-y-8 p-5 md:p-8">
+      {/* Header */}
+      <header className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">{greeting()}, {name}.</h1>
+          <p className="mt-1 text-slate-300">Ready to learn something new today?</p>
+          <p className="mt-1 text-sm text-slate-500">Your personalized AI-powered learning workspace.</p>
+        </div>
+        <div className="flex shrink-0 items-center gap-3">
+          <span className="hidden items-center gap-2 rounded-lg border border-line px-3 py-1.5 text-xs text-slate-400 sm:flex">
+            <Calendar size={14} /> {today}
+          </span>
+          <span aria-label={`Signed in as ${name}`} className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-accent to-accent2/80 text-sm font-semibold">
+            {initials(name)}
+          </span>
+        </div>
+      </header>
+
+      {/* Hero + AI status */}
+      <div className="grid gap-4 lg:grid-cols-3">
+        <section className="surface relative overflow-hidden p-6 md:p-8 lg:col-span-2">
+          <svg aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-72 w-72 text-accent opacity-40" viewBox="0 0 200 200" fill="none">
+            <circle cx="100" cy="100" r="30" stroke="currentColor" strokeOpacity=".7" />
+            <circle cx="100" cy="100" r="55" stroke="currentColor" strokeOpacity=".4" />
+            <circle cx="100" cy="100" r="80" stroke="currentColor" strokeOpacity=".22" strokeDasharray="3 6" />
+            <circle cx="130" cy="72" r="4" fill="currentColor" />
+            <circle cx="55" cy="112" r="3" fill="#818cf8" />
+            <circle cx="112" cy="168" r="3" fill="currentColor" fillOpacity=".7" />
+          </svg>
+          <div className="relative max-w-lg">
+            <span className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs text-accent2">
+              <Languages size={13} /> Multilingual AI Support
+            </span>
+            <h2 className="mt-4 text-2xl font-semibold tracking-tight md:text-3xl">Your AI Learning Companion</h2>
+            <p className="mt-3 text-slate-300">
+              Learn concepts, solve doubts, and explore subjects in your preferred language with your personal AI tutor.
+            </p>
+            <p className="mt-2 text-sm text-slate-400">Learn in the language you're comfortable with.</p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link to="/tutor" className="inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-medium shadow-lg shadow-accent/20 transition hover:brightness-110">
+                Start Learning <ArrowRight size={16} />
+              </Link>
+              <Link to="/settings" className="inline-flex items-center gap-2 rounded-lg border border-line px-5 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-white/5">
+                Choose your language
+              </Link>
+            </div>
+          </div>
+        </section>
+        <AiStatusCard health={health} error={healthErr} onRetry={loadHealth} />
+      </div>
+
+      {/* Metrics */}
+      <section aria-label="Learning overview" className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <MetricCard icon={MessageSquare} label="Learning Sessions" state={convState} value={convs?.length ?? 0}
+          caption={week > 0 ? `${week} in the last 7 days` : "Tutor conversations"} />
+        <MetricCard icon={Target} label="Practice Completed" state="soon" />
+        <MetricCard icon={FileText} label="Documents Uploaded" state={docsErr ? "error" : docCount === null ? "loading" : "ok"}
+          value={docCount ?? 0} caption="Study materials" />
+        <MetricCard icon={Flame} label="Learning Streak" state={convState} value={`${streak} ${streak === 1 ? "day" : "days"}`}
+          caption="Days with a tutor session" />
+      </section>
+
+      {/* Quick access */}
+      <section>
+        <h2 className="mb-3 text-lg font-semibold">Continue Learning</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {QUICK.map(({ to, title, text, icon: Icon, soon }) => (
+            <Link key={to} to={to} className="surface surface-hover group flex flex-col p-5">
+              <div className="flex items-center justify-between">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent/10 text-accent"><Icon size={20} /></span>
+                <ArrowUpRight size={16} className="text-slate-600 transition-colors group-hover:text-accent2" />
+              </div>
+              <p className="mt-4 flex items-center gap-2 font-medium">
+                {title}
+                {soon && <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-normal uppercase tracking-wide text-slate-400">Soon</span>}
+              </p>
+              <p className="mt-1 text-sm text-slate-400">{text}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Journey + recent activity */}
+      <div className="grid gap-4 lg:grid-cols-3">
+        <section className="surface p-5 lg:col-span-2">
+          <h2 className="flex items-center gap-2 text-lg font-semibold"><TrendingUp size={18} className="text-accent" /> Your Learning Journey</h2>
+          {/* TODO (Phases 8-10): activity chart, practice completion, topics, revision areas — needs real progress data. */}
+          <EmptyState icon={TrendingUp} title="Your learning journey starts here."
+            text="Complete your first practice session to see your progress and personalized recommendations."
+            actionLabel="Go to Practice" to="/practice" />
+        </section>
+
+        <section className="surface p-5">
+          <h2 className="flex items-center gap-2 text-lg font-semibold"><History size={18} className="text-accent" /> Recent activity</h2>
+          {convsErr && <p className="mt-4 text-sm text-red-400">{convsErr}</p>}
+          {!convs && !convsErr && (
+            <div className="mt-4 space-y-3">{[0, 1, 2].map((i) => <div key={i} className="h-10 animate-pulse rounded-lg bg-white/5" />)}</div>
+          )}
+          {convs && convs.length === 0 && (
+            <EmptyState icon={MessageSquare} title="No activity yet" text="Your tutor conversations will show up here."
+              actionLabel="Ask the tutor" to="/tutor" />
+          )}
+          {convs && convs.length > 0 && (
+            <ul className="mt-3 space-y-1">
+              {convs.slice(0, 4).map((c) => (
+                <li key={c.id}>
+                  <Link to={`/tutor?c=${c.id}`} className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-white/5">
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/5 text-slate-400"><MessageSquare size={14} /></span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm">{c.title}</span>
+                      <span className="block text-xs text-slate-500">
+                        {timeAgo(c.created_at)} · {LANGUAGES.find((l) => l.code === c.language)?.label ?? c.language}
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
+    </div>
+  );
+}

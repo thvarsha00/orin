@@ -1,0 +1,3211 @@
+[
+  {
+    "title": "Rotting Oranges",
+    "topic": "JavaScript Graphs",
+    "difficulty": "medium",
+    "description": "A grid holds 0 (empty cell), 1 (fresh orange) or 2 (rotten orange). Every minute, each fresh orange that is directly up, down, left or right of a rotten orange becomes rotten. Return the number of minutes that must pass until no fresh orange is left, or -1 if some fresh orange can never rot. If there is no fresh orange at the start, the answer is 0.",
+    "examples": [
+      {
+        "input": "grid = [[2, 1, 1], [1, 1, 0], [0, 1, 1]]",
+        "output": "4",
+        "explanation": "The rot spreads outward from the top-left corner one step per minute, and the last orange, in the bottom-right corner, rots in minute 4."
+      }
+    ],
+    "constraints": "1 <= rows, cols <= 10. Each cell is 0, 1 or 2.",
+    "starter_code": "function solve(grid) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(rows * cols)",
+    "tags": [
+      "bfs",
+      "grid",
+      "multi-source"
+    ],
+    "hints": [
+      "Start a breadth-first search from all rotten oranges at the same time, and count the fresh oranges.",
+      "Process the search one level at a time, one level per minute. When the queue ends, the answer is the number of minutes if no fresh orange is left, otherwise -1."
+    ],
+    "reference_solution": "function solve(grid) {\n    const rows = grid.length;\n    if (rows === 0) return 0;\n    const cols = grid[0].length;\n    const g = grid.map((row) => [...row]);\n    let fresh = 0;\n    let queue = [];\n    for (let r = 0; r < rows; r++) {\n        for (let c = 0; c < cols; c++) {\n            if (g[r][c] === 2) queue.push([r, c]);\n            else if (g[r][c] === 1) fresh += 1;\n        }\n    }\n    const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];\n    let minutes = 0;\n    while (queue.length > 0 && fresh > 0) {\n        const next = [];\n        for (const [r, c] of queue) {\n            for (const [dr, dc] of dirs) {\n                const nr = r + dr;\n                const nc = c + dc;\n                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && g[nr][nc] === 1) {\n                    g[nr][nc] = 2;\n                    fresh -= 1;\n                    next.push([nr, nc]);\n                }\n            }\n        }\n        queue = next;\n        minutes += 1;\n    }\n    return fresh === 0 ? minutes : -1;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              0,
+              1,
+              1
+            ]
+          ]
+        ],
+        "output": 4,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              0,
+              1,
+              1
+            ],
+            [
+              1,
+              0,
+              1
+            ]
+          ]
+        ],
+        "output": -1,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              0,
+              2
+            ]
+          ]
+        ],
+        "output": 0,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              1
+            ]
+          ]
+        ],
+        "output": -1,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            [
+              2,
+              1,
+              1,
+              1,
+              1
+            ]
+          ]
+        ],
+        "output": 4,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Is Graph Bipartite",
+    "topic": "JavaScript Graphs",
+    "difficulty": "medium",
+    "description": "An undirected graph with n nodes numbered 0 to n - 1 is given as an adjacency list: graph[i] lists every node connected to node i, and if a is in graph[b] then b is in graph[a]. Return true if the nodes can be split into two groups so that every edge joins one node from each group. The graph may be disconnected and may have no nodes.",
+    "examples": [
+      {
+        "input": "graph = [[1, 3], [0, 2], [1, 3], [0, 2]]",
+        "output": "true",
+        "explanation": "Put nodes 0 and 2 in one group and nodes 1 and 3 in the other. Every edge crosses between the groups."
+      }
+    ],
+    "constraints": "0 <= graph.length <= 100. There are no self-loops and no repeated edges.",
+    "starter_code": "function solve(graph) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(V + E)",
+    "tags": [
+      "graph",
+      "bfs",
+      "coloring"
+    ],
+    "hints": [
+      "Try to color the nodes with two colors so that neighbours always get different colors.",
+      "Run a breadth-first search from every node that is not colored yet (the graph may be disconnected). If you meet a neighbour with the same color as the current node, the answer is false."
+    ],
+    "reference_solution": "function solve(graph) {\n    const n = graph.length;\n    const color = new Array(n).fill(-1);\n    for (let s = 0; s < n; s++) {\n        if (color[s] !== -1) continue;\n        color[s] = 0;\n        const queue = [s];\n        for (let head = 0; head < queue.length; head++) {\n            const u = queue[head];\n            for (const v of graph[u]) {\n                if (color[v] === -1) {\n                    color[v] = 1 - color[u];\n                    queue.push(v);\n                } else if (color[v] === color[u]) {\n                    return false;\n                }\n            }\n        }\n    }\n    return true;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1,
+              3
+            ],
+            [
+              0,
+              2
+            ]
+          ]
+        ],
+        "output": false,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              2
+            ]
+          ]
+        ],
+        "output": true,
+        "hidden": false
+      },
+      {
+        "input": [
+          []
+        ],
+        "output": true,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              1
+            ],
+            [
+              0
+            ],
+            [
+              3
+            ],
+            [
+              2
+            ]
+          ]
+        ],
+        "output": true,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "output": false,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Redundant Connection",
+    "topic": "JavaScript Graphs",
+    "difficulty": "medium",
+    "description": "A tree with nodes numbered 1 to n had one extra edge added, so the input is a list of n edges [a, b], each joining two different nodes, and the graph is connected. Return an edge that can be removed so that the remaining edges form a tree. If several edges qualify, return the one that appears last in the input.",
+    "examples": [
+      {
+        "input": "edges = [[1, 2], [1, 3], [2, 3]]",
+        "output": "[2, 3]",
+        "explanation": "The three edges form a cycle, and removing the last one leaves a tree."
+      }
+    ],
+    "constraints": "3 <= edges.length <= 100. Every edge joins two different nodes between 1 and edges.length, and there are no repeated edges.",
+    "starter_code": "function solve(edges) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n * alpha(n))",
+    "tags": [
+      "union-find",
+      "graph",
+      "cycle-detection"
+    ],
+    "hints": [
+      "Add the edges one at a time, keeping track of which nodes are already connected.",
+      "With union-find, the first edge whose two ends already have the same root is the edge that closes the cycle, and it is the last cycle edge in the input order."
+    ],
+    "reference_solution": "function solve(edges) {\n    const parent = Array.from({ length: edges.length + 1 }, (_, i) => i);\n    const find = (x) => {\n        while (parent[x] !== x) {\n            parent[x] = parent[parent[x]];\n            x = parent[x];\n        }\n        return x;\n    };\n    for (const [a, b] of edges) {\n        const ra = find(a);\n        const rb = find(b);\n        if (ra === rb) return [a, b];\n        parent[ra] = rb;\n    }\n    return [];\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ]
+          ]
+        ],
+        "output": [
+          2,
+          3
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ]
+          ]
+        ],
+        "output": [
+          1,
+          4
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ]
+          ]
+        ],
+        "output": [
+          1,
+          3
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              1
+            ]
+          ]
+        ],
+        "output": [
+          3,
+          1
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              2,
+              4
+            ]
+          ]
+        ],
+        "output": [
+          2,
+          4
+        ],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Binary Tree Right Side View",
+    "topic": "JavaScript Trees",
+    "difficulty": "medium",
+    "description": "A binary tree is given in level order as an array: the nodes are listed row by row from left to right, null marks a missing child, and a missing node has no children listed under it. An empty array is an empty tree. Return the values you would see standing on the right side of the tree, from top to bottom, which is the last node of each level.",
+    "examples": [
+      {
+        "input": "tree = [1, 2, 3, null, 5, null, 4]",
+        "output": "[1, 3, 4]",
+        "explanation": "The last node of the levels is 1, then 3, then 4."
+      }
+    ],
+    "constraints": "0 <= tree.length <= 100. Node values are integers between -1000 and 1000.",
+    "starter_code": "function solve(tree) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "tree",
+      "bfs",
+      "level-order"
+    ],
+    "hints": [
+      "First build node objects from the array: use a queue, and give every dequeued node its next two array items as left and right children.",
+      "Then walk the tree level by level and keep the last node of each level."
+    ],
+    "reference_solution": "function solve(tree) {\n    const build = (arr) => {\n        if (arr.length === 0 || arr[0] === null) return null;\n        const root = { v: arr[0], l: null, r: null };\n        const queue = [root];\n        let i = 1;\n        while (i < arr.length && queue.length > 0) {\n            const node = queue.shift();\n            if (i < arr.length) {\n                if (arr[i] !== null) {\n                    node.l = { v: arr[i], l: null, r: null };\n                    queue.push(node.l);\n                }\n                i += 1;\n            }\n            if (i < arr.length) {\n                if (arr[i] !== null) {\n                    node.r = { v: arr[i], l: null, r: null };\n                    queue.push(node.r);\n                }\n                i += 1;\n            }\n        }\n        return root;\n    };\n    const root = build(tree);\n    if (root === null) return [];\n    const out = [];\n    let level = [root];\n    while (level.length > 0) {\n        out.push(level[level.length - 1].v);\n        const next = [];\n        for (const node of level) {\n            if (node.l) next.push(node.l);\n            if (node.r) next.push(node.r);\n        }\n        level = next;\n    }\n    return out;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            3,
+            null,
+            5,
+            null,
+            4
+          ]
+        ],
+        "output": [
+          1,
+          3,
+          4
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          []
+        ],
+        "output": [],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            null,
+            3
+          ]
+        ],
+        "output": [
+          1,
+          3
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            2,
+            3,
+            4
+          ]
+        ],
+        "output": [
+          1,
+          3,
+          4
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            1,
+            2,
+            null,
+            3,
+            null,
+            4
+          ]
+        ],
+        "output": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Lowest Common Ancestor of Binary Tree",
+    "topic": "JavaScript Trees",
+    "difficulty": "medium",
+    "description": "A binary tree with distinct values is given in level order as an array: the nodes are listed row by row from left to right, null marks a missing child, and a missing node has no children listed under it. Given two values p and q that both exist in the tree, return the value of their lowest common ancestor: the deepest node that has both p and q in its subtree, where a node counts as being in its own subtree.",
+    "examples": [
+      {
+        "input": "tree = [3, 5, 1, 6, 2, 0, 8, null, null, 7, 4], p = 5, q = 1",
+        "output": "3",
+        "explanation": "5 is in the left subtree of 3 and 1 is in the right subtree, so the lowest common ancestor is the root 3."
+      }
+    ],
+    "constraints": "2 <= tree.length <= 100. Node values are distinct integers between -1000 and 1000. p and q are different values that both appear in the tree.",
+    "starter_code": "function solve(tree, p, q) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "tree",
+      "recursion",
+      "dfs"
+    ],
+    "hints": [
+      "Build node objects from the array first, then search the tree recursively.",
+      "A call returns the node if it is p or q, otherwise whatever the two sides return. If both sides return something, the current node is the answer."
+    ],
+    "reference_solution": "function solve(tree, p, q) {\n    const build = (arr) => {\n        if (arr.length === 0 || arr[0] === null) return null;\n        const root = { v: arr[0], l: null, r: null };\n        const queue = [root];\n        let i = 1;\n        while (i < arr.length && queue.length > 0) {\n            const node = queue.shift();\n            if (i < arr.length) {\n                if (arr[i] !== null) {\n                    node.l = { v: arr[i], l: null, r: null };\n                    queue.push(node.l);\n                }\n                i += 1;\n            }\n            if (i < arr.length) {\n                if (arr[i] !== null) {\n                    node.r = { v: arr[i], l: null, r: null };\n                    queue.push(node.r);\n                }\n                i += 1;\n            }\n        }\n        return root;\n    };\n    const find = (node) => {\n        if (node === null || node.v === p || node.v === q) return node;\n        const left = find(node.l);\n        const right = find(node.r);\n        if (left && right) return node;\n        return left || right;\n    };\n    const result = find(build(tree));\n    return result === null ? null : result.v;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            3,
+            5,
+            1,
+            6,
+            2,
+            0,
+            8,
+            null,
+            null,
+            7,
+            4
+          ],
+          5,
+          1
+        ],
+        "output": 3,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            3,
+            5,
+            1,
+            6,
+            2,
+            0,
+            8,
+            null,
+            null,
+            7,
+            4
+          ],
+          5,
+          4
+        ],
+        "output": 5,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            2
+          ],
+          1,
+          2
+        ],
+        "output": 1,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            3,
+            5,
+            1,
+            6,
+            2,
+            0,
+            8,
+            null,
+            null,
+            7,
+            4
+          ],
+          7,
+          4
+        ],
+        "output": 2,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            3,
+            5,
+            1,
+            6,
+            2,
+            0,
+            8,
+            null,
+            null,
+            7,
+            4
+          ],
+          0,
+          8
+        ],
+        "output": 1,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "K Closest Points to Origin",
+    "topic": "JavaScript Heaps",
+    "difficulty": "medium",
+    "description": "Given an array of points [x, y] and an integer k, return the k points closest to the origin (0, 0) by straight-line distance. Order the returned points from closest to farthest. Points at the same distance are ordered by x, and then by y, both from smaller to larger.",
+    "examples": [
+      {
+        "input": "points = [[3, 3], [5, -1], [-2, 4]], k = 2",
+        "output": "[[3, 3], [-2, 4]]",
+        "explanation": "The squared distances are 18, 26 and 20, so the two closest are [3, 3] and [-2, 4]."
+      }
+    ],
+    "constraints": "0 <= k <= points.length <= 1000. Coordinates are integers between -10^4 and 10^4.",
+    "starter_code": "function solve(points, k) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log k)",
+    "tags": [
+      "heap",
+      "sorting",
+      "geometry"
+    ],
+    "hints": [
+      "You can compare squared distances x * x + y * y, which avoids square roots and rounding.",
+      "Sorting all points costs O(n log n) and passes. A max-heap holding only the k best points so far brings it down to O(n log k)."
+    ],
+    "reference_solution": "function solve(points, k) {\n    const dist = (p) => p[0] * p[0] + p[1] * p[1];\n    return [...points]\n        .sort((a, b) => dist(a) - dist(b) || a[0] - b[0] || a[1] - b[1])\n        .slice(0, k);\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            [
+              1,
+              3
+            ],
+            [
+              -2,
+              2
+            ]
+          ],
+          1
+        ],
+        "output": [
+          [
+            -2,
+            2
+          ]
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              3,
+              3
+            ],
+            [
+              5,
+              -1
+            ],
+            [
+              -2,
+              4
+            ]
+          ],
+          2
+        ],
+        "output": [
+          [
+            3,
+            3
+          ],
+          [
+            -2,
+            4
+          ]
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [],
+          0
+        ],
+        "output": [],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          2
+        ],
+        "output": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              -1,
+              -1
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          3
+        ],
+        "output": [
+          [
+            0,
+            0
+          ],
+          [
+            -1,
+            -1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Minimum Cost to Connect Sticks",
+    "topic": "JavaScript Heaps",
+    "difficulty": "medium",
+    "description": "You have sticks with the given lengths. Joining any two sticks into one costs the sum of their lengths, and the new stick has that length. Keep joining until a single stick is left. Return the minimum total cost. If there are 0 or 1 sticks, the cost is 0.",
+    "examples": [
+      {
+        "input": "sticks = [2, 4, 3]",
+        "output": "14",
+        "explanation": "Join 2 and 3 for 5, then join 5 and 4 for 9. The total is 5 + 9 = 14."
+      }
+    ],
+    "constraints": "0 <= sticks.length <= 1000. Each length is an integer between 1 and 10^4.",
+    "starter_code": "function solve(sticks) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": [
+      "heap",
+      "greedy",
+      "priority-queue"
+    ],
+    "hints": [
+      "Always joining the two shortest sticks keeps the repeated additions as small as possible.",
+      "Use a min-heap: take the two smallest values, add their sum to the cost, and push the sum back. Stop when one stick is left."
+    ],
+    "reference_solution": "function solve(sticks) {\n    const heap = [];\n    const push = (x) => {\n        heap.push(x);\n        let i = heap.length - 1;\n        while (i > 0) {\n            const p = (i - 1) >> 1;\n            if (heap[p] <= heap[i]) break;\n            [heap[p], heap[i]] = [heap[i], heap[p]];\n            i = p;\n        }\n    };\n    const pop = () => {\n        const top = heap[0];\n        const last = heap.pop();\n        if (heap.length > 0) {\n            heap[0] = last;\n            let i = 0;\n            while (true) {\n                const l = 2 * i + 1;\n                const r = l + 1;\n                let m = i;\n                if (l < heap.length && heap[l] < heap[m]) m = l;\n                if (r < heap.length && heap[r] < heap[m]) m = r;\n                if (m === i) break;\n                [heap[m], heap[i]] = [heap[i], heap[m]];\n                i = m;\n            }\n        }\n        return top;\n    };\n    for (const s of sticks) push(s);\n    let cost = 0;\n    while (heap.length > 1) {\n        const a = pop();\n        const b = pop();\n        cost += a + b;\n        push(a + b);\n    }\n    return cost;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            2,
+            4,
+            3
+          ]
+        ],
+        "output": 14,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            8,
+            3,
+            5
+          ]
+        ],
+        "output": 30,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            5
+          ]
+        ],
+        "output": 0,
+        "hidden": false
+      },
+      {
+        "input": [
+          []
+        ],
+        "output": 0,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "output": 8,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Replace Words with Roots",
+    "topic": "JavaScript Tries",
+    "difficulty": "medium",
+    "description": "You are given a list of root words and a sentence whose words are separated by single spaces. Replace every word of the sentence that starts with a root by the shortest root that is a prefix of it. A word that starts with none of the roots stays unchanged. Return the new sentence.",
+    "examples": [
+      {
+        "input": "roots = [\"cat\", \"bat\", \"rat\"], sentence = \"the cattle was rattled by the battery\"",
+        "output": "\"the cat was rat by the bat\"",
+        "explanation": "cattle, rattled and battery are replaced by their roots cat, rat and bat. The other words have no root."
+      }
+    ],
+    "constraints": "0 <= roots.length <= 100. 1 <= sentence.length <= 1000. Roots and words contain lowercase letters only, and words are separated by single spaces.",
+    "starter_code": "function solve(roots, sentence) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(total characters)",
+    "tags": [
+      "trie",
+      "strings",
+      "prefix"
+    ],
+    "hints": [
+      "Store the roots in a Set, or in a trie to be faster on long words.",
+      "For each word try its prefixes from the shortest to the longest, and use the first one that is a root."
+    ],
+    "reference_solution": "function solve(roots, sentence) {\n    const set = new Set(roots);\n    return sentence\n        .split(' ')\n        .map((word) => {\n            for (let len = 1; len <= word.length; len++) {\n                const prefix = word.slice(0, len);\n                if (set.has(prefix)) return prefix;\n            }\n            return word;\n        })\n        .join(' ');\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            "cat",
+            "bat",
+            "rat"
+          ],
+          "the cattle was rattled by the battery"
+        ],
+        "output": "the cat was rat by the bat",
+        "hidden": false
+      },
+      {
+        "input": [
+          [],
+          "a b"
+        ],
+        "output": "a b",
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            "a",
+            "aa"
+          ],
+          "aaa aa b"
+        ],
+        "output": "a a b",
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            "ab",
+            "abc"
+          ],
+          "abcd abx a"
+        ],
+        "output": "ab ab a",
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            "x"
+          ],
+          "xx yx x"
+        ],
+        "output": "x yx x",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Trie Prefix Counts Simulation",
+    "topic": "JavaScript Tries",
+    "difficulty": "medium",
+    "description": "Simulate a word store. Each operation is [\"insert\", word] (add one copy of the word), [\"erase\", word] (remove one copy if the word is present, otherwise do nothing) or [\"count\", prefix] (how many stored copies start with the prefix). The same word can be stored several times, and every copy counts. Return the results of the \"count\" operations, in order.",
+    "examples": [
+      {
+        "input": "operations = [[\"insert\", \"apple\"], [\"insert\", \"app\"], [\"count\", \"app\"], [\"erase\", \"apple\"], [\"count\", \"app\"], [\"count\", \"b\"]]",
+        "output": "[2, 1, 0]",
+        "explanation": "Both stored words start with app, so the first count is 2. After apple is erased the count is 1. Nothing starts with b."
+      }
+    ],
+    "constraints": "0 <= operations.length <= 1000. Words and prefixes are non-empty strings of lowercase letters, at most 20 characters.",
+    "starter_code": "function solve(operations) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(total characters)",
+    "tags": [
+      "trie",
+      "design",
+      "simulation",
+      "counting"
+    ],
+    "hints": [
+      "Make each trie node store how many stored words pass through it. The count of a prefix is the count of the node you reach by following it.",
+      "Keep a Map from word to number of copies, so that erasing a word that is not stored does nothing."
+    ],
+    "reference_solution": "function solve(operations) {\n    const root = { count: 0, children: new Map() };\n    const copies = new Map();\n    const update = (word, delta) => {\n        let node = root;\n        for (const ch of word) {\n            if (!node.children.has(ch)) node.children.set(ch, { count: 0, children: new Map() });\n            node = node.children.get(ch);\n            node.count += delta;\n        }\n    };\n    const find = (prefix) => {\n        let node = root;\n        for (const ch of prefix) {\n            node = node.children.get(ch);\n            if (node === undefined) return null;\n        }\n        return node;\n    };\n    const out = [];\n    for (const [type, text] of operations) {\n        if (type === 'insert') {\n            copies.set(text, (copies.get(text) || 0) + 1);\n            update(text, 1);\n        } else if (type === 'erase') {\n            if ((copies.get(text) || 0) > 0) {\n                copies.set(text, copies.get(text) - 1);\n                update(text, -1);\n            }\n        } else {\n            const node = find(text);\n            out.push(node === null ? 0 : node.count);\n        }\n    }\n    return out;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            [
+              "insert",
+              "apple"
+            ],
+            [
+              "insert",
+              "app"
+            ],
+            [
+              "count",
+              "app"
+            ],
+            [
+              "count",
+              "apple"
+            ],
+            [
+              "erase",
+              "apple"
+            ],
+            [
+              "count",
+              "app"
+            ],
+            [
+              "count",
+              "b"
+            ]
+          ]
+        ],
+        "output": [
+          2,
+          1,
+          1,
+          0
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          []
+        ],
+        "output": [],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              "count",
+              "a"
+            ]
+          ]
+        ],
+        "output": [
+          0
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              "insert",
+              "a"
+            ],
+            [
+              "insert",
+              "a"
+            ],
+            [
+              "count",
+              "a"
+            ],
+            [
+              "erase",
+              "a"
+            ],
+            [
+              "count",
+              "a"
+            ],
+            [
+              "erase",
+              "a"
+            ],
+            [
+              "erase",
+              "a"
+            ],
+            [
+              "count",
+              "a"
+            ]
+          ]
+        ],
+        "output": [
+          2,
+          1,
+          0
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            [
+              "insert",
+              "car"
+            ],
+            [
+              "insert",
+              "card"
+            ],
+            [
+              "insert",
+              "care"
+            ],
+            [
+              "count",
+              "car"
+            ],
+            [
+              "count",
+              "card"
+            ],
+            [
+              "count",
+              "ca"
+            ],
+            [
+              "count",
+              "cars"
+            ]
+          ]
+        ],
+        "output": [
+          3,
+          1,
+          3,
+          0
+        ],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Coin Change Minimum Coins",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "medium",
+    "description": "Given an array of coin denominations and a target amount, return the minimum number of coins needed to make exactly that amount. Each coin can be used any number of times. Return -1 if the amount cannot be formed.",
+    "examples": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            5
+          ],
+          11
+        ],
+        "output": 3
+      },
+      {
+        "input": [
+          [
+            2
+          ],
+          3
+        ],
+        "output": -1
+      },
+      {
+        "input": [
+          [
+            1
+          ],
+          3,
+          0
+        ],
+        "output": 0
+      }
+    ],
+    "constraints": "Coin values are positive integers. amount is a non-negative integer.",
+    "starter_code": "function solve(coins, amount) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(amount * number of coins) time and O(amount) space",
+    "tags": [
+      "dynamic-programming",
+      "arrays",
+      "unbounded-knapsack"
+    ],
+    "hints": [
+      "Let dp[x] represent the minimum number of coins needed to make amount x.",
+      "Build the table from smaller amounts toward the target.",
+      "For each coin, consider using it as the final coin."
+    ],
+    "reference_solution": "function solve(coins, amount) {\n    const dp = new Array(amount + 1).fill(Infinity);\n    dp[0] = 0;\n\n    for (let current = 1; current <= amount; current++) {\n        for (const coin of coins) {\n            if (coin <= current && dp[current - coin] !== Infinity) {\n                dp[current] = Math.min(dp[current], dp[current - coin] + 1);\n            }\n        }\n    }\n\n    return dp[amount] === Infinity ? -1 : dp[amount];\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            5
+          ],
+          11
+        ],
+        "output": 3,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            2
+          ],
+          3
+        ],
+        "output": -1,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1
+          ],
+          0
+        ],
+        "output": 0,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            2,
+            5,
+            10,
+            1,
+            3
+          ],
+          27
+        ],
+        "output": 4,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Decode Ways",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "medium",
+    "description": "A message containing digits can be decoded using 1 through 26 as mappings to letters A through Z. Return the number of possible decodings of the given digit string.",
+    "examples": [
+      {
+        "input": [
+          "12"
+        ],
+        "output": 2
+      },
+      {
+        "input": [
+          "226"
+        ],
+        "output": 3
+      },
+      {
+        "input": [
+          "06"
+        ],
+        "output": 0
+      }
+    ],
+    "constraints": "The string contains only digits and has length between 1 and 100.",
+    "starter_code": "function solve(s) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time and O(n) space",
+    "tags": [
+      "dynamic-programming",
+      "strings"
+    ],
+    "hints": [
+      "A single non-zero digit can represent one letter.",
+      "A valid two-digit number must be between 10 and 26.",
+      "Use the number of ways to decode the previous one and two positions."
+    ],
+    "reference_solution": "function solve(s) {\n    if (s.length === 0 || s[0] === '0') return 0;\n\n    const dp = new Array(s.length + 1).fill(0);\n    dp[0] = 1;\n    dp[1] = 1;\n\n    for (let i = 2; i <= s.length; i++) {\n        const one = Number(s.slice(i - 1, i));\n        const two = Number(s.slice(i - 2, i));\n\n        if (one >= 1 && one <= 9) {\n            dp[i] += dp[i - 1];\n        }\n\n        if (two >= 10 && two <= 26) {\n            dp[i] += dp[i - 2];\n        }\n    }\n\n    return dp[s.length];\n}",
+    "tests": [
+      {
+        "input": [
+          "12"
+        ],
+        "output": 2,
+        "hidden": false
+      },
+      {
+        "input": [
+          "226"
+        ],
+        "output": 3,
+        "hidden": false
+      },
+      {
+        "input": [
+          "06"
+        ],
+        "output": 0,
+        "hidden": true
+      },
+      {
+        "input": [
+          "11106"
+        ],
+        "output": 2,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Word Break",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "medium",
+    "description": "Given a string and a dictionary of words, determine whether the string can be segmented into one or more dictionary words.",
+    "examples": [
+      {
+        "input": [
+          "leetcode",
+          [
+            "leet",
+            "code"
+          ]
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          "applepenapple",
+          [
+            "apple",
+            "pen"
+          ]
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          "catsandog",
+          [
+            "cats",
+            "dog",
+            "sand",
+            "and",
+            "cat"
+          ]
+        ],
+        "output": false
+      }
+    ],
+    "constraints": "The string length is at most 300. Dictionary words contain lowercase English letters.",
+    "starter_code": "function solve(s, wordDict) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n * m * k) time in the worst case and O(n) space",
+    "tags": [
+      "dynamic-programming",
+      "strings",
+      "hash-set"
+    ],
+    "hints": [
+      "Use dp[i] to indicate whether the prefix ending at index i can be segmented.",
+      "Store dictionary words in a Set for fast lookup.",
+      "For each position, try possible previous word boundaries."
+    ],
+    "reference_solution": "function solve(s, wordDict) {\n    const words = new Set(wordDict);\n    const dp = new Array(s.length + 1).fill(false);\n    dp[0] = true;\n\n    for (let i = 1; i <= s.length; i++) {\n        for (let j = 0; j < i; j++) {\n            if (dp[j] && words.has(s.slice(j, i))) {\n                dp[i] = true;\n                break;\n            }\n        }\n    }\n\n    return dp[s.length];\n}",
+    "tests": [
+      {
+        "input": [
+          "leetcode",
+          [
+            "leet",
+            "code"
+          ]
+        ],
+        "output": true,
+        "hidden": false
+      },
+      {
+        "input": [
+          "applepenapple",
+          [
+            "apple",
+            "pen"
+          ]
+        ],
+        "output": true,
+        "hidden": false
+      },
+      {
+        "input": [
+          "catsandog",
+          [
+            "cats",
+            "dog",
+            "sand",
+            "and",
+            "cat"
+          ]
+        ],
+        "output": false,
+        "hidden": true
+      },
+      {
+        "input": [
+          "cars",
+          [
+            "car",
+            "ca",
+            "rs"
+          ]
+        ],
+        "output": true,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Target Sum Ways",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "hard",
+    "description": "Given a list of non-negative integers, assign either a plus or minus sign to every number so that the resulting expression equals target. Return the number of different assignments that achieve the target.",
+    "examples": [
+      {
+        "input": [
+          [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          3
+        ],
+        "output": 5
+      },
+      {
+        "input": [
+          [
+            1
+          ],
+          1
+        ],
+        "output": 1
+      },
+      {
+        "input": [
+          [
+            1
+          ],
+          2
+        ],
+        "output": 0
+      }
+    ],
+    "constraints": "Numbers are non-negative integers. The array length is at most 20.",
+    "starter_code": "function solve(nums, target) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n * sum(nums)) time and O(sum(nums)) space",
+    "tags": [
+      "dynamic-programming",
+      "subset-sum",
+      "arrays"
+    ],
+    "hints": [
+      "Separate the numbers assigned a plus sign from those assigned a minus sign.",
+      "This can be transformed into a subset-sum counting problem.",
+      "If (sum + target) is odd or outside the possible range, no solution exists."
+    ],
+    "reference_solution": "function solve(nums, target) {\n    const sum = nums.reduce((a, b) => a + b, 0);\n    if (Math.abs(target) > sum || (sum + target) % 2 !== 0) return 0;\n\n    const goal = (sum + target) / 2;\n    const dp = new Array(goal + 1).fill(0);\n    dp[0] = 1;\n\n    for (const num of nums) {\n        for (let j = goal; j >= num; j--) {\n            dp[j] += dp[j - num];\n        }\n    }\n\n    return dp[goal];\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          3
+        ],
+        "output": 5,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1
+          ],
+          1
+        ],
+        "output": 1,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1
+          ],
+          2
+        ],
+        "output": 0,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          1
+        ],
+        "output": 256,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Longest Common Subsequence",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "hard",
+    "description": "Given two strings, return the length of their longest subsequence that appears in both strings while preserving relative character order.",
+    "examples": [
+      {
+        "input": [
+          "abcde",
+          "ace"
+        ],
+        "output": 3
+      },
+      {
+        "input": [
+          "abc",
+          "abc"
+        ],
+        "output": 3
+      },
+      {
+        "input": [
+          "abc",
+          "def"
+        ],
+        "output": 0
+      }
+    ],
+    "constraints": "Both strings contain lowercase English letters and have length at most 1000.",
+    "starter_code": "function solve(text1, text2) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(m * n) time and O(min(m, n)) space",
+    "tags": [
+      "dynamic-programming",
+      "strings",
+      "subsequence"
+    ],
+    "hints": [
+      "Compare the final characters of the two prefixes.",
+      "If they match, extend the best solution for the previous prefixes.",
+      "Otherwise take the better result from skipping one character from either string."
+    ],
+    "reference_solution": "function solve(text1, text2) {\n    if (text2.length > text1.length) {\n        [text1, text2] = [text2, text1];\n    }\n\n    let prev = new Array(text2.length + 1).fill(0);\n\n    for (let i = 1; i <= text1.length; i++) {\n        const curr = new Array(text2.length + 1).fill(0);\n        for (let j = 1; j <= text2.length; j++) {\n            if (text1[i - 1] === text2[j - 1]) {\n                curr[j] = prev[j - 1] + 1;\n            } else {\n                curr[j] = Math.max(prev[j], curr[j - 1]);\n            }\n        }\n        prev = curr;\n    }\n\n    return prev[text2.length];\n}",
+    "tests": [
+      {
+        "input": [
+          "abcde",
+          "ace"
+        ],
+        "output": 3,
+        "hidden": false
+      },
+      {
+        "input": [
+          "abc",
+          "abc"
+        ],
+        "output": 3,
+        "hidden": false
+      },
+      {
+        "input": [
+          "abc",
+          "def"
+        ],
+        "output": 0,
+        "hidden": true
+      },
+      {
+        "input": [
+          "bl",
+          "yby"
+        ],
+        "output": 1,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Edit Distance",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "hard",
+    "description": "Given two strings, return the minimum number of insertions, deletions, and substitutions required to transform the first string into the second.",
+    "examples": [
+      {
+        "input": [
+          "horse",
+          "ros"
+        ],
+        "output": 3
+      },
+      {
+        "input": [
+          "intention",
+          "execution"
+        ],
+        "output": 5
+      },
+      {
+        "input": [
+          "",
+          "abc"
+        ],
+        "output": 3
+      }
+    ],
+    "constraints": "Strings contain lowercase English letters and have length at most 500.",
+    "starter_code": "function solve(word1, word2) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(m * n) time and O(min(m, n)) space",
+    "tags": [
+      "dynamic-programming",
+      "strings",
+      "edit-distance"
+    ],
+    "hints": [
+      "Use a DP row representing distances to prefixes of the second string.",
+      "Equal characters require no new operation.",
+      "For different characters, consider insert, delete, and replace."
+    ],
+    "reference_solution": "function solve(word1, word2) {\n    if (word2.length > word1.length) {\n        [word1, word2] = [word2, word1];\n    }\n\n    let prev = Array.from({ length: word2.length + 1 }, (_, i) => i);\n\n    for (let i = 1; i <= word1.length; i++) {\n        const curr = new Array(word2.length + 1).fill(0);\n        curr[0] = i;\n\n        for (let j = 1; j <= word2.length; j++) {\n            if (word1[i - 1] === word2[j - 1]) {\n                curr[j] = prev[j - 1];\n            } else {\n                curr[j] = Math.min(\n                    prev[j] + 1,\n                    curr[j - 1] + 1,\n                    prev[j - 1] + 1\n                );\n            }\n        }\n\n        prev = curr;\n    }\n\n    return prev[word2.length];\n}",
+    "tests": [
+      {
+        "input": [
+          "horse",
+          "ros"
+        ],
+        "output": 3,
+        "hidden": false
+      },
+      {
+        "input": [
+          "intention",
+          "execution"
+        ],
+        "output": 5,
+        "hidden": false
+      },
+      {
+        "input": [
+          "",
+          "abc"
+        ],
+        "output": 3,
+        "hidden": true
+      },
+      {
+        "input": [
+          "kitten",
+          "sitting"
+        ],
+        "output": 3,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Maximum Product Subarray",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "hard",
+    "description": "Given an integer array, find the contiguous subarray with the largest product and return that product.",
+    "examples": [
+      {
+        "input": [
+          [
+            2,
+            3,
+            -2,
+            4
+          ]
+        ],
+        "output": 6
+      },
+      {
+        "input": [
+          [
+            -2,
+            0,
+            -1
+          ]
+        ],
+        "output": 0
+      },
+      {
+        "input": [
+          [
+            -2,
+            3,
+            -4
+          ]
+        ],
+        "output": 24
+      }
+    ],
+    "constraints": "The array contains at least one integer.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time and O(1) space",
+    "tags": [
+      "dynamic-programming",
+      "arrays",
+      "subarrays"
+    ],
+    "hints": [
+      "Track both the largest and smallest product ending at the current position.",
+      "A negative number can turn the smallest product into the largest.",
+      "Update the global maximum after processing each element."
+    ],
+    "reference_solution": "function solve(nums) {\n    let currentMax = nums[0];\n    let currentMin = nums[0];\n    let answer = nums[0];\n\n    for (let i = 1; i < nums.length; i++) {\n        const value = nums[i];\n        const candidates = [value, currentMax * value, currentMin * value];\n        currentMax = Math.max(...candidates);\n        currentMin = Math.min(...candidates);\n        answer = Math.max(answer, currentMax);\n    }\n\n    return answer;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            2,
+            3,
+            -2,
+            4
+          ]
+        ],
+        "output": 6,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            -2,
+            0,
+            -1
+          ]
+        ],
+        "output": 0,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            -2,
+            3,
+            -4
+          ]
+        ],
+        "output": 24,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            -2
+          ]
+        ],
+        "output": -2,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Daily Temperatures",
+    "topic": "JavaScript Stacks",
+    "difficulty": "hard",
+    "description": "Given daily temperatures, return an array where each position contains the number of days that must pass until a warmer temperature occurs. Return 0 when no warmer future day exists.",
+    "examples": [
+      {
+        "input": [
+          [
+            73,
+            74,
+            75,
+            71,
+            69,
+            72,
+            76,
+            73
+          ]
+        ],
+        "output": [
+          1,
+          1,
+          4,
+          2,
+          1,
+          1,
+          0,
+          0
+        ]
+      },
+      {
+        "input": [
+          [
+            30,
+            40,
+            50,
+            60
+          ]
+        ],
+        "output": [
+          1,
+          1,
+          1,
+          0
+        ]
+      },
+      {
+        "input": [
+          [
+            30,
+            60,
+            90
+          ]
+        ],
+        "output": [
+          1,
+          1,
+          0
+        ]
+      }
+    ],
+    "constraints": "The array length is at most 100000.",
+    "starter_code": "function solve(temperatures) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time and O(n) space",
+    "tags": [
+      "monotonic-stack",
+      "stacks",
+      "arrays"
+    ],
+    "hints": [
+      "Keep indices whose warmer day has not been found.",
+      "Maintain a decreasing stack of temperatures.",
+      "When the current temperature is warmer, resolve previous indices."
+    ],
+    "reference_solution": "function solve(temperatures) {\n    const answer = new Array(temperatures.length).fill(0);\n    const stack = [];\n\n    for (let i = 0; i < temperatures.length; i++) {\n        while (stack.length > 0 && temperatures[i] > temperatures[stack[stack.length - 1]]) {\n            const previous = stack.pop();\n            answer[previous] = i - previous;\n        }\n        stack.push(i);\n    }\n\n    return answer;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            73,
+            74,
+            75,
+            71,
+            69,
+            72,
+            76,
+            73
+          ]
+        ],
+        "output": [
+          1,
+          1,
+          4,
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            30,
+            40,
+            50,
+            60
+          ]
+        ],
+        "output": [
+          1,
+          1,
+          1,
+          0
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            90,
+            80,
+            70
+          ]
+        ],
+        "output": [
+          0,
+          0,
+          0
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            70,
+            70,
+            71
+          ]
+        ],
+        "output": [
+          2,
+          1,
+          0
+        ],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Largest Rectangle in Histogram",
+    "topic": "JavaScript Stacks",
+    "difficulty": "hard",
+    "description": "Given an array of non-negative bar heights representing a histogram, return the area of the largest rectangle that can be formed using consecutive bars.",
+    "examples": [
+      {
+        "input": [
+          [
+            2,
+            1,
+            5,
+            6,
+            2,
+            3
+          ]
+        ],
+        "output": 10
+      },
+      {
+        "input": [
+          [
+            2,
+            4
+          ]
+        ],
+        "output": 4
+      },
+      {
+        "input": [
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "output": 3
+      }
+    ],
+    "constraints": "The array length is at most 100000.",
+    "starter_code": "function solve(heights) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time and O(n) space",
+    "tags": [
+      "monotonic-stack",
+      "stacks",
+      "arrays"
+    ],
+    "hints": [
+      "Maintain indices of bars in increasing height order.",
+      "When a shorter bar appears, previously stored bars can no longer extend farther right.",
+      "Use the current index as the right boundary and the new stack top as the left boundary."
+    ],
+    "reference_solution": "function solve(heights) {\n    const stack = [];\n    let answer = 0;\n    const values = heights.concat([0]);\n\n    for (let i = 0; i < values.length; i++) {\n        while (stack.length > 0 && values[i] < values[stack[stack.length - 1]]) {\n            const heightIndex = stack.pop();\n            const height = values[heightIndex];\n            const left = stack.length === 0 ? 0 : stack[stack.length - 1] + 1;\n            const width = i - left;\n            answer = Math.max(answer, height * width);\n        }\n        stack.push(i);\n    }\n\n    return answer;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            2,
+            1,
+            5,
+            6,
+            2,
+            3
+          ]
+        ],
+        "output": 10,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            2,
+            4
+          ]
+        ],
+        "output": 4,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "output": 3,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            6,
+            2,
+            5,
+            4,
+            5,
+            1,
+            6
+          ]
+        ],
+        "output": 12,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Sliding Window Maximum",
+    "topic": "JavaScript Queues",
+    "difficulty": "hard",
+    "description": "Given an integer array and a window size k, return the maximum value in every contiguous window of size k.",
+    "examples": [
+      {
+        "input": [
+          [
+            1,
+            3,
+            -1,
+            -3,
+            5,
+            3,
+            6,
+            7
+          ],
+          3
+        ],
+        "output": [
+          3,
+          3,
+          5,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "input": [
+          [
+            1
+          ],
+          1
+        ],
+        "output": [
+          1
+        ]
+      },
+      {
+        "input": [
+          [
+            1,
+            -1
+          ],
+          1
+        ],
+        "output": [
+          1,
+          -1
+        ]
+      }
+    ],
+    "constraints": "The array length is at most 100000. 1 <= k <= nums.length.",
+    "starter_code": "function solve(nums, k) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time and O(k) auxiliary space",
+    "tags": [
+      "sliding-window",
+      "deque",
+      "arrays"
+    ],
+    "hints": [
+      "Store indices rather than values so expired elements can be removed.",
+      "Maintain a decreasing deque of candidate indices.",
+      "The index at the front of the deque is the maximum for the current window."
+    ],
+    "reference_solution": "function solve(nums, k) {\n    const answer = [];\n    const deque = new Array(nums.length);\n    let head = 0;\n    let tail = 0;\n\n    for (let i = 0; i < nums.length; i++) {\n        while (head < tail && deque[head] <= i - k) head++;\n        while (head < tail && nums[deque[tail - 1]] <= nums[i]) tail--;\n        deque[tail++] = i;\n\n        if (i >= k - 1) {\n            answer.push(nums[deque[head]]);\n        }\n    }\n\n    return answer;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            3,
+            -1,
+            -3,
+            5,
+            3,
+            6,
+            7
+          ],
+          3
+        ],
+        "output": [
+          3,
+          3,
+          5,
+          5,
+          6,
+          7
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1
+          ],
+          1
+        ],
+        "output": [
+          1
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            9,
+            8,
+            7,
+            6
+          ],
+          2
+        ],
+        "output": [
+          9,
+          8,
+          7
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            4,
+            4,
+            4,
+            4
+          ],
+          3
+        ],
+        "output": [
+          4,
+          4
+        ],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Trapping Rain Water",
+    "topic": "JavaScript Two Pointers",
+    "difficulty": "hard",
+    "description": "Given an array of non-negative bar heights, calculate how much rain water can be trapped between the bars.",
+    "examples": [
+      {
+        "input": [
+          [
+            0,
+            1,
+            0,
+            2,
+            1,
+            0,
+            1,
+            3,
+            2,
+            1,
+            2,
+            1
+          ]
+        ],
+        "output": 6
+      },
+      {
+        "input": [
+          [
+            4,
+            2,
+            0,
+            3,
+            2,
+            5
+          ]
+        ],
+        "output": 9
+      },
+      {
+        "input": [
+          [
+            1,
+            2,
+            3
+          ]
+        ],
+        "output": 0
+      }
+    ],
+    "constraints": "The array length is at most 100000.",
+    "starter_code": "function solve(height) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time and O(1) space",
+    "tags": [
+      "two-pointers",
+      "arrays",
+      "prefix-max"
+    ],
+    "hints": [
+      "Water above a position depends on the shorter of the tallest boundaries on both sides.",
+      "Use two pointers starting at both ends.",
+      "Process the side with the smaller current boundary."
+    ],
+    "reference_solution": "function solve(height) {\n    let left = 0;\n    let right = height.length - 1;\n    let leftMax = 0;\n    let rightMax = 0;\n    let water = 0;\n\n    while (left < right) {\n        if (height[left] <= height[right]) {\n            if (height[left] >= leftMax) {\n                leftMax = height[left];\n            } else {\n                water += leftMax - height[left];\n            }\n            left++;\n        } else {\n            if (height[right] >= rightMax) {\n                rightMax = height[right];\n            } else {\n                water += rightMax - height[right];\n            }\n            right--;\n        }\n    }\n\n    return water;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            0,
+            1,
+            0,
+            2,
+            1,
+            0,
+            1,
+            3,
+            2,
+            1,
+            2,
+            1
+          ]
+        ],
+        "output": 6,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            4,
+            2,
+            0,
+            3,
+            2,
+            5
+          ]
+        ],
+        "output": 9,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            2,
+            3
+          ]
+        ],
+        "output": 0,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            3,
+            0,
+            2,
+            0,
+            4
+          ]
+        ],
+        "output": 7,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Minimum Window Substring",
+    "topic": "JavaScript Sliding Window",
+    "difficulty": "hard",
+    "description": "Given strings s and t, return the shortest substring of s that contains every character in t with at least the required frequency. Return an empty string if no such substring exists.",
+    "examples": [
+      {
+        "input": [
+          "ADOBECODEBANC",
+          "ABC"
+        ],
+        "output": "BANC"
+      },
+      {
+        "input": [
+          "a",
+          "a"
+        ],
+        "output": "a"
+      },
+      {
+        "input": [
+          "a",
+          "aa"
+        ],
+        "output": ""
+      }
+    ],
+    "constraints": "The strings contain English letters. The length of s is at most 100000.",
+    "starter_code": "function solve(s, t) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time and O(k) space",
+    "tags": [
+      "sliding-window",
+      "hash-map",
+      "strings"
+    ],
+    "hints": [
+      "Count the required frequency of every character in t.",
+      "Expand the right edge until the window contains all required characters.",
+      "Then shrink the left edge while keeping the window valid."
+    ],
+    "reference_solution": "function solve(s, t) {\n    if (t.length === 0 || s.length < t.length) return \"\";\n\n    const need = new Map();\n    for (const ch of t) need.set(ch, (need.get(ch) || 0) + 1);\n\n    const have = new Map();\n    let formed = 0;\n    let left = 0;\n    let bestStart = 0;\n    let bestLength = Infinity;\n\n    for (let right = 0; right < s.length; right++) {\n        const ch = s[right];\n        if (need.has(ch)) {\n            have.set(ch, (have.get(ch) || 0) + 1);\n            if (have.get(ch) === need.get(ch)) formed++;\n        }\n\n        while (formed === need.size) {\n            const length = right - left + 1;\n            if (length < bestLength) {\n                bestLength = length;\n                bestStart = left;\n            }\n\n            const leftChar = s[left++];\n            if (need.has(leftChar)) {\n                if (have.get(leftChar) === need.get(leftChar)) formed--;\n                have.set(leftChar, have.get(leftChar) - 1);\n            }\n        }\n    }\n\n    return bestLength === Infinity ? \"\" : s.slice(bestStart, bestStart + bestLength);\n}",
+    "tests": [
+      {
+        "input": [
+          "ADOBECODEBANC",
+          "ABC"
+        ],
+        "output": "BANC",
+        "hidden": false
+      },
+      {
+        "input": [
+          "a",
+          "a"
+        ],
+        "output": "a",
+        "hidden": false
+      },
+      {
+        "input": [
+          "a",
+          "aa"
+        ],
+        "output": "",
+        "hidden": true
+      },
+      {
+        "input": [
+          "aa",
+          "aa"
+        ],
+        "output": "aa",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Word Ladder Length",
+    "topic": "JavaScript Graphs",
+    "difficulty": "hard",
+    "description": "Given a begin word, an end word, and a dictionary, return the number of words in the shortest transformation sequence from beginWord to endWord. Each transformation changes exactly one character and every intermediate word must exist in the dictionary.",
+    "examples": [
+      {
+        "input": [
+          "hit",
+          "cog",
+          [
+            "hot",
+            "dot",
+            "dog",
+            "lot",
+            "log",
+            "cog"
+          ]
+        ],
+        "output": 5
+      },
+      {
+        "input": [
+          "hit",
+          "cog",
+          [
+            "hot",
+            "dot",
+            "dog",
+            "lot",
+            "log"
+          ]
+        ],
+        "output": 0
+      },
+      {
+        "input": [
+          "a",
+          "c",
+          [
+            "a",
+            "b",
+            "c"
+          ]
+        ],
+        "output": 2
+      }
+    ],
+    "constraints": "All words have the same length and contain lowercase English letters.",
+    "starter_code": "function solve(beginWord, endWord, wordList) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n * L^2) time and O(n) space",
+    "tags": [
+      "breadth-first-search",
+      "graphs",
+      "strings"
+    ],
+    "hints": [
+      "Use breadth-first search because every transformation has equal cost.",
+      "Generate all words that differ by one character.",
+      "Mark words visited when they enter the queue."
+    ],
+    "reference_solution": "function solve(beginWord, endWord, wordList) {\n    const words = new Set(wordList);\n    if (!words.has(endWord)) return 0;\n\n    const queue = [[beginWord, 1]];\n    let head = 0;\n    const visited = new Set([beginWord]);\n\n    while (head < queue.length) {\n        const [word, distance] = queue[head++];\n        if (word === endWord) return distance;\n\n        for (let i = 0; i < word.length; i++) {\n            for (let code = 97; code <= 122; code++) {\n                const ch = String.fromCharCode(code);\n                if (ch === word[i]) continue;\n\n                const next = word.slice(0, i) + ch + word.slice(i + 1);\n                if (words.has(next) && !visited.has(next)) {\n                    visited.add(next);\n                    queue.push([next, distance + 1]);\n                }\n            }\n        }\n    }\n\n    return 0;\n}",
+    "tests": [
+      {
+        "input": [
+          "hit",
+          "cog",
+          [
+            "hot",
+            "dot",
+            "dog",
+            "lot",
+            "log",
+            "cog"
+          ]
+        ],
+        "output": 5,
+        "hidden": false
+      },
+      {
+        "input": [
+          "hit",
+          "cog",
+          [
+            "hot",
+            "dot",
+            "dog",
+            "lot",
+            "log"
+          ]
+        ],
+        "output": 0,
+        "hidden": false
+      },
+      {
+        "input": [
+          "a",
+          "c",
+          [
+            "a",
+            "b",
+            "c"
+          ]
+        ],
+        "output": 2,
+        "hidden": true
+      },
+      {
+        "input": [
+          "hit",
+          "hot",
+          [
+            "hot"
+          ]
+        ],
+        "output": 2,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Course Schedule Feasibility",
+    "topic": "JavaScript Graphs",
+    "difficulty": "hard",
+    "description": "There are numCourses courses numbered from 0 to numCourses - 1. prerequisites contains pairs [course, prerequisite]. Return true if all courses can be completed, or false if the prerequisites contain a cycle.",
+    "examples": [
+      {
+        "input": [
+          2,
+          [
+            [
+              1,
+              0
+            ]
+          ]
+        ],
+        "output": true
+      },
+      {
+        "input": [
+          2,
+          [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "output": false
+      },
+      {
+        "input": [
+          3,
+          [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              1
+            ]
+          ]
+        ],
+        "output": true
+      }
+    ],
+    "constraints": "numCourses is positive. Each prerequisite pair contains valid course indices.",
+    "starter_code": "function solve(numCourses, prerequisites) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(V + E) time and O(V + E) space",
+    "tags": [
+      "graphs",
+      "topological-sort",
+      "cycle-detection"
+    ],
+    "hints": [
+      "Model prerequisites as directed edges.",
+      "A cycle prevents a complete topological ordering.",
+      "Use indegrees and a queue to process courses with no remaining prerequisites."
+    ],
+    "reference_solution": "function solve(numCourses, prerequisites) {\n    const graph = Array.from({ length: numCourses }, () => []);\n    const indegree = new Array(numCourses).fill(0);\n\n    for (const [course, prerequisite] of prerequisites) {\n        graph[prerequisite].push(course);\n        indegree[course]++;\n    }\n\n    const queue = [];\n    for (let i = 0; i < numCourses; i++) {\n        if (indegree[i] === 0) queue.push(i);\n    }\n\n    let head = 0;\n    let completed = 0;\n\n    while (head < queue.length) {\n        const course = queue[head++];\n        completed++;\n\n        for (const next of graph[course]) {\n            indegree[next]--;\n            if (indegree[next] === 0) queue.push(next);\n        }\n    }\n\n    return completed === numCourses;\n}",
+    "tests": [
+      {
+        "input": [
+          2,
+          [
+            [
+              1,
+              0
+            ]
+          ]
+        ],
+        "output": true,
+        "hidden": false
+      },
+      {
+        "input": [
+          2,
+          [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "output": false,
+        "hidden": false
+      },
+      {
+        "input": [
+          3,
+          [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              1
+            ]
+          ]
+        ],
+        "output": true,
+        "hidden": true
+      },
+      {
+        "input": [
+          4,
+          [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              1,
+              3
+            ]
+          ]
+        ],
+        "output": false,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Number of Islands",
+    "topic": "JavaScript Graphs",
+    "difficulty": "hard",
+    "description": "Given a grid containing '1' for land and '0' for water, return the number of connected islands. Cells are connected horizontally or vertically.",
+    "examples": [
+      {
+        "input": [
+          [
+            [
+              "1",
+              "1",
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "1",
+              "1",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          ]
+        ],
+        "output": 1
+      },
+      {
+        "input": [
+          [
+            [
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1"
+            ]
+          ]
+        ],
+        "output": 3
+      },
+      {
+        "input": [
+          [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0"
+            ]
+          ]
+        ],
+        "output": 0
+      }
+    ],
+    "constraints": "The grid has at most 200 rows and 200 columns.",
+    "starter_code": "function solve(grid) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(rows * columns) time and O(rows * columns) space in the worst case",
+    "tags": [
+      "graphs",
+      "breadth-first-search",
+      "grid"
+    ],
+    "hints": [
+      "When an unvisited land cell is found, start a traversal from it.",
+      "Mark every connected land cell as visited.",
+      "Each traversal corresponds to one island."
+    ],
+    "reference_solution": "function solve(grid) {\n    if (grid.length === 0) return 0;\n\n    const rows = grid.length;\n    const cols = grid[0].length;\n    let islands = 0;\n    const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]];\n\n    for (let r = 0; r < rows; r++) {\n        for (let c = 0; c < cols; c++) {\n            if (grid[r][c] !== '1') continue;\n\n            islands++;\n            const queue = [[r, c]];\n            let head = 0;\n            grid[r][c] = '0';\n\n            while (head < queue.length) {\n                const [cr, cc] = queue[head++];\n\n                for (const [dr, dc] of directions) {\n                    const nr = cr + dr;\n                    const nc = cc + dc;\n\n                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] === '1') {\n                        grid[nr][nc] = '0';\n                        queue.push([nr, nc]);\n                    }\n                }\n            }\n        }\n    }\n\n    return islands;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            [
+              "1",
+              "1",
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "1",
+              "1",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ]
+          ]
+        ],
+        "output": 1,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1"
+            ]
+          ]
+        ],
+        "output": 3,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0"
+            ]
+          ]
+        ],
+        "output": 0,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            [
+              "1"
+            ]
+          ]
+        ],
+        "output": 1,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Kth Largest Element",
+    "topic": "JavaScript Heaps",
+    "difficulty": "hard",
+    "description": "Given an integer array and an integer k, return the kth largest element in the array.",
+    "examples": [
+      {
+        "input": [
+          [
+            3,
+            2,
+            1,
+            5,
+            6,
+            4
+          ],
+          2
+        ],
+        "output": 5
+      },
+      {
+        "input": [
+          [
+            3,
+            2,
+            3,
+            1,
+            2,
+            4,
+            5,
+            5,
+            6
+          ],
+          4
+        ],
+        "output": 4
+      },
+      {
+        "input": [
+          [
+            1
+          ],
+          1
+        ],
+        "output": 1
+      }
+    ],
+    "constraints": "The array contains at least one integer. 1 <= k <= nums.length.",
+    "starter_code": "function solve(nums, k) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n) time and O(n) space",
+    "tags": [
+      "sorting",
+      "heaps",
+      "arrays"
+    ],
+    "hints": [
+      "Sorting the array in descending order makes the kth largest element easy to locate.",
+      "Duplicates count as separate positions.",
+      "Be careful to return the kth largest rather than the kth distinct value."
+    ],
+    "reference_solution": "function solve(nums, k) {\n    const sorted = [...nums].sort((a, b) => b - a);\n    return sorted[k - 1];\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            3,
+            2,
+            1,
+            5,
+            6,
+            4
+          ],
+          2
+        ],
+        "output": 5,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            3,
+            2,
+            3,
+            1,
+            2,
+            4,
+            5,
+            5,
+            6
+          ],
+          4
+        ],
+        "output": 4,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1
+          ],
+          1
+        ],
+        "output": 1,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            5,
+            5,
+            5,
+            5
+          ],
+          3
+        ],
+        "output": 5,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Find Duplicate Number",
+    "topic": "JavaScript Two Pointers",
+    "difficulty": "hard",
+    "description": "Given an array containing n + 1 integers where each integer is between 1 and n inclusive, return the single duplicated number. The duplicate may appear more than twice.",
+    "examples": [
+      {
+        "input": [
+          [
+            1,
+            3,
+            4,
+            2,
+            2
+          ]
+        ],
+        "output": 2
+      },
+      {
+        "input": [
+          [
+            3,
+            1,
+            3,
+            4,
+            2
+          ]
+        ],
+        "output": 3
+      },
+      {
+        "input": [
+          [
+            1,
+            1
+          ]
+        ],
+        "output": 1
+      }
+    ],
+    "constraints": "The array contains n + 1 integers with values from 1 through n. There is exactly one duplicated value.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time and O(1) extra space",
+    "tags": [
+      "two-pointers",
+      "cycle-detection",
+      "arrays"
+    ],
+    "hints": [
+      "Treat each value as a pointer to another index.",
+      "The duplicate creates a cycle.",
+      "Use Floyd's tortoise and hare cycle detection."
+    ],
+    "reference_solution": "function solve(nums) {\n    let slow = nums[0];\n    let fast = nums[0];\n\n    do {\n        slow = nums[slow];\n        fast = nums[nums[fast]];\n    } while (slow !== fast);\n\n    slow = nums[0];\n    while (slow !== fast) {\n        slow = nums[slow];\n        fast = nums[fast];\n    }\n\n    return slow;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            3,
+            4,
+            2,
+            2
+          ]
+        ],
+        "output": 2,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            3,
+            1,
+            3,
+            4,
+            2
+          ]
+        ],
+        "output": 3,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            1
+          ]
+        ],
+        "output": 1,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            2,
+            5,
+            9,
+            6,
+            9,
+            3,
+            8,
+            9,
+            7,
+            1
+          ]
+        ],
+        "output": 9,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Serialize and Deserialize Binary Tree",
+    "topic": "JavaScript Trees",
+    "difficulty": "hard",
+    "description": "Given a binary tree represented as a level-order array where null represents a missing child, serialize the tree and then deserialize it. Return the resulting tree in the same normalized level-order array representation.",
+    "examples": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            3,
+            null,
+            null,
+            4,
+            5
+          ]
+        ],
+        "output": [
+          1,
+          2,
+          3,
+          null,
+          null,
+          4,
+          5
+        ]
+      },
+      {
+        "input": [
+          [
+            1,
+            2,
+            null,
+            3
+          ]
+        ],
+        "output": [
+          1,
+          2,
+          null,
+          3
+        ]
+      },
+      {
+        "input": [
+          [
+            7
+          ]
+        ],
+        "output": [
+          7
+        ]
+      }
+    ],
+    "constraints": "The input represents a valid binary tree in level-order form. Values are integers or null. The tree contains at most 100000 nodes.",
+    "starter_code": "function solve(values) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time and O(n) space",
+    "tags": [
+      "trees",
+      "serialization",
+      "deserialization",
+      "level-order"
+    ],
+    "hints": [
+      "Use a queue to reconstruct the tree from the level-order representation.",
+      "Preserve null children while traversing the tree.",
+      "Remove only trailing null values from the final level-order representation."
+    ],
+    "reference_solution": "function solve(values) {\n    if (!values || values.length === 0 || values[0] === null) return [];\n\n    const root = { value: values[0], left: null, right: null };\n    const queue = [root];\n    let head = 0;\n    let index = 1;\n\n    while (head < queue.length && index < values.length) {\n        const node = queue[head++];\n\n        if (index < values.length && values[index] !== null) {\n            node.left = { value: values[index], left: null, right: null };\n            queue.push(node.left);\n        }\n        index++;\n\n        if (index < values.length && values[index] !== null) {\n            node.right = { value: values[index], left: null, right: null };\n            queue.push(node.right);\n        }\n        index++;\n    }\n\n    const result = [];\n    const traversal = [root];\n    let traversalHead = 0;\n\n    while (traversalHead < traversal.length) {\n        const node = traversal[traversalHead++];\n        if (node === null) {\n            result.push(null);\n        } else {\n            result.push(node.value);\n            traversal.push(node.left);\n            traversal.push(node.right);\n        }\n    }\n\n    while (result.length > 0 && result[result.length - 1] === null) {\n        result.pop();\n    }\n\n    return result;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            3,
+            null,
+            null,
+            4,
+            5
+          ]
+        ],
+        "output": [
+          1,
+          2,
+          3,
+          null,
+          null,
+          4,
+          5
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            2,
+            null,
+            3
+          ]
+        ],
+        "output": [
+          1,
+          2,
+          null,
+          3
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            7
+          ]
+        ],
+        "output": [
+          7
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            10,
+            5,
+            15,
+            2,
+            7,
+            null,
+            20
+          ]
+        ],
+        "output": [
+          10,
+          5,
+          15,
+          2,
+          7,
+          null,
+          20
+        ],
+        "hidden": true
+      }
+    ]
+  }
+]

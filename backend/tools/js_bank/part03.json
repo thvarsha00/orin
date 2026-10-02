@@ -1,0 +1,392 @@
+[
+  {
+    "title": "Counter with Closure Operations",
+    "topic": "JavaScript Closures",
+    "difficulty": "easy",
+    "description": "A counter starts at 0. You are given an array of operations, each one of \"inc\" (add 1), \"dec\" (subtract 1), \"reset\" (set to 0) or \"get\" (read the current value). Process the operations in order and return an array with the value read by each \"get\", in order. The counter may go negative.",
+    "examples": [
+      {
+        "input": "operations = [\"inc\", \"inc\", \"get\", \"dec\", \"get\", \"reset\", \"get\"]",
+        "output": "[2, 1, 0]",
+        "explanation": "The counter goes 1, 2 (read 2), 1 (read 1), then resets to 0 (read 0)."
+      }
+    ],
+    "constraints": "0 <= operations.length <= 1000. Every operation is one of \"inc\", \"dec\", \"reset\" or \"get\".",
+    "starter_code": "function solve(operations) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["closures", "state", "simulation"],
+    "hints": [
+      "A closure lets a function keep a private variable between calls: write a makeCounter() that returns small functions sharing one count variable.",
+      "Call the matching function for each operation and collect the result only for \"get\"."
+    ],
+    "reference_solution": "function solve(operations) {\n    const makeCounter = () => {\n        let count = 0;\n        return {\n            inc() { count += 1; },\n            dec() { count -= 1; },\n            reset() { count = 0; },\n            get() { return count; }\n        };\n    };\n    const counter = makeCounter();\n    const out = [];\n    for (const op of operations) {\n        if (op === 'get') out.push(counter.get());\n        else counter[op]();\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [["inc", "inc", "get", "dec", "get", "reset", "get"]], "output": [2, 1, 0], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [["get"]], "output": [0], "hidden": false},
+      {"input": [["dec", "dec", "get", "inc", "get"]], "output": [-2, -1], "hidden": true},
+      {"input": [["inc", "reset", "inc", "inc", "inc", "get", "get"]], "output": [3, 3], "hidden": true}
+    ]
+  },
+  {
+    "title": "Sort Strings by Length Then Alphabet",
+    "topic": "JavaScript Sorting",
+    "difficulty": "easy",
+    "description": "Given an array of strings, return a new array sorted by length from shortest to longest. Strings of equal length are ordered alphabetically using plain string comparison (code-unit order, so every uppercase letter comes before every lowercase letter). Keep repeated strings.",
+    "examples": [
+      {
+        "input": "words = [\"pear\", \"fig\", \"apple\", \"kiwi\", \"date\"]",
+        "output": "[\"fig\", \"date\", \"kiwi\", \"pear\", \"apple\"]",
+        "explanation": "fig has 3 letters, date, kiwi and pear have 4 (in alphabetical order), and apple has 5."
+      }
+    ],
+    "constraints": "0 <= words.length <= 1000. Each word has 1 to 30 letters.",
+    "starter_code": "function solve(words) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": ["sorting", "comparator", "strings"],
+    "hints": [
+      "Array.prototype.sort accepts a comparator (a, b) => number. A negative result puts a first.",
+      "Compare lengths first, and only when they are equal compare the strings themselves with < and >."
+    ],
+    "reference_solution": "function solve(words) {\n    return [...words].sort((a, b) => {\n        if (a.length !== b.length) return a.length - b.length;\n        return a < b ? -1 : a > b ? 1 : 0;\n    });\n}",
+    "tests": [
+      {"input": [["pear", "fig", "apple", "kiwi", "date"]], "output": ["fig", "date", "kiwi", "pear", "apple"], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [["b", "a", "c"]], "output": ["a", "b", "c"], "hidden": false},
+      {"input": [["bb", "a", "aa", "b"]], "output": ["a", "b", "aa", "bb"], "hidden": true},
+      {"input": [["Zed", "apple", "Bob"]], "output": ["Bob", "Zed", "apple"], "hidden": true}
+    ]
+  },
+  {
+    "title": "Zip Arrays into Pairs",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Given two arrays a and b, return an array of pairs where the i-th pair is [a[i], b[i]]. Stop at the length of the shorter array and ignore the extra items of the longer one.",
+    "examples": [
+      {
+        "input": "a = [1, 2, 3], b = [\"x\", \"y\"]",
+        "output": "[[1, \"x\"], [2, \"y\"]]",
+        "explanation": "The shorter array has 2 items, so only 2 pairs are built."
+      }
+    ],
+    "constraints": "0 <= a.length, b.length <= 1000. Items are integers or strings.",
+    "starter_code": "function solve(a, b) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(min(n, m))",
+    "tags": ["arrays", "map", "pairs"],
+    "hints": [
+      "The number of pairs is Math.min(a.length, b.length).",
+      "Array.from({ length: k }, (_, i) => ...) builds an array of k items from the index."
+    ],
+    "reference_solution": "function solve(a, b) {\n    const n = Math.min(a.length, b.length);\n    return Array.from({ length: n }, (_, i) => [a[i], b[i]]);\n}",
+    "tests": [
+      {"input": [[1, 2, 3], ["x", "y"]], "output": [[1, "x"], [2, "y"]], "hidden": false},
+      {"input": [[], [1]], "output": [], "hidden": false},
+      {"input": [[1], [2]], "output": [[1, 2]], "hidden": false},
+      {"input": [[1, 2], [3, 4, 5, 6]], "output": [[1, 3], [2, 4]], "hidden": true},
+      {"input": [["a", "b", "c"], ["d", "e", "f"]], "output": [["a", "d"], ["b", "e"], ["c", "f"]], "hidden": true}
+    ]
+  },
+  {
+    "title": "Take While Prefix",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Given an array of integers and the name of a rule, return the longest prefix of the array in which every item satisfies the rule. The rule is \"positive\" (item > 0), \"even\" (item is divisible by 2, and 0 counts as even) or \"negative\" (item < 0). Stop at the first item that fails the rule.",
+    "examples": [
+      {
+        "input": "nums = [2, 4, 5, 6], rule = \"even\"",
+        "output": "[2, 4]",
+        "explanation": "2 and 4 are even, and 5 stops the prefix, so 6 is not included even though it is even."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each item is an integer between -10^6 and 10^6. rule is one of \"positive\", \"even\" or \"negative\".",
+    "starter_code": "function solve(nums, rule) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["arrays", "predicates", "loops"],
+    "hints": [
+      "Store the three rules as small functions in an object and pick one by name.",
+      "Advance an index while the item passes, then return nums.slice(0, index)."
+    ],
+    "reference_solution": "function solve(nums, rule) {\n    const rules = {\n        positive: (x) => x > 0,\n        even: (x) => x % 2 === 0,\n        negative: (x) => x < 0\n    };\n    const test = rules[rule];\n    let i = 0;\n    while (i < nums.length && test(nums[i])) i += 1;\n    return nums.slice(0, i);\n}",
+    "tests": [
+      {"input": [[2, 4, 5, 6], "even"], "output": [2, 4], "hidden": false},
+      {"input": [[], "even"], "output": [], "hidden": false},
+      {"input": [[1, 2], "even"], "output": [], "hidden": false},
+      {"input": [[3, 5, -1, 4], "positive"], "output": [3, 5], "hidden": true},
+      {"input": [[-1, -2, 0, -3], "negative"], "output": [-1, -2], "hidden": true}
+    ]
+  },
+  {
+    "title": "Range with Step",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Given integers start, end and step, return the array that begins at start and moves by step each time, stopping before it reaches or passes end (end itself is never included). The step may be negative to count down. If step is 0, or the step points away from end, return an empty array.",
+    "examples": [
+      {
+        "input": "start = 0, end = 10, step = 3",
+        "output": "[0, 3, 6, 9]",
+        "explanation": "The next value would be 12, which is past 10, so the range stops at 9."
+      }
+    ],
+    "constraints": "-10^4 <= start, end <= 10^4. -10^4 <= step <= 10^4. The result has at most 1000 items.",
+    "starter_code": "function solve(start, end, step) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["arrays", "loops", "generation"],
+    "hints": [
+      "Handle step === 0 first, since it would loop forever.",
+      "Use one loop condition for positive steps (x < end) and another for negative steps (x > end)."
+    ],
+    "reference_solution": "function solve(start, end, step) {\n    if (step === 0) return [];\n    const out = [];\n    if (step > 0) {\n        for (let x = start; x < end; x += step) out.push(x);\n    } else {\n        for (let x = start; x > end; x += step) out.push(x);\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [0, 10, 3], "output": [0, 3, 6, 9], "hidden": false},
+      {"input": [10, 0, -4], "output": [10, 6, 2], "hidden": false},
+      {"input": [0, 5, -1], "output": [], "hidden": false},
+      {"input": [1, 4, 0], "output": [], "hidden": true},
+      {"input": [-3, 3, 2], "output": [-3, -1, 1], "hidden": true}
+    ]
+  },
+  {
+    "title": "Running Maximum",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Given an array of integers, return an array of the same length where item i is the largest value among the first i + 1 items of the input.",
+    "examples": [
+      {
+        "input": "nums = [3, 1, 4, 1, 5]",
+        "output": "[3, 3, 4, 4, 5]",
+        "explanation": "The maximum so far is 3, 3, 4, 4 and finally 5."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each item is an integer between -10^6 and 10^6.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["arrays", "loops", "running-state"],
+    "hints": [
+      "Keep one variable holding the best value seen so far.",
+      "Start it at -Infinity so that any first item replaces it, and push it after every item."
+    ],
+    "reference_solution": "function solve(nums) {\n    const out = [];\n    let best = -Infinity;\n    for (const x of nums) {\n        if (x > best) best = x;\n        out.push(best);\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [[3, 1, 4, 1, 5]], "output": [3, 3, 4, 4, 5], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [[-2, -5, -1]], "output": [-2, -2, -1], "hidden": false},
+      {"input": [[1, 2, 3]], "output": [1, 2, 3], "hidden": true},
+      {"input": [[5, 4, 3, 2]], "output": [5, 5, 5, 5], "hidden": true}
+    ]
+  },
+  {
+    "title": "Partition Array by Threshold",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Given an array of integers and an integer threshold, return a two-item array [below, rest]. below holds the items smaller than the threshold and rest holds the items greater than or equal to it. Both keep the original relative order.",
+    "examples": [
+      {
+        "input": "nums = [5, 1, 8, 3, 5], threshold = 5",
+        "output": "[[1, 3], [5, 8, 5]]",
+        "explanation": "1 and 3 are below 5. The two 5s and the 8 are at least 5, in their original order."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each item and the threshold are integers between -10^6 and 10^6.",
+    "starter_code": "function solve(nums, threshold) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["arrays", "filter", "partition"],
+    "hints": [
+      "You can call filter twice, or loop once and push each item to one of two arrays.",
+      "Return the two arrays inside one outer array."
+    ],
+    "reference_solution": "function solve(nums, threshold) {\n    const below = [];\n    const rest = [];\n    for (const x of nums) {\n        if (x < threshold) below.push(x);\n        else rest.push(x);\n    }\n    return [below, rest];\n}",
+    "tests": [
+      {"input": [[5, 1, 8, 3, 5], 5], "output": [[1, 3], [5, 8, 5]], "hidden": false},
+      {"input": [[], 3], "output": [[], []], "hidden": false},
+      {"input": [[1, 2], 10], "output": [[1, 2], []], "hidden": false},
+      {"input": [[10, 20], 5], "output": [[], [10, 20]], "hidden": true},
+      {"input": [[-1, 0, 1, -2], 0], "output": [[-1, -2], [0, 1]], "hidden": true}
+    ]
+  },
+  {
+    "title": "Memoization Call Counter",
+    "topic": "JavaScript Closures",
+    "difficulty": "medium",
+    "description": "A recursive function fib(n) returns n when n < 2, and fib(n - 1) + fib(n - 2) otherwise. It is wrapped in a memoizer that keeps one cache for the whole run: a call for an argument already in the cache returns the stored value without running the function body, and every recursive call also goes through the cache. You are given an array of arguments to call, in order. Return an object with two fields: results, the value returned for each call, and computations, the total number of times the function body actually ran across all calls.",
+    "examples": [
+      {
+        "input": "calls = [5, 3, 7]",
+        "output": "{\"results\": [5, 2, 13], \"computations\": 8}",
+        "explanation": "fib(5) runs the body for the arguments 0 to 5 (6 times). fib(3) is already cached. fib(7) adds only 6 and 7, so the total is 8."
+      }
+    ],
+    "constraints": "0 <= calls.length <= 100. Each argument is an integer between 0 and 40.",
+    "starter_code": "function solve(calls) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(max argument)",
+    "tags": ["closures", "memoization", "map", "recursion"],
+    "hints": [
+      "Create a Map cache and a computations counter outside the recursive function so that they survive between calls.",
+      "Check the cache first. Only when it misses, increment the counter, compute the value with recursive calls to the same cached function, store it and return it."
+    ],
+    "reference_solution": "function solve(calls) {\n    const cache = new Map();\n    let computations = 0;\n    const fib = (n) => {\n        if (cache.has(n)) return cache.get(n);\n        computations += 1;\n        const value = n < 2 ? n : fib(n - 1) + fib(n - 2);\n        cache.set(n, value);\n        return value;\n    };\n    const results = calls.map((n) => fib(n));\n    return { results, computations };\n}",
+    "tests": [
+      {"input": [[5, 3, 7]], "output": {"results": [5, 2, 13], "computations": 8}, "hidden": false},
+      {"input": [[]], "output": {"results": [], "computations": 0}, "hidden": false},
+      {"input": [[0]], "output": {"results": [0], "computations": 1}, "hidden": false},
+      {"input": [[10, 10, 10]], "output": {"results": [55, 55, 55], "computations": 11}, "hidden": true},
+      {"input": [[2, 6, 4]], "output": {"results": [1, 8, 3], "computations": 7}, "hidden": true}
+    ]
+  },
+  {
+    "title": "Debounce Simulation",
+    "topic": "JavaScript Closures",
+    "difficulty": "medium",
+    "description": "A debounced function runs only after events stop arriving for a while. You are given the times (in ms, in non-decreasing order) at which an event happens, and a wait time. Every event starts a timer that will fire at event time + wait, and it cancels the timer of the previous event if that timer has not fired yet. A timer fires unless another event arrives strictly before its fire time (an event arriving exactly at the fire time does not cancel it). Return the fire times, in order.",
+    "examples": [
+      {
+        "input": "events = [0, 100, 150, 400], wait = 200",
+        "output": "[350, 600]",
+        "explanation": "The events at 0 and 100 are cancelled by the next event. The event at 150 fires at 350 because 400 is later than 350. The event at 400 fires at 600."
+      }
+    ],
+    "constraints": "0 <= events.length <= 1000. 0 <= events[i] <= 10^6 and the array is non-decreasing. 1 <= wait <= 10^6.",
+    "starter_code": "function solve(events, wait) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["closures", "timers", "simulation", "debounce"],
+    "hints": [
+      "An event's timer survives only if the next event is not strictly earlier than its fire time.",
+      "Compare each event with the next one, and treat the last event as always surviving."
+    ],
+    "reference_solution": "function solve(events, wait) {\n    const fires = [];\n    for (let i = 0; i < events.length; i++) {\n        const isLast = i === events.length - 1;\n        if (isLast || events[i + 1] - events[i] >= wait) fires.push(events[i] + wait);\n    }\n    return fires;\n}",
+    "tests": [
+      {"input": [[0, 100, 150, 400], 200], "output": [350, 600], "hidden": false},
+      {"input": [[], 100], "output": [], "hidden": false},
+      {"input": [[5], 10], "output": [15], "hidden": false},
+      {"input": [[0, 10, 20, 30], 10], "output": [10, 20, 30, 40], "hidden": true},
+      {"input": [[1, 2, 3, 4, 5], 3], "output": [8], "hidden": true}
+    ]
+  },
+  {
+    "title": "Throttle Simulation",
+    "topic": "JavaScript Closures",
+    "difficulty": "medium",
+    "description": "A throttled function runs at most once per wait period. You are given the times (in ms, in non-decreasing order) at which an event happens, and a wait time. The first event always runs. After that, an event runs only if at least wait ms have passed since the last event that ran (an event exactly wait ms later does run). Events that do not run are ignored and do not extend the period. Return the times of the events that ran, in order.",
+    "examples": [
+      {
+        "input": "events = [0, 50, 100, 120, 300], wait = 100",
+        "output": "[0, 100, 300]",
+        "explanation": "0 runs. 50 is too soon. 100 is exactly 100 ms after 0, so it runs. 120 is too soon after 100. 300 runs."
+      }
+    ],
+    "constraints": "0 <= events.length <= 1000. 0 <= events[i] <= 10^6 and the array is non-decreasing. 1 <= wait <= 10^6.",
+    "starter_code": "function solve(events, wait) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["closures", "timers", "simulation", "throttle"],
+    "hints": [
+      "Remember the time of the last event that actually ran, starting with nothing.",
+      "Run an event when nothing has run yet or when time - last >= wait, and update last only when you run it."
+    ],
+    "reference_solution": "function solve(events, wait) {\n    const ran = [];\n    let last = null;\n    for (const t of events) {\n        if (last === null || t - last >= wait) {\n            ran.push(t);\n            last = t;\n        }\n    }\n    return ran;\n}",
+    "tests": [
+      {"input": [[0, 50, 100, 120, 300], 100], "output": [0, 100, 300], "hidden": false},
+      {"input": [[], 10], "output": [], "hidden": false},
+      {"input": [[7], 5], "output": [7], "hidden": false},
+      {"input": [[0, 1, 2, 3, 4, 5, 6], 3], "output": [0, 3, 6], "hidden": true},
+      {"input": [[10, 10, 10, 20], 5], "output": [10, 20], "hidden": true}
+    ]
+  },
+  {
+    "title": "Event Emitter Simulation",
+    "topic": "JavaScript Closures",
+    "difficulty": "medium",
+    "description": "Simulate an event emitter. Each operation is [\"on\", event, listenerId] to register a listener, [\"off\", event, listenerId] to remove it, or [\"emit\", event]. Listeners are called in the order they were registered. Registering a listener id that is already registered for the same event does nothing, and removing a listener that is not registered does nothing. For every \"emit\", record the array of listener ids that were called (an empty array if there are none). Return the recorded arrays in order.",
+    "examples": [
+      {
+        "input": "operations = [[\"on\", \"a\", \"x\"], [\"on\", \"a\", \"y\"], [\"emit\", \"a\"], [\"off\", \"a\", \"x\"], [\"emit\", \"a\"], [\"emit\", \"b\"]]",
+        "output": "[[\"x\", \"y\"], [\"y\"], []]",
+        "explanation": "The first emit calls x and y. After x is removed, only y is called. Event b has no listeners."
+      }
+    ],
+    "constraints": "0 <= operations.length <= 1000. Event names and listener ids are non-empty strings.",
+    "starter_code": "function solve(operations) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n * listeners)",
+    "tags": ["closures", "map", "events", "simulation"],
+    "hints": [
+      "Keep a Map from event name to an array of listener ids.",
+      "Copy the array when you record an emit, so that later on/off operations do not change the recorded result."
+    ],
+    "reference_solution": "function solve(operations) {\n    const listeners = new Map();\n    const out = [];\n    for (const op of operations) {\n        const type = op[0];\n        const event = op[1];\n        const id = op[2];\n        if (type === 'on') {\n            if (!listeners.has(event)) listeners.set(event, []);\n            const list = listeners.get(event);\n            if (!list.includes(id)) list.push(id);\n        } else if (type === 'off') {\n            const list = listeners.get(event);\n            if (list) {\n                const i = list.indexOf(id);\n                if (i !== -1) list.splice(i, 1);\n            }\n        } else {\n            out.push([...(listeners.get(event) || [])]);\n        }\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [[["on", "a", "x"], ["on", "a", "y"], ["emit", "a"], ["off", "a", "x"], ["emit", "a"], ["emit", "b"]]], "output": [["x", "y"], ["y"], []], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [[["emit", "z"]]], "output": [[]], "hidden": false},
+      {"input": [[["on", "a", "x"], ["on", "a", "x"], ["emit", "a"]]], "output": [["x"]], "hidden": true},
+      {"input": [[["on", "a", "p"], ["on", "b", "q"], ["on", "a", "q"], ["emit", "a"], ["off", "a", "p"], ["off", "a", "p"], ["emit", "a"], ["emit", "b"]]], "output": [["p", "q"], ["q"], ["q"]], "hidden": true}
+    ]
+  },
+  {
+    "title": "Curried Function Evaluation",
+    "topic": "JavaScript Closures",
+    "difficulty": "medium",
+    "description": "A curried sum function needs arity numbers in total, and it accepts them in several calls. Each call gives it a chunk of numbers. As soon as it has collected at least arity numbers, it returns the sum of the first arity numbers it received, and any extra numbers or later chunks are ignored. Until then it returns another function waiting for more. You are given arity and an array of chunks (each chunk is an array of numbers, possibly empty), to be passed in order as separate calls. Return the sum, or null if the chunks run out before arity numbers were collected.",
+    "examples": [
+      {
+        "input": "arity = 3, chunks = [[1], [2, 3]]",
+        "output": "6",
+        "explanation": "After the first chunk only one number is known. The second chunk completes the three numbers 1, 2 and 3."
+      }
+    ],
+    "constraints": "1 <= arity <= 20. 0 <= chunks.length <= 50. Each chunk has 0 to 20 integers between -1000 and 1000.",
+    "starter_code": "function solve(arity, chunks) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(total numbers)",
+    "tags": ["closures", "currying", "functions", "rest-spread"],
+    "hints": [
+      "Write curry(collected) that returns a function (...args) => ...; each call joins the new args to the collected ones.",
+      "If the joined list has at least arity numbers, return the sum of its first arity items. Otherwise return curry(joined) and pass the next chunk to that."
+    ],
+    "reference_solution": "function solve(arity, chunks) {\n    const curry = (collected) => (...args) => {\n        const all = collected.concat(args);\n        if (all.length >= arity) return all.slice(0, arity).reduce((sum, x) => sum + x, 0);\n        return curry(all);\n    };\n    let current = curry([]);\n    for (const chunk of chunks) {\n        const result = current(...chunk);\n        if (typeof result === 'number') return result;\n        current = result;\n    }\n    return null;\n}",
+    "tests": [
+      {"input": [3, [[1], [2, 3]]], "output": 6, "hidden": false},
+      {"input": [2, [[5]]], "output": null, "hidden": false},
+      {"input": [1, [[4, 9]]], "output": 4, "hidden": false},
+      {"input": [3, [[], [1], [], [2], [3, 4, 5]]], "output": 6, "hidden": true},
+      {"input": [2, [[10], [20], [30]]], "output": 30, "hidden": true}
+    ]
+  },
+  {
+    "title": "Sort Records by Multiple Keys",
+    "topic": "JavaScript Sorting",
+    "difficulty": "medium",
+    "description": "Given an array of record objects and a sort spec, return a new array with the records sorted. The spec is an array of [key, direction] pairs, where direction is \"asc\" or \"desc\". Records are compared by the first pair. If they tie, the next pair breaks the tie, and so on. Values under one key are all numbers or all strings; strings use plain code-unit order. Records that tie on every pair keep their original relative order, and an empty spec keeps the original order.",
+    "examples": [
+      {
+        "input": "records = [{\"n\": \"b\", \"a\": 2}, {\"n\": \"a\", \"a\": 2}, {\"n\": \"c\", \"a\": 1}], spec = [[\"a\", \"desc\"], [\"n\", \"asc\"]]",
+        "output": "[{\"n\": \"a\", \"a\": 2}, {\"n\": \"b\", \"a\": 2}, {\"n\": \"c\", \"a\": 1}]",
+        "explanation": "a is sorted from high to low, so the two records with a = 2 come first, and they are ordered by n from low to high."
+      }
+    ],
+    "constraints": "0 <= records.length <= 1000. 0 <= spec.length <= 5. Every record has every key named in the spec.",
+    "starter_code": "function solve(records, spec) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n * k)",
+    "tags": ["sorting", "comparator", "stable-sort", "objects"],
+    "hints": [
+      "Write one comparator that loops over the spec and returns the first non-zero comparison.",
+      "For \"desc\" flip the sign of that comparison. Array.prototype.sort is stable, so returning 0 keeps the original order."
+    ],
+    "reference_solution": "function solve(records, spec) {\n    return [...records].sort((a, b) => {\n        for (const [key, direction] of spec) {\n            let cmp = a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0;\n            if (direction === 'desc') cmp = -cmp;\n            if (cmp !== 0) return cmp;\n        }\n        return 0;\n    });\n}",
+    "tests": [
+      {"input": [[{"n": "b", "a": 2}, {"n": "a", "a": 2}, {"n": "c", "a": 1}], [["a", "desc"], ["n", "asc"]]], "output": [{"n": "a", "a": 2}, {"n": "b", "a": 2}, {"n": "c", "a": 1}], "hidden": false},
+      {"input": [[], [["x", "asc"]]], "output": [], "hidden": false},
+      {"input": [[{"x": 2}, {"x": 1}], []], "output": [{"x": 2}, {"x": 1}], "hidden": false},
+      {"input": [[{"g": "b", "v": 1}, {"g": "a", "v": 2}, {"g": "b", "v": 3}, {"g": "a", "v": 4}], [["g", "asc"]]], "output": [{"g": "a", "v": 2}, {"g": "a", "v": 4}, {"g": "b", "v": 1}, {"g": "b", "v": 3}], "hidden": true},
+      {"input": [[{"p": -1, "q": 5}, {"p": -1, "q": 2}, {"p": 3, "q": 0}], [["p", "desc"], ["q", "desc"]]], "output": [{"p": 3, "q": 0}, {"p": -1, "q": 5}, {"p": -1, "q": 2}], "hidden": true}
+    ]
+  }
+]

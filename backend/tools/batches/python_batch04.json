@@ -1,0 +1,765 @@
+[
+  {
+    "title": "Count Word Frequencies",
+    "topic": "Python Dictionaries",
+    "difficulty": "easy",
+    "description": "Given a list of words, return a dictionary containing the number of times each word appears.",
+    "examples": [
+      {
+        "input": "[\"apple\", \"banana\", \"apple\", \"orange\"]",
+        "output": "{\"apple\": 2, \"banana\": 1, \"orange\": 1}",
+        "explanation": "Each word is counted once for every occurrence."
+      }
+    ],
+    "constraints": "0 <= len(words) <= 1000",
+    "starter_code": "def solve(words):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "dictionaries",
+      "counting",
+      "strings"
+    ],
+    "hints": [
+      "Use a dictionary whose keys are words.",
+      "Increase the stored count whenever a word appears."
+    ],
+    "reference_solution": "def solve(words):\n    counts = {}\n    for word in words:\n        counts[word] = counts.get(word, 0) + 1\n    return counts",
+    "tests": [
+      {
+        "input": [
+          [
+            "apple",
+            "banana",
+            "apple",
+            "orange"
+          ]
+        ],
+        "output": {
+          "apple": 2,
+          "banana": 1,
+          "orange": 1
+        },
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            "cat",
+            "cat",
+            "cat"
+          ]
+        ],
+        "output": {
+          "cat": 3
+        },
+        "hidden": false
+      },
+      {
+        "input": [
+          []
+        ],
+        "output": {},
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            "a",
+            "b",
+            "a",
+            "b",
+            "a"
+          ]
+        ],
+        "output": {
+          "a": 3,
+          "b": 2
+        },
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Remove Vowels",
+    "topic": "Python Strings",
+    "difficulty": "easy",
+    "description": "Given a string s, return a new string with all English vowels removed. Treat uppercase and lowercase vowels the same.",
+    "examples": [
+      {
+        "input": "\"Hello World\"",
+        "output": "\"Hll Wrld\"",
+        "explanation": "The vowels e and o are removed."
+      }
+    ],
+    "constraints": "0 <= len(s) <= 1000",
+    "starter_code": "def solve(s):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "strings",
+      "loops",
+      "filtering"
+    ],
+    "hints": [
+      "Keep the characters that are not vowels.",
+      "Use a set containing a, e, i, o, and u in both cases."
+    ],
+    "reference_solution": "def solve(s):\n    vowels = set('aeiouAEIOU')\n    return ''.join(ch for ch in s if ch not in vowels)",
+    "tests": [
+      {
+        "input": [
+          "Hello World"
+        ],
+        "output": "Hll Wrld",
+        "hidden": false
+      },
+      {
+        "input": [
+          "python"
+        ],
+        "output": "pythn",
+        "hidden": false
+      },
+      {
+        "input": [
+          "AEIOU"
+        ],
+        "output": "",
+        "hidden": true
+      },
+      {
+        "input": [
+          "rhythm! 123"
+        ],
+        "output": "rhythm! 123",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Find Missing Number",
+    "topic": "Python Sets",
+    "difficulty": "easy",
+    "description": "Given a list containing n distinct integers chosen from the range 0 through n, return the one number from that range that is missing.",
+    "examples": [
+      {
+        "input": "[3, 0, 1]",
+        "output": "2",
+        "explanation": "The range is 0 through 3, and 2 is missing."
+      }
+    ],
+    "constraints": "0 <= len(nums) <= 1000, all values are distinct, 0 <= nums[i] <= len(nums)",
+    "starter_code": "def solve(nums):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "sets",
+      "arrays",
+      "searching"
+    ],
+    "hints": [
+      "The complete range has len(nums) + 1 values.",
+      "Compare the expected range with the values that are present."
+    ],
+    "reference_solution": "def solve(nums):\n    present = set(nums)\n    for value in range(len(nums) + 1):\n        if value not in present:\n            return value",
+    "tests": [
+      {
+        "input": [
+          [
+            3,
+            0,
+            1
+          ]
+        ],
+        "output": 2,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            0,
+            1
+          ]
+        ],
+        "output": 2,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1
+          ]
+        ],
+        "output": 0,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            9,
+            6,
+            4,
+            2,
+            3,
+            5,
+            7,
+            0,
+            1
+          ]
+        ],
+        "output": 8,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Rotate String Left",
+    "topic": "Python Strings",
+    "difficulty": "easy",
+    "description": "Given a string s and a non-negative integer k, return s rotated k positions to the left.",
+    "examples": [
+      {
+        "input": "\"abcdef\", 2",
+        "output": "\"cdefab\"",
+        "explanation": "The first two characters move to the end."
+      }
+    ],
+    "constraints": "0 <= len(s) <= 1000, 0 <= k <= 10^9",
+    "starter_code": "def solve(s, k):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "strings",
+      "slicing",
+      "modulo"
+    ],
+    "hints": [
+      "A rotation larger than the string length can wrap around.",
+      "Use k % len(s) before slicing."
+    ],
+    "reference_solution": "def solve(s, k):\n    if not s:\n        return s\n    k %= len(s)\n    return s[k:] + s[:k]",
+    "tests": [
+      {
+        "input": [
+          "abcdef",
+          2
+        ],
+        "output": "cdefab",
+        "hidden": false
+      },
+      {
+        "input": [
+          "hello",
+          0
+        ],
+        "output": "hello",
+        "hidden": false
+      },
+      {
+        "input": [
+          "abc",
+          5
+        ],
+        "output": "cab",
+        "hidden": true
+      },
+      {
+        "input": [
+          "a",
+          100
+        ],
+        "output": "a",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Intersection With Counts",
+    "topic": "Python Dictionaries",
+    "difficulty": "medium",
+    "description": "Given two integer lists, return a list containing each value that appears in both lists as many times as it appears in both. The result may be returned in any order.",
+    "examples": [
+      {
+        "input": "[1,2,2,1], [2,2]",
+        "output": "[2,2]",
+        "explanation": "2 appears twice in both lists, while 1 does not appear in the second list."
+      }
+    ],
+    "constraints": "0 <= len(a), len(b) <= 1000",
+    "starter_code": "def solve(a, b):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n + m)",
+    "tags": [
+      "dictionaries",
+      "counting",
+      "lists"
+    ],
+    "hints": [
+      "Count the values in one list.",
+      "When scanning the other list, use one copy of a value only when its count is still positive."
+    ],
+    "reference_solution": "def solve(a, b):\n    counts = {}\n    for x in a:\n        counts[x] = counts.get(x, 0) + 1\n    out = []\n    for x in b:\n        if counts.get(x, 0) > 0:\n            out.append(x)\n            counts[x] -= 1\n    return out",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "output": [
+          2,
+          2
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            4,
+            9,
+            5
+          ],
+          [
+            9,
+            4,
+            9,
+            8,
+            4
+          ]
+        ],
+        "output": [
+          9,
+          4
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [],
+          [
+            1,
+            2
+          ]
+        ],
+        "output": [],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "output": [
+          1,
+          1,
+          1
+        ],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Longest Increasing Run",
+    "topic": "Python Arrays",
+    "difficulty": "medium",
+    "description": "Given a list of integers, return the length of the longest contiguous run in which every value is strictly greater than the value immediately before it.",
+    "examples": [
+      {
+        "input": "[1,3,5,4,7]",
+        "output": "3",
+        "explanation": "The run 1, 3, 5 has length 3."
+      }
+    ],
+    "constraints": "0 <= len(nums) <= 1000",
+    "starter_code": "def solve(nums):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "arrays",
+      "loops",
+      "dynamic-state"
+    ],
+    "hints": [
+      "Track the length of the current increasing run.",
+      "Reset the current length when the next value is not greater."
+    ],
+    "reference_solution": "def solve(nums):\n    if not nums:\n        return 0\n    best = current = 1\n    for i in range(1, len(nums)):\n        if nums[i] > nums[i - 1]:\n            current += 1\n            best = max(best, current)\n        else:\n            current = 1\n    return best",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            3,
+            5,
+            4,
+            7
+          ]
+        ],
+        "output": 3,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            5,
+            4,
+            3
+          ]
+        ],
+        "output": 1,
+        "hidden": false
+      },
+      {
+        "input": [
+          []
+        ],
+        "output": 0,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        ],
+        "output": 5,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Evaluate Postfix Expression",
+    "topic": "Python Stacks",
+    "difficulty": "medium",
+    "description": "Given a list of tokens representing a postfix expression, evaluate it using integer arithmetic. Tokens are integers or one of +, -, *, and /. Division truncates toward zero.",
+    "examples": [
+      {
+        "input": "[\"2\", \"1\", \"+\", \"3\", \"*\"]",
+        "output": "9",
+        "explanation": "(2 + 1) * 3 = 9."
+      }
+    ],
+    "constraints": "1 <= len(tokens) <= 1000, the expression is valid",
+    "starter_code": "def solve(tokens):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "stacks",
+      "parsing",
+      "expressions"
+    ],
+    "hints": [
+      "Push numbers onto a stack.",
+      "For an operator, pop the right operand first, then the left operand."
+    ],
+    "reference_solution": "def solve(tokens):\n    stack = []\n    for token in tokens:\n        if token not in {'+', '-', '*', '/'}:\n            stack.append(int(token))\n            continue\n        right = stack.pop()\n        left = stack.pop()\n        if token == '+':\n            stack.append(left + right)\n        elif token == '-':\n            stack.append(left - right)\n        elif token == '*':\n            stack.append(left * right)\n        else:\n            value = abs(left) // abs(right)\n            if (left < 0) != (right < 0):\n                value = -value\n            stack.append(value)\n    return stack[-1]",
+    "tests": [
+      {
+        "input": [
+          [
+            "2",
+            "1",
+            "+",
+            "3",
+            "*"
+          ]
+        ],
+        "output": 9,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            "4",
+            "13",
+            "5",
+            "/",
+            "+"
+          ]
+        ],
+        "output": 6,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            "10",
+            "6",
+            "-",
+            "2",
+            "/"
+          ]
+        ],
+        "output": 2,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            "7",
+            "3",
+            "/"
+          ]
+        ],
+        "output": 2,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Daily Temperature Wait",
+    "topic": "Python Stacks",
+    "difficulty": "medium",
+    "description": "Given a list of daily temperatures, return a list where each position tells how many days must pass before a warmer temperature occurs. Use 0 if no warmer day exists.",
+    "examples": [
+      {
+        "input": "[73,74,75,71,69,72,76,73]",
+        "output": "[1,1,4,2,1,1,0,0]",
+        "explanation": "For example, 71 has to wait two days for 72."
+      }
+    ],
+    "constraints": "0 <= len(temperatures) <= 1000, -50 <= temperatures[i] <= 100",
+    "starter_code": "def solve(temperatures):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "stacks",
+      "arrays",
+      "monotonic-stack"
+    ],
+    "hints": [
+      "Keep indices whose warmer day has not been found yet.",
+      "When the current temperature is warmer than the temperature at the stack top, resolve that earlier index."
+    ],
+    "reference_solution": "def solve(temperatures):\n    result = [0] * len(temperatures)\n    stack = []\n    for i, temp in enumerate(temperatures):\n        while stack and temperatures[stack[-1]] < temp:\n            j = stack.pop()\n            result[j] = i - j\n        stack.append(i)\n    return result",
+    "tests": [
+      {
+        "input": [
+          [
+            73,
+            74,
+            75,
+            71,
+            69,
+            72,
+            76,
+            73
+          ]
+        ],
+        "output": [
+          1,
+          1,
+          4,
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            30,
+            40,
+            50,
+            60
+          ]
+        ],
+        "output": [
+          1,
+          1,
+          1,
+          0
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            90,
+            80,
+            70
+          ]
+        ],
+        "output": [
+          0,
+          0,
+          0
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          []
+        ],
+        "output": [],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Kth Largest Number",
+    "topic": "Python Sorting",
+    "difficulty": "medium",
+    "description": "Given a non-empty list of integers nums and an integer k, return the kth largest value, counting duplicate values as separate positions.",
+    "examples": [
+      {
+        "input": "[3,2,1,5,6,4], 2",
+        "output": "5",
+        "explanation": "The values in descending order are 6, 5, 4, 3, 2, 1."
+      }
+    ],
+    "constraints": "1 <= len(nums) <= 1000, 1 <= k <= len(nums)",
+    "starter_code": "def solve(nums, k):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": [
+      "sorting",
+      "arrays",
+      "selection"
+    ],
+    "hints": [
+      "Sort the values in descending order.",
+      "The kth largest value is at index k - 1 after that sort."
+    ],
+    "reference_solution": "def solve(nums, k):\n    return sorted(nums, reverse=True)[k - 1]",
+    "tests": [
+      {
+        "input": [
+          [
+            3,
+            2,
+            1,
+            5,
+            6,
+            4
+          ],
+          2
+        ],
+        "output": 5,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            3,
+            2,
+            3,
+            1,
+            2,
+            4,
+            5,
+            5,
+            6
+          ],
+          4
+        ],
+        "output": 4,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1
+          ],
+          1
+        ],
+        "output": 1,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            2,
+            2,
+            2,
+            2
+          ],
+          3
+        ],
+        "output": 2,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Shortest Word",
+    "topic": "Python Strings",
+    "difficulty": "easy",
+    "description": "Given a string containing words separated by spaces, return the length of the shortest non-empty word. Return 0 if there are no words.",
+    "examples": [
+      {
+        "input": "\"find the shortest word\"",
+        "output": "3",
+        "explanation": "The shortest words are 'the' and 'word' has length 4, so the answer is 3."
+      }
+    ],
+    "constraints": "0 <= len(s) <= 1000",
+    "starter_code": "def solve(s):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "strings",
+      "split",
+      "minimum"
+    ],
+    "hints": [
+      "str.split() ignores extra spaces.",
+      "If there are no words, return 0; otherwise find the minimum length."
+    ],
+    "reference_solution": "def solve(s):\n    words = s.split()\n    if not words:\n        return 0\n    return min(len(word) for word in words)",
+    "tests": [
+      {
+        "input": [
+          "find the shortest word"
+        ],
+        "output": 3,
+        "hidden": false
+      },
+      {
+        "input": [
+          "hello"
+        ],
+        "output": 5,
+        "hidden": false
+      },
+      {
+        "input": [
+          "   "
+        ],
+        "output": 0,
+        "hidden": true
+      },
+      {
+        "input": [
+          "a bb ccc"
+        ],
+        "output": 1,
+        "hidden": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,904 @@
+[
+  {
+    "title": "Count Uppercase Letters",
+    "topic": "Python Strings",
+    "difficulty": "easy",
+    "description": "Given a string s, return the number of uppercase English letters in it.",
+    "examples": [
+      {
+        "input": "\"Hello World!\"",
+        "output": "2",
+        "explanation": "H and W are uppercase letters."
+      }
+    ],
+    "constraints": "0 <= len(s) <= 1000",
+    "starter_code": "def solve(s):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "strings",
+      "loops",
+      "character-checking"
+    ],
+    "hints": [
+      "Loop through each character.",
+      "str.isupper() checks whether a character is uppercase."
+    ],
+    "reference_solution": "def solve(s):\n    return sum(ch.isupper() for ch in s)",
+    "tests": [
+      {
+        "input": [
+          "Hello World!"
+        ],
+        "output": 2,
+        "hidden": false
+      },
+      {
+        "input": [
+          "python"
+        ],
+        "output": 0,
+        "hidden": false
+      },
+      {
+        "input": [
+          "ABC123xyz"
+        ],
+        "output": 3,
+        "hidden": true
+      },
+      {
+        "input": [
+          ""
+        ],
+        "output": 0,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Rotate List Right",
+    "topic": "Python Lists",
+    "difficulty": "easy",
+    "description": "Given a list nums and a non-negative integer k, return a new list with the elements rotated k positions to the right.",
+    "examples": [
+      {
+        "input": "[1, 2, 3, 4, 5], 2",
+        "output": "[4, 5, 1, 2, 3]",
+        "explanation": "The last two elements move to the front."
+      }
+    ],
+    "constraints": "0 <= len(nums) <= 1000, 0 <= k <= 10^9",
+    "starter_code": "def solve(nums, k):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "lists",
+      "slicing",
+      "modulo"
+    ],
+    "hints": [
+      "If the list is empty, return an empty list.",
+      "Use k % len(nums) so very large rotations wrap around."
+    ],
+    "reference_solution": "def solve(nums, k):\n    if not nums:\n        return []\n    k %= len(nums)\n    if k == 0:\n        return nums[:]\n    return nums[-k:] + nums[:-k]",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          2
+        ],
+        "output": [
+          4,
+          5,
+          1,
+          2,
+          3
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            2,
+            3
+          ],
+          0
+        ],
+        "output": [
+          1,
+          2,
+          3
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            2,
+            3
+          ],
+          5
+        ],
+        "output": [
+          2,
+          3,
+          1
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [],
+          7
+        ],
+        "output": [],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Flatten One Level",
+    "topic": "Python Lists",
+    "difficulty": "easy",
+    "description": "Given a list containing values and lists, return a new list with each nested list expanded by exactly one level. Do not recursively flatten deeper lists.",
+    "examples": [
+      {
+        "input": "[1, [2, 3], 4, [5]]",
+        "output": "[1, 2, 3, 4, 5]",
+        "explanation": "Each inner list is expanded once."
+      }
+    ],
+    "constraints": "0 <= len(items) <= 1000",
+    "starter_code": "def solve(items):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n + total nested elements)",
+    "tags": [
+      "lists",
+      "type-checking",
+      "iteration"
+    ],
+    "hints": [
+      "Build a new result list.",
+      "Use isinstance(item, list) to decide whether to extend or append."
+    ],
+    "reference_solution": "def solve(items):\n    out = []\n    for item in items:\n        if isinstance(item, list):\n            out.extend(item)\n        else:\n            out.append(item)\n    return out",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            [
+              2,
+              3
+            ],
+            4,
+            [
+              5
+            ]
+          ]
+        ],
+        "output": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          []
+        ],
+        "output": [],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            [
+              [
+                2
+              ]
+            ],
+            3
+          ]
+        ],
+        "output": [
+          1,
+          [
+            2
+          ],
+          3
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            "a",
+            [
+              "b",
+              "c"
+            ]
+          ]
+        ],
+        "output": [
+          "a",
+          "b",
+          "c"
+        ],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Chunk List",
+    "topic": "Python Lists",
+    "difficulty": "easy",
+    "description": "Given a list nums and a positive integer size, return a list of consecutive chunks, each containing at most size elements.",
+    "examples": [
+      {
+        "input": "[1, 2, 3, 4, 5], 2",
+        "output": "[[1, 2], [3, 4], [5]]",
+        "explanation": "The list is split into groups of two except for the final shorter group."
+      }
+    ],
+    "constraints": "0 <= len(nums) <= 1000, 1 <= size <= 1000",
+    "starter_code": "def solve(nums, size):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "lists",
+      "slicing",
+      "loops"
+    ],
+    "hints": [
+      "Move through the list in steps of size.",
+      "nums[i:i + size] creates one chunk."
+    ],
+    "reference_solution": "def solve(nums, size):\n    return [nums[i:i + size] for i in range(0, len(nums), size)]",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          2
+        ],
+        "output": [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            2,
+            3
+          ],
+          5
+        ],
+        "output": [
+          [
+            1,
+            2,
+            3
+          ]
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [],
+          3
+        ],
+        "output": [],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            "a",
+            "b",
+            "c",
+            "d"
+          ],
+          1
+        ],
+        "output": [
+          [
+            "a"
+          ],
+          [
+            "b"
+          ],
+          [
+            "c"
+          ],
+          [
+            "d"
+          ]
+        ],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "First Repeated Character",
+    "topic": "Python Dictionaries",
+    "difficulty": "medium",
+    "description": "Given a string s, return the first character that appears at least twice when scanning from left to right. Return an empty string if every character is unique.",
+    "examples": [
+      {
+        "input": "\"abca\"",
+        "output": "\"a\"",
+        "explanation": "The second occurrence of a is the first repeated character encountered."
+      }
+    ],
+    "constraints": "0 <= len(s) <= 1000",
+    "starter_code": "def solve(s):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "strings",
+      "sets",
+      "hashing"
+    ],
+    "hints": [
+      "Keep a set of characters already seen.",
+      "As soon as a character is already in the set, return it."
+    ],
+    "reference_solution": "def solve(s):\n    seen = set()\n    for ch in s:\n        if ch in seen:\n            return ch\n        seen.add(ch)\n    return ''",
+    "tests": [
+      {
+        "input": [
+          "abca"
+        ],
+        "output": "a",
+        "hidden": false
+      },
+      {
+        "input": [
+          "abcdef"
+        ],
+        "output": "",
+        "hidden": false
+      },
+      {
+        "input": [
+          "aabb"
+        ],
+        "output": "a",
+        "hidden": true
+      },
+      {
+        "input": [
+          "swiss"
+        ],
+        "output": "s",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Group Words by Length",
+    "topic": "Python Dictionaries",
+    "difficulty": "medium",
+    "description": "Given a list of words, return a dictionary mapping each word length to the list of words having that length, preserving their original order.",
+    "examples": [
+      {
+        "input": "[\"cat\", \"to\", \"dog\", \"a\"]",
+        "output": "{\"3\": [\"cat\", \"dog\"], \"2\": [\"to\"], \"1\": [\"a\"]}",
+        "explanation": "Words are grouped by their character count."
+      }
+    ],
+    "constraints": "0 <= len(words) <= 1000, 0 <= len(word) <= 100",
+    "starter_code": "def solve(words):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(total characters)",
+    "tags": [
+      "dictionaries",
+      "grouping",
+      "lists"
+    ],
+    "hints": [
+      "Use the word length as the dictionary key.",
+      "Append each word to the list stored for that key."
+    ],
+    "reference_solution": "def solve(words):\n    groups = {}\n    for word in words:\n        groups.setdefault(len(word), []).append(word)\n    return groups",
+    "tests": [
+      {
+        "input": [
+          [
+            "cat",
+            "to",
+            "dog",
+            "a"
+          ]
+        ],
+        "output": {
+          "3": [
+            "cat",
+            "dog"
+          ],
+          "2": [
+            "to"
+          ],
+          "1": [
+            "a"
+          ]
+        },
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            "one",
+            "two",
+            "six"
+          ]
+        ],
+        "output": {
+          "3": [
+            "one",
+            "two",
+            "six"
+          ]
+        },
+        "hidden": false
+      },
+      {
+        "input": [
+          []
+        ],
+        "output": {},
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            "",
+            "a",
+            "bb",
+            ""
+          ]
+        ],
+        "output": {
+          "0": [
+            "",
+            ""
+          ],
+          "1": [
+            "a"
+          ],
+          "2": [
+            "bb"
+          ]
+        },
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Valid Parentheses",
+    "topic": "Python Stacks",
+    "difficulty": "medium",
+    "description": "Given a string containing only parentheses (), square brackets [], and curly braces {}, return True if every opening bracket is correctly closed in the proper order.",
+    "examples": [
+      {
+        "input": "\"{[()]}\"",
+        "output": "True",
+        "explanation": "Each opening bracket is closed in reverse order."
+      }
+    ],
+    "constraints": "0 <= len(s) <= 1000",
+    "starter_code": "def solve(s):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "stacks",
+      "strings",
+      "parsing"
+    ],
+    "hints": [
+      "Push opening brackets onto a stack.",
+      "For a closing bracket, the top of the stack must contain its matching opener."
+    ],
+    "reference_solution": "def solve(s):\n    stack = []\n    pairs = {')': '(', ']': '[', '}': '{'}\n    for ch in s:\n        if ch in '([{':\n            stack.append(ch)\n        elif not stack or stack.pop() != pairs[ch]:\n            return False\n    return not stack",
+    "tests": [
+      {
+        "input": [
+          "{[()]}"
+        ],
+        "output": true,
+        "hidden": false
+      },
+      {
+        "input": [
+          "([)]"
+        ],
+        "output": false,
+        "hidden": false
+      },
+      {
+        "input": [
+          ""
+        ],
+        "output": true,
+        "hidden": true
+      },
+      {
+        "input": [
+          "(((())))"
+        ],
+        "output": true,
+        "hidden": true
+      },
+      {
+        "input": [
+          "{[}"
+        ],
+        "output": false,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Merge Overlapping Intervals",
+    "topic": "Python Sorting",
+    "difficulty": "medium",
+    "description": "Given a list of intervals [start, end], merge all overlapping intervals and return the resulting intervals sorted by their start value.",
+    "examples": [
+      {
+        "input": "[[1,3],[2,6],[8,10],[9,12]]",
+        "output": "[[1,6],[8,12]]",
+        "explanation": "The first two intervals overlap, and the last two intervals overlap."
+      }
+    ],
+    "constraints": "0 <= len(intervals) <= 1000, start <= end",
+    "starter_code": "def solve(intervals):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": [
+      "sorting",
+      "intervals",
+      "lists"
+    ],
+    "hints": [
+      "Sort intervals by their start value first.",
+      "If the next interval starts before or at the current end, extend the current interval."
+    ],
+    "reference_solution": "def solve(intervals):\n    if not intervals:\n        return []\n    intervals = sorted(intervals)\n    merged = [intervals[0][:]]\n    for start, end in intervals[1:]:\n        if start <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], end)\n        else:\n            merged.append([start, end])\n    return merged",
+    "tests": [
+      {
+        "input": [
+          [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              8,
+              10
+            ],
+            [
+              9,
+              12
+            ]
+          ]
+        ],
+        "output": [
+          [
+            1,
+            6
+          ],
+          [
+            8,
+            12
+          ]
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            [
+              1,
+              2
+            ],
+            [
+              3,
+              4
+            ]
+          ]
+        ],
+        "output": [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          []
+        ],
+        "output": [],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              3
+            ]
+          ]
+        ],
+        "output": [
+          [
+            1,
+            5
+          ]
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            [
+              5,
+              7
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              4
+            ]
+          ]
+        ],
+        "output": [
+          [
+            1,
+            4
+          ],
+          [
+            5,
+            7
+          ]
+        ],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Product Except Self",
+    "topic": "Python Arrays",
+    "difficulty": "medium",
+    "description": "Given a list of integers nums, return a list where each position contains the product of every value in nums except the value at that position. Do not use division.",
+    "examples": [
+      {
+        "input": "[1,2,3,4]",
+        "output": "[24,12,8,6]",
+        "explanation": "Each result is the product of all elements except the one at the same index."
+      }
+    ],
+    "constraints": "2 <= len(nums) <= 1000, -30 <= nums[i] <= 30",
+    "starter_code": "def solve(nums):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "arrays",
+      "prefix-product",
+      "suffix-product"
+    ],
+    "hints": [
+      "First store the product of all elements to the left of each position.",
+      "Then multiply each position by the product of all elements to its right."
+    ],
+    "reference_solution": "def solve(nums):\n    out = [1] * len(nums)\n    prefix = 1\n    for i, value in enumerate(nums):\n        out[i] = prefix\n        prefix *= value\n    suffix = 1\n    for i in range(len(nums) - 1, -1, -1):\n        out[i] *= suffix\n        suffix *= nums[i]\n    return out",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            3,
+            4
+          ]
+        ],
+        "output": [
+          24,
+          12,
+          8,
+          6
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            2,
+            3
+          ]
+        ],
+        "output": [
+          3,
+          2
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "output": [
+          6,
+          0,
+          0,
+          0
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            1,
+            0,
+            1,
+            0
+          ]
+        ],
+        "output": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Top K Frequent Values",
+    "topic": "Python Dictionaries",
+    "difficulty": "medium",
+    "description": "Given a non-empty list of integers nums and an integer k, return the k values that occur most frequently. If frequencies tie, return the smaller value first.",
+    "examples": [
+      {
+        "input": "[1,1,1,2,2,3], 2",
+        "output": "[1,2]",
+        "explanation": "1 occurs three times and 2 occurs twice."
+      }
+    ],
+    "constraints": "1 <= len(nums) <= 1000, 1 <= k <= number of distinct values",
+    "starter_code": "def solve(nums, k):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": [
+      "dictionaries",
+      "counting",
+      "sorting"
+    ],
+    "hints": [
+      "Count each value with a dictionary.",
+      "Sort the distinct values using frequency descending and value ascending."
+    ],
+    "reference_solution": "def solve(nums, k):\n    counts = {}\n    for x in nums:\n        counts[x] = counts.get(x, 0) + 1\n    values = sorted(counts, key=lambda x: (-counts[x], x))\n    return values[:k]",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            1,
+            1,
+            2,
+            2,
+            3
+          ],
+          2
+        ],
+        "output": [
+          1,
+          2
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            4,
+            4,
+            5,
+            5,
+            6
+          ],
+          2
+        ],
+        "output": [
+          4,
+          5
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            7
+          ],
+          1
+        ],
+        "output": [
+          7
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            3,
+            3,
+            2,
+            2,
+            1,
+            1
+          ],
+          3
+        ],
+        "output": [
+          1,
+          2,
+          3
+        ],
+        "hidden": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,272 @@
+[
+  {
+    "title": "Rotting Oranges",
+    "topic": "JavaScript Graphs",
+    "difficulty": "medium",
+    "description": "A grid holds 0 (empty cell), 1 (fresh orange) or 2 (rotten orange). Every minute, each fresh orange that is directly up, down, left or right of a rotten orange becomes rotten. Return the number of minutes that must pass until no fresh orange is left, or -1 if some fresh orange can never rot. If there is no fresh orange at the start, the answer is 0.",
+    "examples": [
+      {
+        "input": "grid = [[2, 1, 1], [1, 1, 0], [0, 1, 1]]",
+        "output": "4",
+        "explanation": "The rot spreads outward from the top-left corner one step per minute, and the last orange, in the bottom-right corner, rots in minute 4."
+      }
+    ],
+    "constraints": "1 <= rows, cols <= 10. Each cell is 0, 1 or 2.",
+    "starter_code": "function solve(grid) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(rows * cols)",
+    "tags": ["bfs", "grid", "multi-source"],
+    "hints": [
+      "Start a breadth-first search from all rotten oranges at the same time, and count the fresh oranges.",
+      "Process the search one level at a time, one level per minute. When the queue ends, the answer is the number of minutes if no fresh orange is left, otherwise -1."
+    ],
+    "reference_solution": "function solve(grid) {\n    const rows = grid.length;\n    if (rows === 0) return 0;\n    const cols = grid[0].length;\n    const g = grid.map((row) => [...row]);\n    let fresh = 0;\n    let queue = [];\n    for (let r = 0; r < rows; r++) {\n        for (let c = 0; c < cols; c++) {\n            if (g[r][c] === 2) queue.push([r, c]);\n            else if (g[r][c] === 1) fresh += 1;\n        }\n    }\n    const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];\n    let minutes = 0;\n    while (queue.length > 0 && fresh > 0) {\n        const next = [];\n        for (const [r, c] of queue) {\n            for (const [dr, dc] of dirs) {\n                const nr = r + dr;\n                const nc = c + dc;\n                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && g[nr][nc] === 1) {\n                    g[nr][nc] = 2;\n                    fresh -= 1;\n                    next.push([nr, nc]);\n                }\n            }\n        }\n        queue = next;\n        minutes += 1;\n    }\n    return fresh === 0 ? minutes : -1;\n}",
+    "tests": [
+      {"input": [[[2, 1, 1], [1, 1, 0], [0, 1, 1]]], "output": 4, "hidden": false},
+      {"input": [[[2, 1, 1], [0, 1, 1], [1, 0, 1]]], "output": -1, "hidden": false},
+      {"input": [[[0, 2]]], "output": 0, "hidden": false},
+      {"input": [[[1]]], "output": -1, "hidden": true},
+      {"input": [[[2, 1, 1, 1, 1]]], "output": 4, "hidden": true}
+    ]
+  },
+  {
+    "title": "Is Graph Bipartite",
+    "topic": "JavaScript Graphs",
+    "difficulty": "medium",
+    "description": "An undirected graph with n nodes numbered 0 to n - 1 is given as an adjacency list: graph[i] lists every node connected to node i, and if a is in graph[b] then b is in graph[a]. Return true if the nodes can be split into two groups so that every edge joins one node from each group. The graph may be disconnected and may have no nodes.",
+    "examples": [
+      {
+        "input": "graph = [[1, 3], [0, 2], [1, 3], [0, 2]]",
+        "output": "true",
+        "explanation": "Put nodes 0 and 2 in one group and nodes 1 and 3 in the other. Every edge crosses between the groups."
+      }
+    ],
+    "constraints": "0 <= graph.length <= 100. There are no self-loops and no repeated edges.",
+    "starter_code": "function solve(graph) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(V + E)",
+    "tags": ["graph", "bfs", "coloring"],
+    "hints": [
+      "Try to color the nodes with two colors so that neighbours always get different colors.",
+      "Run a breadth-first search from every node that is not colored yet (the graph may be disconnected). If you meet a neighbour with the same color as the current node, the answer is false."
+    ],
+    "reference_solution": "function solve(graph) {\n    const n = graph.length;\n    const color = new Array(n).fill(-1);\n    for (let s = 0; s < n; s++) {\n        if (color[s] !== -1) continue;\n        color[s] = 0;\n        const queue = [s];\n        for (let head = 0; head < queue.length; head++) {\n            const u = queue[head];\n            for (const v of graph[u]) {\n                if (color[v] === -1) {\n                    color[v] = 1 - color[u];\n                    queue.push(v);\n                } else if (color[v] === color[u]) {\n                    return false;\n                }\n            }\n        }\n    }\n    return true;\n}",
+    "tests": [
+      {"input": [[[1, 2, 3], [0, 2], [0, 1, 3], [0, 2]]], "output": false, "hidden": false},
+      {"input": [[[1, 3], [0, 2], [1, 3], [0, 2]]], "output": true, "hidden": false},
+      {"input": [[]], "output": true, "hidden": false},
+      {"input": [[[1], [0], [3], [2]]], "output": true, "hidden": true},
+      {"input": [[[1, 2], [0, 2], [0, 1]]], "output": false, "hidden": true}
+    ]
+  },
+  {
+    "title": "Redundant Connection",
+    "topic": "JavaScript Graphs",
+    "difficulty": "medium",
+    "description": "A tree with nodes numbered 1 to n had one extra edge added, so the input is a list of n edges [a, b], each joining two different nodes, and the graph is connected. Return an edge that can be removed so that the remaining edges form a tree. If several edges qualify, return the one that appears last in the input.",
+    "examples": [
+      {
+        "input": "edges = [[1, 2], [1, 3], [2, 3]]",
+        "output": "[2, 3]",
+        "explanation": "The three edges form a cycle, and removing the last one leaves a tree."
+      }
+    ],
+    "constraints": "3 <= edges.length <= 100. Every edge joins two different nodes between 1 and edges.length, and there are no repeated edges.",
+    "starter_code": "function solve(edges) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n * alpha(n))",
+    "tags": ["union-find", "graph", "cycle-detection"],
+    "hints": [
+      "Add the edges one at a time, keeping track of which nodes are already connected.",
+      "With union-find, the first edge whose two ends already have the same root is the edge that closes the cycle, and it is the last cycle edge in the input order."
+    ],
+    "reference_solution": "function solve(edges) {\n    const parent = Array.from({ length: edges.length + 1 }, (_, i) => i);\n    const find = (x) => {\n        while (parent[x] !== x) {\n            parent[x] = parent[parent[x]];\n            x = parent[x];\n        }\n        return x;\n    };\n    for (const [a, b] of edges) {\n        const ra = find(a);\n        const rb = find(b);\n        if (ra === rb) return [a, b];\n        parent[ra] = rb;\n    }\n    return [];\n}",
+    "tests": [
+      {"input": [[[1, 2], [1, 3], [2, 3]]], "output": [2, 3], "hidden": false},
+      {"input": [[[1, 2], [2, 3], [3, 4], [1, 4], [1, 5]]], "output": [1, 4], "hidden": false},
+      {"input": [[[1, 2], [2, 3], [1, 3]]], "output": [1, 3], "hidden": false},
+      {"input": [[[1, 2], [2, 3], [3, 1]]], "output": [3, 1], "hidden": true},
+      {"input": [[[1, 2], [1, 3], [3, 4], [2, 4]]], "output": [2, 4], "hidden": true}
+    ]
+  },
+  {
+    "title": "Binary Tree Right Side View",
+    "topic": "JavaScript Trees",
+    "difficulty": "medium",
+    "description": "A binary tree is given in level order as an array: the nodes are listed row by row from left to right, null marks a missing child, and a missing node has no children listed under it. An empty array is an empty tree. Return the values you would see standing on the right side of the tree, from top to bottom, which is the last node of each level.",
+    "examples": [
+      {
+        "input": "tree = [1, 2, 3, null, 5, null, 4]",
+        "output": "[1, 3, 4]",
+        "explanation": "The last node of the levels is 1, then 3, then 4."
+      }
+    ],
+    "constraints": "0 <= tree.length <= 100. Node values are integers between -1000 and 1000.",
+    "starter_code": "function solve(tree) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["tree", "bfs", "level-order"],
+    "hints": [
+      "First build node objects from the array: use a queue, and give every dequeued node its next two array items as left and right children.",
+      "Then walk the tree level by level and keep the last node of each level."
+    ],
+    "reference_solution": "function solve(tree) {\n    const build = (arr) => {\n        if (arr.length === 0 || arr[0] === null) return null;\n        const root = { v: arr[0], l: null, r: null };\n        const queue = [root];\n        let i = 1;\n        while (i < arr.length && queue.length > 0) {\n            const node = queue.shift();\n            if (i < arr.length) {\n                if (arr[i] !== null) {\n                    node.l = { v: arr[i], l: null, r: null };\n                    queue.push(node.l);\n                }\n                i += 1;\n            }\n            if (i < arr.length) {\n                if (arr[i] !== null) {\n                    node.r = { v: arr[i], l: null, r: null };\n                    queue.push(node.r);\n                }\n                i += 1;\n            }\n        }\n        return root;\n    };\n    const root = build(tree);\n    if (root === null) return [];\n    const out = [];\n    let level = [root];\n    while (level.length > 0) {\n        out.push(level[level.length - 1].v);\n        const next = [];\n        for (const node of level) {\n            if (node.l) next.push(node.l);\n            if (node.r) next.push(node.r);\n        }\n        level = next;\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [[1, 2, 3, null, 5, null, 4]], "output": [1, 3, 4], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [[1, null, 3]], "output": [1, 3], "hidden": false},
+      {"input": [[1, 2, 3, 4]], "output": [1, 3, 4], "hidden": true},
+      {"input": [[1, 2, null, 3, null, 4]], "output": [1, 2, 3, 4], "hidden": true}
+    ]
+  },
+  {
+    "title": "Lowest Common Ancestor of Binary Tree",
+    "topic": "JavaScript Trees",
+    "difficulty": "medium",
+    "description": "A binary tree with distinct values is given in level order as an array: the nodes are listed row by row from left to right, null marks a missing child, and a missing node has no children listed under it. Given two values p and q that both exist in the tree, return the value of their lowest common ancestor: the deepest node that has both p and q in its subtree, where a node counts as being in its own subtree.",
+    "examples": [
+      {
+        "input": "tree = [3, 5, 1, 6, 2, 0, 8, null, null, 7, 4], p = 5, q = 1",
+        "output": "3",
+        "explanation": "5 is in the left subtree of 3 and 1 is in the right subtree, so the lowest common ancestor is the root 3."
+      }
+    ],
+    "constraints": "2 <= tree.length <= 100. Node values are distinct integers between -1000 and 1000. p and q are different values that both appear in the tree.",
+    "starter_code": "function solve(tree, p, q) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["tree", "recursion", "dfs"],
+    "hints": [
+      "Build node objects from the array first, then search the tree recursively.",
+      "A call returns the node if it is p or q, otherwise whatever the two sides return. If both sides return something, the current node is the answer."
+    ],
+    "reference_solution": "function solve(tree, p, q) {\n    const build = (arr) => {\n        if (arr.length === 0 || arr[0] === null) return null;\n        const root = { v: arr[0], l: null, r: null };\n        const queue = [root];\n        let i = 1;\n        while (i < arr.length && queue.length > 0) {\n            const node = queue.shift();\n            if (i < arr.length) {\n                if (arr[i] !== null) {\n                    node.l = { v: arr[i], l: null, r: null };\n                    queue.push(node.l);\n                }\n                i += 1;\n            }\n            if (i < arr.length) {\n                if (arr[i] !== null) {\n                    node.r = { v: arr[i], l: null, r: null };\n                    queue.push(node.r);\n                }\n                i += 1;\n            }\n        }\n        return root;\n    };\n    const find = (node) => {\n        if (node === null || node.v === p || node.v === q) return node;\n        const left = find(node.l);\n        const right = find(node.r);\n        if (left && right) return node;\n        return left || right;\n    };\n    const result = find(build(tree));\n    return result === null ? null : result.v;\n}",
+    "tests": [
+      {"input": [[3, 5, 1, 6, 2, 0, 8, null, null, 7, 4], 5, 1], "output": 3, "hidden": false},
+      {"input": [[3, 5, 1, 6, 2, 0, 8, null, null, 7, 4], 5, 4], "output": 5, "hidden": false},
+      {"input": [[1, 2], 1, 2], "output": 1, "hidden": false},
+      {"input": [[3, 5, 1, 6, 2, 0, 8, null, null, 7, 4], 7, 4], "output": 2, "hidden": true},
+      {"input": [[3, 5, 1, 6, 2, 0, 8, null, null, 7, 4], 0, 8], "output": 1, "hidden": true}
+    ]
+  },
+  {
+    "title": "K Closest Points to Origin",
+    "topic": "JavaScript Heaps",
+    "difficulty": "medium",
+    "description": "Given an array of points [x, y] and an integer k, return the k points closest to the origin (0, 0) by straight-line distance. Order the returned points from closest to farthest. Points at the same distance are ordered by x, and then by y, both from smaller to larger.",
+    "examples": [
+      {
+        "input": "points = [[3, 3], [5, -1], [-2, 4]], k = 2",
+        "output": "[[3, 3], [-2, 4]]",
+        "explanation": "The squared distances are 18, 26 and 20, so the two closest are [3, 3] and [-2, 4]."
+      }
+    ],
+    "constraints": "0 <= k <= points.length <= 1000. Coordinates are integers between -10^4 and 10^4.",
+    "starter_code": "function solve(points, k) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log k)",
+    "tags": ["heap", "sorting", "geometry"],
+    "hints": [
+      "You can compare squared distances x * x + y * y, which avoids square roots and rounding.",
+      "Sorting all points costs O(n log n) and passes. A max-heap holding only the k best points so far brings it down to O(n log k)."
+    ],
+    "reference_solution": "function solve(points, k) {\n    const dist = (p) => p[0] * p[0] + p[1] * p[1];\n    return [...points]\n        .sort((a, b) => dist(a) - dist(b) || a[0] - b[0] || a[1] - b[1])\n        .slice(0, k);\n}",
+    "tests": [
+      {"input": [[[1, 3], [-2, 2]], 1], "output": [[-2, 2]], "hidden": false},
+      {"input": [[[3, 3], [5, -1], [-2, 4]], 2], "output": [[3, 3], [-2, 4]], "hidden": false},
+      {"input": [[], 0], "output": [], "hidden": false},
+      {"input": [[[0, 1], [1, 0]], 2], "output": [[0, 1], [1, 0]], "hidden": true},
+      {"input": [[[2, 2], [1, 1], [-1, -1], [0, 0]], 3], "output": [[0, 0], [-1, -1], [1, 1]], "hidden": true}
+    ]
+  },
+  {
+    "title": "Minimum Cost to Connect Sticks",
+    "topic": "JavaScript Heaps",
+    "difficulty": "medium",
+    "description": "You have sticks with the given lengths. Joining any two sticks into one costs the sum of their lengths, and the new stick has that length. Keep joining until a single stick is left. Return the minimum total cost. If there are 0 or 1 sticks, the cost is 0.",
+    "examples": [
+      {
+        "input": "sticks = [2, 4, 3]",
+        "output": "14",
+        "explanation": "Join 2 and 3 for 5, then join 5 and 4 for 9. The total is 5 + 9 = 14."
+      }
+    ],
+    "constraints": "0 <= sticks.length <= 1000. Each length is an integer between 1 and 10^4.",
+    "starter_code": "function solve(sticks) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": ["heap", "greedy", "priority-queue"],
+    "hints": [
+      "Always joining the two shortest sticks keeps the repeated additions as small as possible.",
+      "Use a min-heap: take the two smallest values, add their sum to the cost, and push the sum back. Stop when one stick is left."
+    ],
+    "reference_solution": "function solve(sticks) {\n    const heap = [];\n    const push = (x) => {\n        heap.push(x);\n        let i = heap.length - 1;\n        while (i > 0) {\n            const p = (i - 1) >> 1;\n            if (heap[p] <= heap[i]) break;\n            [heap[p], heap[i]] = [heap[i], heap[p]];\n            i = p;\n        }\n    };\n    const pop = () => {\n        const top = heap[0];\n        const last = heap.pop();\n        if (heap.length > 0) {\n            heap[0] = last;\n            let i = 0;\n            while (true) {\n                const l = 2 * i + 1;\n                const r = l + 1;\n                let m = i;\n                if (l < heap.length && heap[l] < heap[m]) m = l;\n                if (r < heap.length && heap[r] < heap[m]) m = r;\n                if (m === i) break;\n                [heap[m], heap[i]] = [heap[i], heap[m]];\n                i = m;\n            }\n        }\n        return top;\n    };\n    for (const s of sticks) push(s);\n    let cost = 0;\n    while (heap.length > 1) {\n        const a = pop();\n        const b = pop();\n        cost += a + b;\n        push(a + b);\n    }\n    return cost;\n}",
+    "tests": [
+      {"input": [[2, 4, 3]], "output": 14, "hidden": false},
+      {"input": [[1, 8, 3, 5]], "output": 30, "hidden": false},
+      {"input": [[5]], "output": 0, "hidden": false},
+      {"input": [[]], "output": 0, "hidden": true},
+      {"input": [[1, 1, 1, 1]], "output": 8, "hidden": true}
+    ]
+  },
+  {
+    "title": "Replace Words with Roots",
+    "topic": "JavaScript Tries",
+    "difficulty": "medium",
+    "description": "You are given a list of root words and a sentence whose words are separated by single spaces. Replace every word of the sentence that starts with a root by the shortest root that is a prefix of it. A word that starts with none of the roots stays unchanged. Return the new sentence.",
+    "examples": [
+      {
+        "input": "roots = [\"cat\", \"bat\", \"rat\"], sentence = \"the cattle was rattled by the battery\"",
+        "output": "\"the cat was rat by the bat\"",
+        "explanation": "cattle, rattled and battery are replaced by their roots cat, rat and bat. The other words have no root."
+      }
+    ],
+    "constraints": "0 <= roots.length <= 100. 1 <= sentence.length <= 1000. Roots and words contain lowercase letters only, and words are separated by single spaces.",
+    "starter_code": "function solve(roots, sentence) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(total characters)",
+    "tags": ["trie", "strings", "prefix"],
+    "hints": [
+      "Store the roots in a Set, or in a trie to be faster on long words.",
+      "For each word try its prefixes from the shortest to the longest, and use the first one that is a root."
+    ],
+    "reference_solution": "function solve(roots, sentence) {\n    const set = new Set(roots);\n    return sentence\n        .split(' ')\n        .map((word) => {\n            for (let len = 1; len <= word.length; len++) {\n                const prefix = word.slice(0, len);\n                if (set.has(prefix)) return prefix;\n            }\n            return word;\n        })\n        .join(' ');\n}",
+    "tests": [
+      {"input": [["cat", "bat", "rat"], "the cattle was rattled by the battery"], "output": "the cat was rat by the bat", "hidden": false},
+      {"input": [[], "a b"], "output": "a b", "hidden": false},
+      {"input": [["a", "aa"], "aaa aa b"], "output": "a a b", "hidden": false},
+      {"input": [["ab", "abc"], "abcd abx a"], "output": "ab ab a", "hidden": true},
+      {"input": [["x"], "xx yx x"], "output": "x yx x", "hidden": true}
+    ]
+  },
+  {
+    "title": "Trie Prefix Counts Simulation",
+    "topic": "JavaScript Tries",
+    "difficulty": "medium",
+    "description": "Simulate a word store. Each operation is [\"insert\", word] (add one copy of the word), [\"erase\", word] (remove one copy if the word is present, otherwise do nothing) or [\"count\", prefix] (how many stored copies start with the prefix). The same word can be stored several times, and every copy counts. Return the results of the \"count\" operations, in order.",
+    "examples": [
+      {
+        "input": "operations = [[\"insert\", \"apple\"], [\"insert\", \"app\"], [\"count\", \"app\"], [\"erase\", \"apple\"], [\"count\", \"app\"], [\"count\", \"b\"]]",
+        "output": "[2, 1, 0]",
+        "explanation": "Both stored words start with app, so the first count is 2. After apple is erased the count is 1. Nothing starts with b."
+      }
+    ],
+    "constraints": "0 <= operations.length <= 1000. Words and prefixes are non-empty strings of lowercase letters, at most 20 characters.",
+    "starter_code": "function solve(operations) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(total characters)",
+    "tags": ["trie", "design", "simulation", "counting"],
+    "hints": [
+      "Make each trie node store how many stored words pass through it. The count of a prefix is the count of the node you reach by following it.",
+      "Keep a Map from word to number of copies, so that erasing a word that is not stored does nothing."
+    ],
+    "reference_solution": "function solve(operations) {\n    const root = { count: 0, children: new Map() };\n    const copies = new Map();\n    const update = (word, delta) => {\n        let node = root;\n        for (const ch of word) {\n            if (!node.children.has(ch)) node.children.set(ch, { count: 0, children: new Map() });\n            node = node.children.get(ch);\n            node.count += delta;\n        }\n    };\n    const find = (prefix) => {\n        let node = root;\n        for (const ch of prefix) {\n            node = node.children.get(ch);\n            if (node === undefined) return null;\n        }\n        return node;\n    };\n    const out = [];\n    for (const [type, text] of operations) {\n        if (type === 'insert') {\n            copies.set(text, (copies.get(text) || 0) + 1);\n            update(text, 1);\n        } else if (type === 'erase') {\n            if ((copies.get(text) || 0) > 0) {\n                copies.set(text, copies.get(text) - 1);\n                update(text, -1);\n            }\n        } else {\n            const node = find(text);\n            out.push(node === null ? 0 : node.count);\n        }\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [[["insert", "apple"], ["insert", "app"], ["count", "app"], ["count", "apple"], ["erase", "apple"], ["count", "app"], ["count", "b"]]], "output": [2, 1, 1, 0], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [[["count", "a"]]], "output": [0], "hidden": false},
+      {"input": [[["insert", "a"], ["insert", "a"], ["count", "a"], ["erase", "a"], ["count", "a"], ["erase", "a"], ["erase", "a"], ["count", "a"]]], "output": [2, 1, 0], "hidden": true},
+      {"input": [[["insert", "car"], ["insert", "card"], ["insert", "care"], ["count", "car"], ["count", "card"], ["count", "ca"], ["count", "cars"]]], "output": [3, 1, 3, 0], "hidden": true}
+    ]
+  }
+]

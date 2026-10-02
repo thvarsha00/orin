@@ -1,0 +1,370 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import {
+  ArrowDown, ArrowUp, Code2, GraduationCap, ImagePlus, ListChecks, MessageSquare, PanelLeftOpen, Puzzle, SlidersHorizontal,
+  Square, X,
+} from "lucide-react";
+import { LanguageSelect } from "../components/LanguageSelect";
+import { ScriptSelect } from "../components/ScriptSelect";
+import { ConversationList } from "../components/tutor/ConversationList";
+import { ImageLightbox } from "../components/tutor/ImageLightbox";
+import { AssistantMessage, UserMessage } from "../components/tutor/Message";
+import { useAuth } from "../context/AuthContext";
+import { exampleQuestion } from "../lib/languages";
+import { DEFAULT_MAX_IMAGE_MB, formatSize, IMAGE_ACCEPT, validateImage } from "../lib/images";
+import { api, streamTutor, streamTutorImage } from "../services/api";
+import type { ChatMessage, Conversation, Language, Level, ScriptPref } from "../types";
+
+const SUGGESTIONS = [
+  { icon: Code2, label: "Explain a programming concept", prompt: "Explain this programming concept in simple terms: " },
+  { icon: Puzzle, label: "Help me solve a problem", prompt: "Help me solve this problem step by step, with hints first: " },
+  { icon: ListChecks, label: "Create a practice quiz", prompt: "Create a short practice quiz on this topic: " },
+];
+
+const HISTORY_KEY = "orin_tutor_history_open";
+
+export default function Tutor() {
+  const { user } = useAuth();
+  const [lang, setLang] = useState<Language>(user?.profile.preferred_language ?? "en");
+  const [level, setLevel] = useState<Level>(user?.profile.skill_level ?? "beginner");
+  const [script, setScript] = useState<ScriptPref>(user?.profile.preferred_script ?? "auto");
+  const [convs, setConvs] = useState<Conversation[]>([]);
+  const [convId, setConvId] = useState<number | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [input, setInput] = useState("");
+  const [streaming, setStreaming] = useState(false);
+  const [error, setError] = useState("");
+  const [historyOpen, setHistoryOpen] = useState(() => {
+    try { return localStorage.getItem(HISTORY_KEY) !== "0"; } catch { return true; }
+  });
+  const [drawer, setDrawer] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [showJump, setShowJump] = useState(false);
+  const [attached, setAttached] = useState<{ file: File; url: string } | null>(null);
+  const [attachError, setAttachError] = useState("");
+  const [maxMb, setMaxMb] = useState(DEFAULT_MAX_IMAGE_MB);
+  const [dragging, setDragging] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const stick = useRef(true);            // true while the reader is at (or near) the bottom
+  const taRef = useRef<HTMLTextAreaElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const dragDepth = useRef(0);
+  const live = useRef({ messages: [] as ChatMessage[], attached: null as { url: string } | null });
+  live.current = { messages, attached };
+  const [params, setParams] = useSearchParams();
+
+  const loadConvs = useCallback(() => api<Conversation[]>("/tutor/conversations").then(setConvs).catch(() => {}), []);
+  useEffect(() => { loadConvs(); }, [loadConvs]);
+  useEffect(() => () => {
+    abortRef.current?.abort();
+    live.current.messages.forEach((m) => m.imageUrl && URL.revokeObjectURL(m.imageUrl));
+    if (live.current.attached) URL.revokeObjectURL(live.current.attached.url);
+  }, []);
+  // The server owns the size limit (MAX_IMAGE_MB); fall back to the default if it can't be reached.
+  useEffect(() => { api<{ max_mb: number }>("/tutor/image-config").then((c) => setMaxMb(c.max_mb)).catch(() => {}); }, []);
+
+  // Keep the newest text in view only if the reader hasn't scrolled up.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el && stick.current) el.scrollTop = el.scrollHeight;
+  }, [messages]);
+  const onScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const near = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+    stick.current = near;
+    setShowJump((prev) => (prev === !near ? prev : !near));
+  };
+  const jumpToLatest = () => {
+    const el = scrollRef.current;
+    if (el) { stick.current = true; el.scrollTo({ top: el.scrollHeight, behavior: "smooth" }); }
+  };
+
+  // Auto-growing composer
+  useEffect(() => {
+    const el = taRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 176)}px`;
+  }, [input]);
+
+  const stopCurrent = () => { abortRef.current?.abort(); abortRef.current = null; setStreaming(false); };
+
+  const releasePreviews = () => messages.forEach((m) => m.imageUrl && URL.revokeObjectURL(m.imageUrl));
+
+  const open = async (id: number) => {
+    stopCurrent(); releasePreviews();
+    setError(""); setConvId(id); setDrawer(false); stick.current = true;
+    try { setMessages(await api<ChatMessage[]>(`/tutor/conversations/${id}/messages`)); }
+    catch (e) { setError((e as Error).message); }
+  };
+  // Deep link from the dashboard: /tutor?c=<conversation id>
+  useEffect(() => {
+    const id = Number(params.get("c"));
+    if (id) { open(id); setParams({}, { replace: true }); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const fresh = () => {
+    stopCurrent(); releasePreviews();
+    setConvId(null); setMessages([]); setError(""); setDrawer(false); stick.current = true;
+    taRef.current?.focus();
+  };
+  const remove = async (id: number) => {
+    await api(`/tutor/conversations/${id}`, "DELETE").catch(() => {});
+    if (id === convId) fresh();
+    loadConvs();
+  };
+  const toggleHistory = (next: boolean) => {
+    setHistoryOpen(next);
+    try { localStorage.setItem(HISTORY_KEY, next ? "1" : "0"); } catch { /* storage unavailable */ }
+  };
+
+  // ---- image attachment ------------------------------------------------------------------------
+  const attach = (files: FileList | File[] | null) => {
+    const list = files ? Array.from(files) : [];
+    if (!list.length) return;
+    const problem = validateImage(list[0], maxMb);
+    if (problem) { setAttachError(problem); return; }        // keep any image that is already attached
+    setAttachError(list.length > 1 ? "Only one image can be sent per message, so the first one was attached." : "");
+    if (attached) URL.revokeObjectURL(attached.url);
+    setAttached({ file: list[0], url: URL.createObjectURL(list[0]) });
+    taRef.current?.focus();
+  };
+  const removeAttachment = () => {
+    if (attached) URL.revokeObjectURL(attached.url);
+    setAttached(null); setAttachError(""); setPreviewOpen(false);
+  };
+  const hasFiles = (e: React.DragEvent) => Array.from(e.dataTransfer.types).includes("Files");
+  const dragProps = {
+    onDragEnter: (e: React.DragEvent) => { if (hasFiles(e)) { e.preventDefault(); dragDepth.current++; setDragging(true); } },
+    onDragOver: (e: React.DragEvent) => { if (hasFiles(e)) e.preventDefault(); },
+    onDragLeave: (e: React.DragEvent) => { if (hasFiles(e) && --dragDepth.current <= 0) { dragDepth.current = 0; setDragging(false); } },
+    onDrop: (e: React.DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault(); dragDepth.current = 0; setDragging(false);
+      attach(e.dataTransfer.files);
+    },
+  };
+
+  const send = async () => {
+    const text = input.trim();
+    const img = attached;
+    if ((!text && !img) || streaming) return;
+    setInput(""); setError(""); setAttachError(""); setAttached(null); setPreviewOpen(false);
+    setStreaming(true); setSettingsOpen(false);
+    stick.current = true;
+    // The bubble takes over the image's preview URL, so it is not revoked here.
+    setMessages((m) => [...m, { role: "user", content: text, ...(img ? { imageUrl: img.url } : {}) }, { role: "assistant", content: "" }]);
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+    let received = false;
+    const onChunk = (chunk: string) => {
+      received = true;
+      setMessages((m) => { const c = [...m]; const last = c[c.length - 1]; c[c.length - 1] = { ...last, content: last.content + chunk }; return c; });
+    };
+    const restore = () => { setMessages((m) => m.slice(0, -2)); setInput(text); if (img) setAttached(img); };
+    try {
+      let id: number;
+      if (img) {
+        const form = new FormData();
+        form.append("image", img.file);
+        form.append("message", text);
+        if (convId) form.append("conversation_id", String(convId));
+        form.append("language", lang); form.append("level", level); form.append("script", script);
+        id = await streamTutorImage(form, onChunk, ctrl.signal, (cid) => setConvId(cid));
+      } else {
+        id = await streamTutor({ message: text, conversation_id: convId, language: lang, level, script }, onChunk, ctrl.signal, (cid) => setConvId(cid));
+      }
+      setConvId(id); loadConvs();
+    } catch (e) {
+      if (abortRef.current !== ctrl) return;                       // superseded by New chat / another conversation
+      if ((e as Error).name === "AbortError") {                    // user pressed Stop
+        if (!received) restore();
+        loadConvs();
+      } else {
+        restore();                                                 // drop the optimistic bubbles, keep text + image
+        setError((e as Error).message);
+      }
+    } finally {
+      if (abortRef.current === ctrl) { abortRef.current = null; setStreaming(false); }
+    }
+  };
+
+  const onImageLoad = () => {
+    const el = scrollRef.current;
+    if (el && stick.current) el.scrollTop = el.scrollHeight;       // a late-loading image must not push the reply out of view
+  };
+
+  const fillPrompt = (prompt: string) => { setInput(prompt); taRef.current?.focus(); };
+  const title = convs.find((c) => c.id === convId)?.title;
+
+  const controls = (
+    <>
+      <select value={level} onChange={(e) => setLevel(e.target.value as Level)} aria-label="Learning level" title="Your learning level"
+        className="h-8 rounded-lg border border-line bg-white/5 px-2 text-xs outline-none focus:border-accent">
+        <option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option>
+      </select>
+      {lang !== "en" && <ScriptSelect value={script} onChange={setScript} compact />}
+      <LanguageSelect value={lang} onChange={setLang} compact />
+    </>
+  );
+
+  const list = (onCollapse?: () => void) => (
+    <ConversationList convs={convs} activeId={convId} onOpen={open} onNew={fresh} onDelete={remove} onCollapse={onCollapse} />
+  );
+
+  return (
+    <div className="absolute inset-0 flex">
+      {/* Chat history: docked on large screens, collapsible */}
+      {historyOpen && <aside className="hidden w-[260px] shrink-0 border-r border-line bg-sidebar/50 lg:block">{list(() => toggleHistory(false))}</aside>}
+
+      <section className="relative flex min-w-0 flex-1 flex-col" {...dragProps}>
+        {dragging && (
+          <div className="pointer-events-none absolute inset-2 z-30 grid place-items-center rounded-2xl border-2 border-dashed border-accent/60 bg-bg/80">
+            <div className="flex items-center gap-2 text-sm text-slate-200"><ImagePlus size={18} className="text-accent" /> Drop an image to attach it</div>
+          </div>
+        )}
+        <header className="relative flex h-14 shrink-0 items-center justify-between gap-3 border-b border-line px-3 md:px-5">
+          <div className="flex min-w-0 items-center gap-2">
+            {!historyOpen && (
+              <button onClick={() => toggleHistory(true)} aria-label="Show chats" title="Show chats"
+                className="hidden rounded-lg p-2 text-slate-400 hover:bg-white/5 hover:text-white lg:inline-flex"><PanelLeftOpen size={18} /></button>
+            )}
+            <button onClick={() => setDrawer(true)} aria-label="Open chats" className="rounded-lg p-2 text-slate-400 hover:bg-white/5 hover:text-white lg:hidden"><MessageSquare size={18} /></button>
+            <GraduationCap size={18} className="hidden shrink-0 text-accent sm:block" />
+            <h1 className="shrink-0 text-sm font-medium">AI Tutor</h1>
+            {title && <span className="hidden min-w-0 truncate text-sm text-slate-500 sm:block">/ {title}</span>}
+          </div>
+
+          <div className="hidden items-center gap-2 md:flex">{controls}</div>
+          <button onClick={() => setSettingsOpen((o) => !o)} aria-label="Tutor settings" aria-expanded={settingsOpen}
+            className="rounded-lg p-2 text-slate-400 hover:bg-white/5 hover:text-white md:hidden"><SlidersHorizontal size={18} /></button>
+          {settingsOpen && (
+            <>
+              <button aria-label="Close settings" className="fixed inset-0 z-20 cursor-default md:hidden" onClick={() => setSettingsOpen(false)} />
+              <div className="absolute right-3 top-[52px] z-30 flex flex-col items-stretch gap-2 rounded-xl border border-line bg-panel p-3 shadow-2xl md:hidden">{controls}</div>
+            </>
+          )}
+        </header>
+
+        {/* The only scrolling region */}
+        <div className="relative min-h-0 flex-1">
+          <div ref={scrollRef} onScroll={onScroll} className="scroll-thin h-full overflow-y-auto">
+            {messages.length === 0 ? (
+              <div className="mx-auto flex min-h-full max-w-2xl flex-col items-center justify-center px-4 py-10 text-center">
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent/15 text-accent"><GraduationCap size={24} /></span>
+                <h2 className="mt-5 text-2xl font-semibold tracking-tight">Where would you like to start learning?</h2>
+                <p className="mt-2 max-w-md text-slate-400">Ask a question, explore a concept, or practice something new in your preferred language.</p>
+                <div className="mt-6 flex flex-wrap justify-center gap-2">
+                  {SUGGESTIONS.map(({ icon: Icon, label, prompt }) => (
+                    <button key={label} onClick={() => fillPrompt(prompt)}
+                      className="flex items-center gap-2 rounded-xl border border-line bg-white/[0.03] px-3.5 py-2 text-sm text-slate-300 transition-colors hover:border-accent/40 hover:bg-accent/10 hover:text-white">
+                      <Icon size={15} className="text-accent" /> {label}
+                    </button>
+                  ))}
+                  <button onClick={() => fileRef.current?.click()}
+                    className="flex items-center gap-2 rounded-xl border border-line bg-white/[0.03] px-3.5 py-2 text-sm text-slate-300 transition-colors hover:border-accent/40 hover:bg-accent/10 hover:text-white">
+                    <ImagePlus size={15} className="text-accent" /> Explain an image
+                  </button>
+                </div>
+                <p className="mt-6 text-sm text-slate-500">Try:{" "}
+                  <button type="button" onClick={() => fillPrompt(exampleQuestion(lang, script))}
+                    className="rounded text-slate-400 underline decoration-dotted underline-offset-4 hover:text-white">
+                    “{exampleQuestion(lang, script)}”
+                  </button>
+                </p>
+              </div>
+            ) : (
+              <div className="mx-auto w-full max-w-[880px] space-y-7 px-4 py-6 md:px-6">
+                {messages.map((m, i) => m.role === "user"
+                  ? <UserMessage key={i} message={m} onImageLoad={onImageLoad} />
+                  : <AssistantMessage key={i} message={m} streaming={streaming && i === messages.length - 1} />)}
+              </div>
+            )}
+          </div>
+          {showJump && (
+            <button onClick={jumpToLatest} aria-label="Scroll to latest message"
+              className="absolute bottom-3 left-1/2 grid h-9 w-9 -translate-x-1/2 place-items-center rounded-full border border-line bg-panel text-slate-300 shadow-lg transition hover:text-white">
+              <ArrowDown size={16} />
+            </button>
+          )}
+        </div>
+
+        {/* Composer: always below the messages, never over them */}
+        <footer className="shrink-0 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 md:px-6">
+          <div className="mx-auto w-full max-w-[880px]">
+            {error && (
+              <div role="alert" className="mb-2 flex items-center justify-between gap-3 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+                <span>{error}</span>
+                <button onClick={send} className="shrink-0 rounded-md px-2 py-1 text-xs font-medium hover:bg-red-500/10">Retry</button>
+              </div>
+            )}
+            {attachError && (
+              <div role="alert" className="mb-2 flex items-center justify-between gap-3 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
+                <span>{attachError}</span>
+                <button onClick={() => setAttachError("")} aria-label="Dismiss" className="shrink-0 rounded-md p-1 hover:bg-amber-500/10"><X size={14} /></button>
+              </div>
+            )}
+            <input ref={fileRef} type="file" accept={IMAGE_ACCEPT} className="hidden" aria-label="Choose an image"
+              onChange={(e) => { attach(e.target.files); e.target.value = ""; }} />
+            <div className="rounded-2xl border border-line bg-[#0f1526] shadow-lg shadow-black/30 transition-colors focus-within:border-accent/60">
+              {attached && (
+                <div className="flex items-center gap-3 border-b border-line p-2.5">
+                  <button type="button" onClick={() => setPreviewOpen(true)} aria-label="View attached image larger"
+                    className="shrink-0 overflow-hidden rounded-lg border border-line bg-black/20 transition hover:border-accent/50">
+                    <img src={attached.url} alt="Attached image preview" className="h-14 w-14 object-contain" />
+                  </button>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm text-slate-200">{attached.file.name}</p>
+                    <p className="text-xs text-slate-500">{formatSize(attached.file.size)}</p>
+                  </div>
+                  <button type="button" onClick={() => fileRef.current?.click()}
+                    className="rounded-md px-2 py-1 text-xs text-slate-400 transition hover:bg-white/5 hover:text-white">Replace</button>
+                  <button type="button" onClick={removeAttachment} aria-label="Remove image" title="Remove image"
+                    className="grid h-7 w-7 place-items-center rounded-full text-slate-400 transition hover:bg-white/10 hover:text-white"><X size={15} /></button>
+                </div>
+              )}
+              <div className="flex items-end gap-2 p-2">
+                <button type="button" onClick={() => fileRef.current?.click()} disabled={streaming} aria-label="Attach an image"
+                  title={`Attach an image (JPG, PNG or WEBP, up to ${Number(maxMb.toFixed(1))} MB)`}
+                  className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl transition hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40 ${attached ? "text-accent" : "text-slate-400 hover:text-white"}`}>
+                  <ImagePlus size={18} />
+                </button>
+                <textarea ref={taRef} value={input} rows={1} onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); send(); } }}
+                  onPaste={(e) => {
+                    const pasted = Array.from(e.clipboardData.files).find((f) => f.type.startsWith("image/"));
+                    if (pasted) { e.preventDefault(); attach([pasted]); }
+                  }}
+                  placeholder={attached ? "Ask about this image, or just send it..." : "Ask anything in your preferred language..."} aria-label="Message"
+                  className="scroll-thin max-h-44 min-h-[36px] flex-1 resize-none bg-transparent px-1 py-1.5 text-[15px] outline-none placeholder:text-slate-500" />
+                {/* TODO: voice input / read-aloud are not built yet */}
+                {streaming ? (
+                  <button onClick={() => abortRef.current?.abort()} aria-label="Stop generating" title="Stop generating"
+                    className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/10 text-white transition hover:bg-white/20"><Square size={14} fill="currentColor" /></button>
+                ) : (
+                  <button onClick={send} disabled={!input.trim() && !attached} aria-label="Send message"
+                    className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"><ArrowUp size={18} /></button>
+                )}
+              </div>
+            </div>
+            <p className="mt-1.5 text-center text-[11px] text-slate-500">Learn in your preferred language • AI-generated responses may need verification</p>
+          </div>
+        </footer>
+      </section>
+
+      {previewOpen && attached && <ImageLightbox src={attached.url} onClose={() => setPreviewOpen(false)} />}
+
+      {/* Chat history drawer for tablet / mobile */}
+      {drawer && (
+        <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true" aria-label="Chats">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setDrawer(false)} />
+          <aside className="absolute inset-y-0 left-0 w-72 max-w-[85vw] border-r border-line bg-sidebar shadow-2xl">{list()}</aside>
+        </div>
+      )}
+    </div>
+  );
+}

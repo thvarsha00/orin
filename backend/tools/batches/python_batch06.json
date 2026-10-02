@@ -1,0 +1,216 @@
+[
+  {
+    "title": "Baseball Score",
+    "topic": "Python Stacks",
+    "difficulty": "easy",
+    "description": "You are given a list of operations ops, each a string. An integer string records that score. \"C\" removes the previous score. \"D\" records double the previous score. \"+\" records the sum of the previous two scores. Return the sum of all scores that remain after all operations. All operations are valid.",
+    "examples": [{"input": "[\"5\", \"2\", \"C\", \"D\", \"+\"]", "output": "30", "explanation": "Scores go 5, 2, then C removes 2, D adds 10, + adds 15. Remaining: 5 + 10 + 15 = 30."}],
+    "constraints": "0 <= len(ops) <= 1000",
+    "starter_code": "def solve(ops):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["stack", "simulation"],
+    "hints": ["A list works well as a stack of scores.", "For \"C\", pop the last score. For \"D\" and \"+\", look at the top one or two scores without removing them."],
+    "reference_solution": "def solve(ops):\n    st = []\n    for o in ops:\n        if o == 'C':\n            st.pop()\n        elif o == 'D':\n            st.append(st[-1] * 2)\n        elif o == '+':\n            st.append(st[-1] + st[-2])\n        else:\n            st.append(int(o))\n    return sum(st)",
+    "tests": [
+      {"input": [["5", "2", "C", "D", "+"]], "output": 30, "hidden": false},
+      {"input": [["1"]], "output": 1, "hidden": false},
+      {"input": [["5", "-2", "4", "C", "D", "9", "+", "+"]], "output": 27, "hidden": true},
+      {"input": [["3", "D", "D"]], "output": 21, "hidden": true},
+      {"input": [[]], "output": 0, "hidden": true}
+    ]
+  },
+  {
+    "title": "Queue Simulation",
+    "topic": "Python Queues",
+    "difficulty": "easy",
+    "description": "Simulate a queue. You are given a list of commands: \"enqueue x\" adds the integer x to the back, \"dequeue\" removes and reports the front value, and \"front\" reports the front value without removing it. Return a list of the reported values, in order. If the queue is empty when a value should be reported, report -1.",
+    "examples": [{"input": "[\"enqueue 1\", \"enqueue 2\", \"front\", \"dequeue\", \"dequeue\", \"dequeue\"]", "output": "[1, 1, 2, -1]", "explanation": "front gives 1, the first dequeue gives 1, the second gives 2, and the third finds the queue empty."}],
+    "constraints": "0 <= len(commands) <= 1000",
+    "starter_code": "def solve(commands):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["queue", "simulation", "parsing"],
+    "hints": ["str.split() separates a command from its number.", "Only dequeue and front add to the output list."],
+    "reference_solution": "def solve(commands):\n    q = []\n    head = 0\n    out = []\n    for cmd in commands:\n        parts = cmd.split()\n        if parts[0] == 'enqueue':\n            q.append(int(parts[1]))\n        elif parts[0] == 'dequeue':\n            if head < len(q):\n                out.append(q[head])\n                head += 1\n            else:\n                out.append(-1)\n        elif parts[0] == 'front':\n            out.append(q[head] if head < len(q) else -1)\n    return out",
+    "tests": [
+      {"input": [["enqueue 1", "enqueue 2", "front", "dequeue", "dequeue", "dequeue"]], "output": [1, 1, 2, -1], "hidden": false},
+      {"input": [["dequeue"]], "output": [-1], "hidden": false},
+      {"input": [["enqueue 5", "enqueue 6", "dequeue", "enqueue 7", "front"]], "output": [5, 6], "hidden": true},
+      {"input": [[]], "output": [], "hidden": true},
+      {"input": [["front", "enqueue -3", "front"]], "output": [-1, -3], "hidden": true}
+    ]
+  },
+  {
+    "title": "Middle of Linked List",
+    "topic": "Python Linked Lists",
+    "difficulty": "easy",
+    "description": "A singly linked list is given as a Python list of its node values from head to tail. Return the values from the middle node to the end of the list. If the list has two middle nodes, use the second one. The list has at least one node.",
+    "examples": [{"input": "[1, 2, 3, 4, 5, 6]", "output": "[4, 5, 6]", "explanation": "There are two middle nodes (3 and 4). The second one is 4."}],
+    "constraints": "1 <= len(nums) <= 1000",
+    "starter_code": "def solve(nums):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["linked-list", "two-pointers"],
+    "hints": ["In a real linked list you would not know the length in advance. Use a slow pointer and a fast pointer.", "Move slow by 1 and fast by 2. When fast reaches the end, slow is at the middle."],
+    "reference_solution": "def solve(nums):\n    slow = 0\n    fast = 0\n    while fast + 1 < len(nums):\n        slow += 1\n        fast += 2\n    return nums[slow:]",
+    "tests": [
+      {"input": [[1, 2, 3, 4, 5]], "output": [3, 4, 5], "hidden": false},
+      {"input": [[1, 2, 3, 4, 5, 6]], "output": [4, 5, 6], "hidden": false},
+      {"input": [[7]], "output": [7], "hidden": true},
+      {"input": [[1, 2]], "output": [2], "hidden": true},
+      {"input": [[9, 8, 7, 6]], "output": [7, 6], "hidden": true}
+    ]
+  },
+  {
+    "title": "Detect Cycle in Linked List",
+    "topic": "Python Linked Lists",
+    "difficulty": "medium",
+    "description": "A linked list is described by a list nxt, where nxt[i] is the index of the node that follows node i, or -1 if node i is the last node. The head is node 0. An empty list means an empty linked list. Return True if following the next links from the head ever returns to a node already visited, otherwise False.",
+    "examples": [{"input": "[1, 2, 0]", "output": "True", "explanation": "Node 0 goes to 1, 1 goes to 2, and 2 goes back to 0."}],
+    "constraints": "0 <= len(nxt) <= 10^4, each value is -1 or a valid index",
+    "starter_code": "def solve(nxt):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["linked-list", "two-pointers", "cycle-detection"],
+    "hints": ["A set of visited indices solves it in O(n) memory.", "For O(1) memory, move one pointer one step and another two steps. If they ever meet, there is a cycle."],
+    "reference_solution": "def solve(nxt):\n    if not nxt:\n        return False\n    slow = 0\n    fast = 0\n    while fast != -1 and nxt[fast] != -1:\n        slow = nxt[slow]\n        fast = nxt[nxt[fast]]\n        if slow == fast:\n            return True\n    return False",
+    "tests": [
+      {"input": [[1, 2, 3, -1]], "output": false, "hidden": false},
+      {"input": [[1, 2, 0]], "output": true, "hidden": false},
+      {"input": [[-1]], "output": false, "hidden": true},
+      {"input": [[0]], "output": true, "hidden": true},
+      {"input": [[1, 2, 3, 1]], "output": true, "hidden": true},
+      {"input": [[]], "output": false, "hidden": true}
+    ]
+  },
+  {
+    "title": "Min Stack Operations",
+    "topic": "Python Stacks",
+    "difficulty": "medium",
+    "description": "Simulate a stack that can report its minimum. Commands are: \"push x\" adds the integer x, \"pop\" removes the top (does nothing if the stack is empty), \"top\" reports the top value, and \"getMin\" reports the smallest value currently in the stack. Return a list of the values reported by \"top\" and \"getMin\", in order. Report -1 if the stack is empty. Aim for O(1) per command.",
+    "examples": [{"input": "[\"push 3\", \"push 5\", \"getMin\", \"push 2\", \"getMin\", \"pop\", \"top\", \"getMin\"]", "output": "[3, 2, 5, 3]", "explanation": "The minimum is 3, then 2 after pushing 2. After the pop the top is 5 and the minimum is 3 again."}],
+    "constraints": "0 <= len(commands) <= 1000",
+    "starter_code": "def solve(commands):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["stack", "design", "simulation"],
+    "hints": ["Scanning the whole stack for the minimum on every getMin is slow.", "Keep a second stack. Each time you push, store the smallest value so far on it."],
+    "reference_solution": "def solve(commands):\n    st = []\n    mins = []\n    out = []\n    for cmd in commands:\n        parts = cmd.split()\n        c = parts[0]\n        if c == 'push':\n            x = int(parts[1])\n            st.append(x)\n            mins.append(x if not mins else min(x, mins[-1]))\n        elif c == 'pop':\n            if st:\n                st.pop()\n                mins.pop()\n        elif c == 'top':\n            out.append(st[-1] if st else -1)\n        elif c == 'getMin':\n            out.append(mins[-1] if mins else -1)\n    return out",
+    "tests": [
+      {"input": [["push 3", "push 5", "getMin", "push 2", "getMin", "pop", "top", "getMin"]], "output": [3, 2, 5, 3], "hidden": false},
+      {"input": [["top", "getMin"]], "output": [-1, -1], "hidden": false},
+      {"input": [["push -2", "push 0", "push -3", "getMin", "pop", "top", "getMin"]], "output": [-3, 0, -2], "hidden": true},
+      {"input": [["push 1", "pop", "pop", "getMin"]], "output": [-1], "hidden": true},
+      {"input": [["push 2", "push 2", "pop", "getMin"]], "output": [2], "hidden": true}
+    ]
+  },
+  {
+    "title": "Sort by Frequency",
+    "topic": "Python Sorting",
+    "difficulty": "medium",
+    "description": "Given a list of integers, return a new list where values are ordered by how often they appear, most frequent first. Values with the same frequency are ordered by value, smallest first. Every occurrence of a value stays in the output.",
+    "examples": [{"input": "[1, 1, 2, 2, 2, 3]", "output": "[2, 2, 2, 1, 1, 3]", "explanation": "2 appears 3 times, 1 appears 2 times, 3 appears once."}],
+    "constraints": "0 <= len(nums) <= 1000",
+    "starter_code": "def solve(nums):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": ["sorting", "custom-key", "hashing"],
+    "hints": ["Count each value first.", "sorted() accepts a key that returns a tuple. Negate the count to sort it descending."],
+    "reference_solution": "def solve(nums):\n    counts = {}\n    for x in nums:\n        counts[x] = counts.get(x, 0) + 1\n    return sorted(nums, key=lambda x: (-counts[x], x))",
+    "tests": [
+      {"input": [[1, 1, 2, 2, 2, 3]], "output": [2, 2, 2, 1, 1, 3], "hidden": false},
+      {"input": [[4, 4, 5, 5]], "output": [4, 4, 5, 5], "hidden": false},
+      {"input": [[3, 1, 2]], "output": [1, 2, 3], "hidden": true},
+      {"input": [[-1, -1, 0, 0, 0, 5]], "output": [0, 0, 0, -1, -1, 5], "hidden": true},
+      {"input": [[]], "output": [], "hidden": true},
+      {"input": [[9, 7, 9, 7, 8]], "output": [7, 7, 9, 9, 8], "hidden": true}
+    ]
+  },
+  {
+    "title": "Generate Parentheses",
+    "topic": "Python Recursion",
+    "difficulty": "medium",
+    "description": "Given n pairs of parentheses, return every valid (well-formed) combination as a list of strings, sorted in ascending alphabetical order. In ASCII, \"(\" comes before \")\".",
+    "examples": [{"input": "3", "output": "[\"((()))\", \"(()())\", \"(())()\", \"()(())\", \"()()()\"]", "explanation": "These are the 5 valid ways to arrange 3 pairs."}],
+    "constraints": "1 <= n <= 8",
+    "starter_code": "def solve(n):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(4^n / sqrt(n))",
+    "tags": ["recursion", "backtracking", "strings"],
+    "hints": ["Build the string one character at a time, tracking how many \"(\" and \")\" you have used.", "You may add \"(\" while fewer than n are used. You may add \")\" only if it would not exceed the number of \"(\" used."],
+    "reference_solution": "def solve(n):\n    out = []\n    def go(s, o, c):\n        if len(s) == 2 * n:\n            out.append(s)\n            return\n        if o < n:\n            go(s + '(', o + 1, c)\n        if c < o:\n            go(s + ')', o, c + 1)\n    go('', 0, 0)\n    return sorted(out)",
+    "tests": [
+      {"input": [3], "output": ["((()))", "(()())", "(())()", "()(())", "()()()"], "hidden": false},
+      {"input": [1], "output": ["()"], "hidden": false},
+      {"input": [2], "output": ["(())", "()()"], "hidden": true},
+      {"input": [4], "output": ["(((())))", "((()()))", "((())())", "((()))()", "(()(()))", "(()()())", "(()())()", "(())(())", "(())()()", "()((()))", "()(()())", "()(())()", "()()(())", "()()()()"], "hidden": true}
+    ]
+  },
+  {
+    "title": "Largest Rectangle in Histogram",
+    "topic": "Python Stacks",
+    "difficulty": "hard",
+    "description": "Given a list of non-negative integers heights, where each value is the height of a histogram bar of width 1, return the area of the largest rectangle that fits entirely inside the histogram. Return 0 for an empty list.",
+    "examples": [{"input": "[2, 1, 5, 6, 2, 3]", "output": "10", "explanation": "The bars of height 5 and 6 form a rectangle of height 5 and width 2, so the area is 10."}],
+    "constraints": "0 <= len(heights) <= 10^5",
+    "starter_code": "def solve(heights):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["stack", "monotonic-stack", "arrays"],
+    "hints": ["For each bar, ask how far left and right you can extend while every bar is at least as tall.", "A stack of indices with increasing heights finds those boundaries in one pass. When a shorter bar arrives, pop taller bars and compute their areas."],
+    "reference_solution": "def solve(heights):\n    st = []\n    best = 0\n    h = heights + [0]\n    for i, x in enumerate(h):\n        while st and h[st[-1]] >= x:\n            height = h[st.pop()]\n            left = st[-1] if st else -1\n            best = max(best, height * (i - left - 1))\n        st.append(i)\n    return best",
+    "tests": [
+      {"input": [[2, 1, 5, 6, 2, 3]], "output": 10, "hidden": false},
+      {"input": [[2, 4]], "output": 4, "hidden": false},
+      {"input": [[1]], "output": 1, "hidden": true},
+      {"input": [[]], "output": 0, "hidden": true},
+      {"input": [[6, 2, 5, 4, 5, 1, 6]], "output": 12, "hidden": true},
+      {"input": [[5, 4, 3, 2, 1]], "output": 9, "hidden": true}
+    ]
+  },
+  {
+    "title": "Count Inversions",
+    "topic": "Python Sorting",
+    "difficulty": "hard",
+    "description": "An inversion is a pair of positions i < j where nums[i] > nums[j]. Given a list of integers, return the number of inversions. Equal values do not form an inversion. Aim for O(n log n), for example by counting during a merge sort.",
+    "examples": [{"input": "[2, 4, 1, 3, 5]", "output": "3", "explanation": "The inversions are (2, 1), (4, 1) and (4, 3)."}],
+    "constraints": "0 <= len(nums) <= 10^5",
+    "starter_code": "def solve(nums):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": ["sorting", "merge-sort", "divide-and-conquer"],
+    "hints": ["Checking every pair works but is O(n^2), too slow for large inputs.", "During the merge step of merge sort, when a value from the right half is placed before values still waiting in the left half, each of those waiting values forms an inversion with it."],
+    "reference_solution": "def solve(nums):\n    def sort(a):\n        if len(a) <= 1:\n            return a, 0\n        mid = len(a) // 2\n        l, x = sort(a[:mid])\n        r, y = sort(a[mid:])\n        merged = []\n        i = 0\n        j = 0\n        cnt = x + y\n        while i < len(l) and j < len(r):\n            if l[i] <= r[j]:\n                merged.append(l[i])\n                i += 1\n            else:\n                merged.append(r[j])\n                j += 1\n                cnt += len(l) - i\n        merged.extend(l[i:])\n        merged.extend(r[j:])\n        return merged, cnt\n    return sort(nums)[1]",
+    "tests": [
+      {"input": [[2, 4, 1, 3, 5]], "output": 3, "hidden": false},
+      {"input": [[1, 2, 3]], "output": 0, "hidden": false},
+      {"input": [[5, 4, 3, 2, 1]], "output": 10, "hidden": true},
+      {"input": [[]], "output": 0, "hidden": true},
+      {"input": [[1, 1, 1]], "output": 0, "hidden": true},
+      {"input": [[3, 1, 2, 1]], "output": 4, "hidden": true}
+    ]
+  },
+  {
+    "title": "N-Queens Count",
+    "topic": "Python Recursion",
+    "difficulty": "hard",
+    "description": "Place n queens on an n x n chessboard so that no two queens attack each other (no shared row, column, or diagonal). Return the number of distinct ways to do this.",
+    "examples": [{"input": "4", "output": "2", "explanation": "A 4 x 4 board has exactly 2 valid arrangements."}],
+    "constraints": "1 <= n <= 8",
+    "starter_code": "def solve(n):\n    # write your code here\n    pass",
+    "entry_function": "solve",
+    "expected_complexity": "O(n!)",
+    "tags": ["recursion", "backtracking"],
+    "hints": ["Place one queen per row. Try each column in the current row, then recurse to the next row.", "Track used columns and both diagonals in sets. Cells on the same diagonal share row - col, and cells on the same anti-diagonal share row + col.", "Remove the queen from the sets when you backtrack."],
+    "reference_solution": "def solve(n):\n    cols = set()\n    d1 = set()\n    d2 = set()\n    def go(r):\n        if r == n:\n            return 1\n        total = 0\n        for c in range(n):\n            if c in cols or (r - c) in d1 or (r + c) in d2:\n                continue\n            cols.add(c)\n            d1.add(r - c)\n            d2.add(r + c)\n            total += go(r + 1)\n            cols.remove(c)\n            d1.remove(r - c)\n            d2.remove(r + c)\n        return total\n    return go(0)",
+    "tests": [
+      {"input": [4], "output": 2, "hidden": false},
+      {"input": [1], "output": 1, "hidden": false},
+      {"input": [2], "output": 0, "hidden": true},
+      {"input": [5], "output": 10, "hidden": true},
+      {"input": [6], "output": 4, "hidden": true},
+      {"input": [8], "output": 92, "hidden": true}
+    ]
+  }
+]

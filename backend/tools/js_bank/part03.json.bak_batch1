@@ -1,0 +1,152 @@
+[
+  {
+    "title": "Counter with Closure Operations",
+    "topic": "JavaScript Closures",
+    "difficulty": "easy",
+    "description": "A counter starts at 0. You are given an array of operations, each one of \"inc\" (add 1), \"dec\" (subtract 1), \"reset\" (set to 0) or \"get\" (read the current value). Process the operations in order and return an array with the value read by each \"get\", in order. The counter may go negative.",
+    "examples": [
+      {
+        "input": "operations = [\"inc\", \"inc\", \"get\", \"dec\", \"get\", \"reset\", \"get\"]",
+        "output": "[2, 1, 0]",
+        "explanation": "The counter goes 1, 2 (read 2), 1 (read 1), then resets to 0 (read 0)."
+      }
+    ],
+    "constraints": "0 <= operations.length <= 1000. Every operation is one of \"inc\", \"dec\", \"reset\" or \"get\".",
+    "starter_code": "function solve(operations) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["closures", "state", "simulation"],
+    "hints": [
+      "A closure lets a function keep a private variable between calls: write a makeCounter() that returns small functions sharing one count variable.",
+      "Call the matching function for each operation and collect the result only for \"get\"."
+    ],
+    "reference_solution": "function solve(operations) {\n    const makeCounter = () => {\n        let count = 0;\n        return {\n            inc() { count += 1; },\n            dec() { count -= 1; },\n            reset() { count = 0; },\n            get() { return count; }\n        };\n    };\n    const counter = makeCounter();\n    const out = [];\n    for (const op of operations) {\n        if (op === 'get') out.push(counter.get());\n        else counter[op]();\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [["inc", "inc", "get", "dec", "get", "reset", "get"]], "output": [2, 1, 0], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [["get"]], "output": [0], "hidden": false},
+      {"input": [["dec", "dec", "get", "inc", "get"]], "output": [-2, -1], "hidden": true},
+      {"input": [["inc", "reset", "inc", "inc", "inc", "get", "get"]], "output": [3, 3], "hidden": true}
+    ]
+  },
+  {
+    "title": "Sort Strings by Length Then Alphabet",
+    "topic": "JavaScript Sorting",
+    "difficulty": "easy",
+    "description": "Given an array of strings, return a new array sorted by length from shortest to longest. Strings of equal length are ordered alphabetically using plain string comparison (code-unit order, so every uppercase letter comes before every lowercase letter). Keep repeated strings.",
+    "examples": [
+      {
+        "input": "words = [\"pear\", \"fig\", \"apple\", \"kiwi\", \"date\"]",
+        "output": "[\"fig\", \"date\", \"kiwi\", \"pear\", \"apple\"]",
+        "explanation": "fig has 3 letters, date, kiwi and pear have 4 (in alphabetical order), and apple has 5."
+      }
+    ],
+    "constraints": "0 <= words.length <= 1000. Each word has 1 to 30 letters.",
+    "starter_code": "function solve(words) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": ["sorting", "comparator", "strings"],
+    "hints": [
+      "Array.prototype.sort accepts a comparator (a, b) => number. A negative result puts a first.",
+      "Compare lengths first, and only when they are equal compare the strings themselves with < and >."
+    ],
+    "reference_solution": "function solve(words) {\n    return [...words].sort((a, b) => {\n        if (a.length !== b.length) return a.length - b.length;\n        return a < b ? -1 : a > b ? 1 : 0;\n    });\n}",
+    "tests": [
+      {"input": [["pear", "fig", "apple", "kiwi", "date"]], "output": ["fig", "date", "kiwi", "pear", "apple"], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [["b", "a", "c"]], "output": ["a", "b", "c"], "hidden": false},
+      {"input": [["bb", "a", "aa", "b"]], "output": ["a", "b", "aa", "bb"], "hidden": true},
+      {"input": [["Zed", "apple", "Bob"]], "output": ["Bob", "Zed", "apple"], "hidden": true}
+    ]
+  },
+  {
+    "title": "Zip Arrays into Pairs",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Given two arrays a and b, return an array of pairs where the i-th pair is [a[i], b[i]]. Stop at the length of the shorter array and ignore the extra items of the longer one.",
+    "examples": [
+      {
+        "input": "a = [1, 2, 3], b = [\"x\", \"y\"]",
+        "output": "[[1, \"x\"], [2, \"y\"]]",
+        "explanation": "The shorter array has 2 items, so only 2 pairs are built."
+      }
+    ],
+    "constraints": "0 <= a.length, b.length <= 1000. Items are integers or strings.",
+    "starter_code": "function solve(a, b) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(min(n, m))",
+    "tags": ["arrays", "map", "pairs"],
+    "hints": [
+      "The number of pairs is Math.min(a.length, b.length).",
+      "Array.from({ length: k }, (_, i) => ...) builds an array of k items from the index."
+    ],
+    "reference_solution": "function solve(a, b) {\n    const n = Math.min(a.length, b.length);\n    return Array.from({ length: n }, (_, i) => [a[i], b[i]]);\n}",
+    "tests": [
+      {"input": [[1, 2, 3], ["x", "y"]], "output": [[1, "x"], [2, "y"]], "hidden": false},
+      {"input": [[], [1]], "output": [], "hidden": false},
+      {"input": [[1], [2]], "output": [[1, 2]], "hidden": false},
+      {"input": [[1, 2], [3, 4, 5, 6]], "output": [[1, 3], [2, 4]], "hidden": true},
+      {"input": [["a", "b", "c"], ["d", "e", "f"]], "output": [["a", "d"], ["b", "e"], ["c", "f"]], "hidden": true}
+    ]
+  },
+  {
+    "title": "Take While Prefix",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Given an array of integers and the name of a rule, return the longest prefix of the array in which every item satisfies the rule. The rule is \"positive\" (item > 0), \"even\" (item is divisible by 2, and 0 counts as even) or \"negative\" (item < 0). Stop at the first item that fails the rule.",
+    "examples": [
+      {
+        "input": "nums = [2, 4, 5, 6], rule = \"even\"",
+        "output": "[2, 4]",
+        "explanation": "2 and 4 are even, and 5 stops the prefix, so 6 is not included even though it is even."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each item is an integer between -10^6 and 10^6. rule is one of \"positive\", \"even\" or \"negative\".",
+    "starter_code": "function solve(nums, rule) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["arrays", "predicates", "loops"],
+    "hints": [
+      "Store the three rules as small functions in an object and pick one by name.",
+      "Advance an index while the item passes, then return nums.slice(0, index)."
+    ],
+    "reference_solution": "function solve(nums, rule) {\n    const rules = {\n        positive: (x) => x > 0,\n        even: (x) => x % 2 === 0,\n        negative: (x) => x < 0\n    };\n    const test = rules[rule];\n    let i = 0;\n    while (i < nums.length && test(nums[i])) i += 1;\n    return nums.slice(0, i);\n}",
+    "tests": [
+      {"input": [[2, 4, 5, 6], "even"], "output": [2, 4], "hidden": false},
+      {"input": [[], "even"], "output": [], "hidden": false},
+      {"input": [[1, 2], "even"], "output": [], "hidden": false},
+      {"input": [[3, 5, -1, 4], "positive"], "output": [3, 5], "hidden": true},
+      {"input": [[-1, -2, 0, -3], "negative"], "output": [-1, -2], "hidden": true}
+    ]
+  },
+  {
+    "title": "Range with Step",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Given integers start, end and step, return the array that begins at start and moves by step each time, stopping before it reaches or passes end (end itself is never included). The step may be negative to count down. If step is 0, or the step points away from end, return an empty array.",
+    "examples": [
+      {
+        "input": "start = 0, end = 10, step = 3",
+        "output": "[0, 3, 6, 9]",
+        "explanation": "The next value would be 12, which is past 10, so the range stops at 9."
+      }
+    ],
+    "constraints": "-10^4 <= start, end <= 10^4. -10^4 <= step <= 10^4. The result has at most 1000 items.",
+    "starter_code": "function solve(start, end, step) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["arrays", "loops", "generation"],
+    "hints": [
+      "Handle step === 0 first, since it would loop forever.",
+      "Use one loop condition for positive steps (x < end) and another for negative steps (x > end)."
+    ],
+    "reference_solution": "function solve(start, end, step) {\n    if (step === 0) return [];\n    const out = [];\n    if (step > 0) {\n        for (let x = start; x < end; x += step) out.push(x);\n    } else {\n        for (let x = start; x > end; x += step) out.push(x);\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [0, 10, 3], "output": [0, 3, 6, 9], "hidden": false},
+      {"input": [10, 0, -4], "output": [10, 6, 2], "hidden": false},
+      {"input": [0, 5, -1], "output": [], "hidden": false},
+      {"input": [1, 4, 0], "output": [], "hidden": true},
+      {"input": [-3, 3, 2], "output": [-3, -1, 1], "hidden": true}
+    ]
+  }
+]

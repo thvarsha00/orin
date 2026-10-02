@@ -1,0 +1,302 @@
+[
+  {
+    "title": "Invert Object Keys and Values",
+    "topic": "JavaScript Objects",
+    "difficulty": "easy",
+    "description": "Given an object whose values are all unique strings, return a new object in which every original value becomes a key and every original key becomes its value.",
+    "examples": [
+      {
+        "input": "obj = {\"a\": \"x\", \"b\": \"y\"}",
+        "output": "{\"x\": \"a\", \"y\": \"b\"}",
+        "explanation": "Each key/value pair is swapped."
+      }
+    ],
+    "constraints": "0 <= number of keys <= 100. All values are unique strings.",
+    "starter_code": "function solve(obj) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["objects", "entries", "transform"],
+    "hints": [
+      "Object.entries(obj) gives you [key, value] pairs.",
+      "Build a new object and set result[value] = key for each pair."
+    ],
+    "reference_solution": "function solve(obj) {\n    const result = {};\n    for (const [key, value] of Object.entries(obj)) result[value] = key;\n    return result;\n}",
+    "tests": [
+      {"input": [{"a": "x", "b": "y"}], "output": {"x": "a", "y": "b"}, "hidden": false},
+      {"input": [{}], "output": {}, "hidden": false},
+      {"input": [{"apple": "red", "banana": "yellow", "grape": "purple"}], "output": {"red": "apple", "yellow": "banana", "purple": "grape"}, "hidden": false},
+      {"input": [{"one": "1", "two": "2", "three": "3"}], "output": {"1": "one", "2": "two", "3": "three"}, "hidden": true},
+      {"input": [{"k": "hello world"}], "output": {"hello world": "k"}, "hidden": true}
+    ]
+  },
+  {
+    "title": "Pick and Omit Keys",
+    "topic": "JavaScript Objects",
+    "difficulty": "easy",
+    "description": "Given an object, a list of key names and a mode, return a new object. If mode is \"pick\", keep only the listed keys that exist in the object. If mode is \"omit\", keep every key except the listed ones. Names in the list that are not in the object are ignored.",
+    "examples": [
+      {
+        "input": "obj = {\"a\": 1, \"b\": 2, \"c\": 3}, keys = [\"a\", \"c\"], mode = \"pick\"",
+        "output": "{\"a\": 1, \"c\": 3}",
+        "explanation": "Only a and c are kept."
+      }
+    ],
+    "constraints": "0 <= number of keys in obj <= 100. keys has at most 100 strings and may include names missing from obj. mode is either \"pick\" or \"omit\".",
+    "starter_code": "function solve(obj, keys, mode) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n + k)",
+    "tags": ["objects", "set", "filter"],
+    "hints": [
+      "Put the listed keys in a Set for fast lookup.",
+      "Loop over Object.entries(obj) and keep an entry when (in the set) matches (mode is pick)."
+    ],
+    "reference_solution": "function solve(obj, keys, mode) {\n    const wanted = new Set(keys);\n    const result = {};\n    for (const [key, value] of Object.entries(obj)) {\n        if (wanted.has(key) === (mode === 'pick')) result[key] = value;\n    }\n    return result;\n}",
+    "tests": [
+      {"input": [{"a": 1, "b": 2, "c": 3}, ["a", "c"], "pick"], "output": {"a": 1, "c": 3}, "hidden": false},
+      {"input": [{"a": 1, "b": 2, "c": 3}, ["a", "c"], "omit"], "output": {"b": 2}, "hidden": false},
+      {"input": [{"x": 10}, ["y"], "pick"], "output": {}, "hidden": false},
+      {"input": [{"name": "Ana", "age": 30, "city": "Pune"}, ["age", "zip"], "omit"], "output": {"name": "Ana", "city": "Pune"}, "hidden": true},
+      {"input": [{}, ["a"], "omit"], "output": {}, "hidden": true}
+    ]
+  },
+  {
+    "title": "Symmetric Difference of Arrays",
+    "topic": "JavaScript Maps and Sets",
+    "difficulty": "easy",
+    "description": "Given two arrays of integers, return a sorted (ascending) array of the distinct values that appear in exactly one of the two arrays.",
+    "examples": [
+      {
+        "input": "a = [1, 2, 3], b = [2, 3, 4]",
+        "output": "[1, 4]",
+        "explanation": "2 and 3 appear in both arrays, so only 1 and 4 remain."
+      }
+    ],
+    "constraints": "0 <= a.length, b.length <= 1000. Each element is an integer between -10^6 and 10^6.",
+    "starter_code": "function solve(a, b) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": ["set", "arrays", "sorting"],
+    "hints": [
+      "Turn each array into a Set to drop duplicates.",
+      "Collect values missing from the other set, then sort numerically with (p, q) => p - q."
+    ],
+    "reference_solution": "function solve(a, b) {\n    const setA = new Set(a);\n    const setB = new Set(b);\n    const result = [];\n    for (const x of setA) if (!setB.has(x)) result.push(x);\n    for (const x of setB) if (!setA.has(x)) result.push(x);\n    return result.sort((p, q) => p - q);\n}",
+    "tests": [
+      {"input": [[1, 2, 3], [2, 3, 4]], "output": [1, 4], "hidden": false},
+      {"input": [[], []], "output": [], "hidden": false},
+      {"input": [[1, 1, 2], [2, 3, 3]], "output": [1, 3], "hidden": false},
+      {"input": [[5, -1, 7], [7, 5, -1]], "output": [], "hidden": true},
+      {"input": [[10, 20, 30], []], "output": [10, 20, 30], "hidden": true}
+    ]
+  },
+  {
+    "title": "Pairs to Object with Duplicate Keys",
+    "topic": "JavaScript Objects",
+    "difficulty": "easy",
+    "description": "Given an array of [key, value] pairs where keys may repeat, return an object that maps each key to an array of all its values, in the order the pairs appear.",
+    "examples": [
+      {
+        "input": "pairs = [[\"a\", 1], [\"b\", 2], [\"a\", 3]]",
+        "output": "{\"a\": [1, 3], \"b\": [2]}",
+        "explanation": "The key a appears twice, so its values are collected into one array."
+      }
+    ],
+    "constraints": "0 <= pairs.length <= 1000. Keys are non-empty strings. Values are integers.",
+    "starter_code": "function solve(pairs) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["objects", "grouping", "destructuring"],
+    "hints": [
+      "Destructure each pair with for (const [key, value] of pairs).",
+      "Create the array the first time you see a key, then push the value."
+    ],
+    "reference_solution": "function solve(pairs) {\n    const result = {};\n    for (const [key, value] of pairs) {\n        if (!Object.prototype.hasOwnProperty.call(result, key)) result[key] = [];\n        result[key].push(value);\n    }\n    return result;\n}",
+    "tests": [
+      {"input": [[["a", 1], ["b", 2], ["a", 3]]], "output": {"a": [1, 3], "b": [2]}, "hidden": false},
+      {"input": [[]], "output": {}, "hidden": false},
+      {"input": [[["x", 5]]], "output": {"x": [5]}, "hidden": false},
+      {"input": [[["k", 1], ["k", 1], ["k", 2]]], "output": {"k": [1, 1, 2]}, "hidden": true},
+      {"input": [[["red", 1], ["blue", 2], ["green", 3], ["blue", 4], ["red", 5], ["blue", 6]]], "output": {"red": [1, 5], "blue": [2, 4, 6], "green": [3]}, "hidden": true}
+    ]
+  },
+  {
+    "title": "Highest Scoring Student",
+    "topic": "JavaScript Objects",
+    "difficulty": "easy",
+    "description": "Given an array of student records, each with a name and a score, return the name of the student with the highest score. If several students share the highest score, return the one who appears first. If the array is empty, return an empty string.",
+    "examples": [
+      {
+        "input": "records = [{\"name\": \"Ana\", \"score\": 80}, {\"name\": \"Ben\", \"score\": 92}, {\"name\": \"Cy\", \"score\": 92}]",
+        "output": "\"Ben\"",
+        "explanation": "Ben and Cy tie at 92, and Ben appears first."
+      }
+    ],
+    "constraints": "0 <= records.length <= 1000. Each name is a non-empty string. Each score is an integer between -1000 and 1000.",
+    "starter_code": "function solve(records) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["objects", "arrays", "destructuring"],
+    "hints": [
+      "Track the best record seen so far while looping.",
+      "Replace it only when a score is strictly greater, so ties keep the earlier student."
+    ],
+    "reference_solution": "function solve(records) {\n    let best = null;\n    for (const { name, score } of records) {\n        if (best === null || score > best.score) best = { name, score };\n    }\n    return best === null ? '' : best.name;\n}",
+    "tests": [
+      {"input": [[{"name": "Ana", "score": 80}, {"name": "Ben", "score": 92}, {"name": "Cy", "score": 92}]], "output": "Ben", "hidden": false},
+      {"input": [[]], "output": "", "hidden": false},
+      {"input": [[{"name": "Solo", "score": 0}]], "output": "Solo", "hidden": false},
+      {"input": [[{"name": "A", "score": -5}, {"name": "B", "score": -2}, {"name": "C", "score": -9}]], "output": "B", "hidden": true},
+      {"input": [[{"name": "Zed", "score": 70}, {"name": "Amy", "score": 70}]], "output": "Zed", "hidden": true}
+    ]
+  },
+  {
+    "title": "Merge Objects Summing Numbers",
+    "topic": "JavaScript Objects",
+    "difficulty": "easy",
+    "description": "Given two objects whose values are all integers, return a new object containing every key that appears in either object. If a key appears in both, its value in the result is the sum of the two values.",
+    "examples": [
+      {
+        "input": "a = {\"a\": 1, \"b\": 2}, b = {\"b\": 3, \"c\": 4}",
+        "output": "{\"a\": 1, \"b\": 5, \"c\": 4}",
+        "explanation": "Only b appears in both objects, so its values 2 and 3 are added."
+      }
+    ],
+    "constraints": "0 <= number of keys in each object <= 100. Keys are non-empty strings. Values are integers between -10^6 and 10^6.",
+    "starter_code": "function solve(a, b) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n + m)",
+    "tags": ["objects", "entries", "merge"],
+    "hints": [
+      "Start from a copy of the first object, for example with the spread syntax {...a}.",
+      "For each entry of the second object, add its value to the existing value, or to 0 when the key is new."
+    ],
+    "reference_solution": "function solve(a, b) {\n    const result = { ...a };\n    for (const [key, value] of Object.entries(b)) {\n        const current = Object.prototype.hasOwnProperty.call(result, key) ? result[key] : 0;\n        result[key] = current + value;\n    }\n    return result;\n}",
+    "tests": [
+      {"input": [{"a": 1, "b": 2}, {"b": 3, "c": 4}], "output": {"a": 1, "b": 5, "c": 4}, "hidden": false},
+      {"input": [{}, {}], "output": {}, "hidden": false},
+      {"input": [{"x": 5}, {}], "output": {"x": 5}, "hidden": false},
+      {"input": [{"p": -1, "q": 10}, {"p": 1, "q": -10}], "output": {"p": 0, "q": 0}, "hidden": true},
+      {"input": [{"a": 1}, {"b": 2, "c": 3}], "output": {"a": 1, "b": 2, "c": 3}, "hidden": true}
+    ]
+  },
+  {
+    "title": "Sum Sales by Category",
+    "topic": "JavaScript Objects",
+    "difficulty": "easy",
+    "description": "Given an array of sale records, each with a category and an amount, return an object that maps every category to the total of its amounts.",
+    "examples": [
+      {
+        "input": "sales = [{\"category\": \"toys\", \"amount\": 10}, {\"category\": \"food\", \"amount\": 5}, {\"category\": \"toys\", \"amount\": 7}]",
+        "output": "{\"toys\": 17, \"food\": 5}",
+        "explanation": "The two toys sales add up to 17."
+      }
+    ],
+    "constraints": "0 <= sales.length <= 1000. Each category is a non-empty string. Each amount is an integer between -10^6 and 10^6.",
+    "starter_code": "function solve(sales) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["objects", "grouping", "destructuring"],
+    "hints": [
+      "Destructure each record with for (const { category, amount } of sales).",
+      "Add the amount to the running total for that category, starting from 0 the first time you see it."
+    ],
+    "reference_solution": "function solve(sales) {\n    const totals = {};\n    for (const { category, amount } of sales) {\n        const current = Object.prototype.hasOwnProperty.call(totals, category) ? totals[category] : 0;\n        totals[category] = current + amount;\n    }\n    return totals;\n}",
+    "tests": [
+      {"input": [[{"category": "toys", "amount": 10}, {"category": "food", "amount": 5}, {"category": "toys", "amount": 7}]], "output": {"toys": 17, "food": 5}, "hidden": false},
+      {"input": [[]], "output": {}, "hidden": false},
+      {"input": [[{"category": "a", "amount": -3}]], "output": {"a": -3}, "hidden": false},
+      {"input": [[{"category": "x", "amount": 1}, {"category": "x", "amount": 2}, {"category": "x", "amount": 3}]], "output": {"x": 6}, "hidden": true},
+      {"input": [[{"category": "books", "amount": 20}, {"category": "games", "amount": 15}, {"category": "books", "amount": -5}, {"category": "games", "amount": 5}]], "output": {"books": 15, "games": 20}, "hidden": true}
+    ]
+  },
+  {
+    "title": "Unique Tags Across Records",
+    "topic": "JavaScript Maps and Sets",
+    "difficulty": "easy",
+    "description": "Given an array of records, each with an id and an array of tag strings, return a sorted array of the distinct tags that appear in any record. Sort in the default string order (plain alphabetical for lowercase words).",
+    "examples": [
+      {
+        "input": "records = [{\"id\": 1, \"tags\": [\"js\", \"web\"]}, {\"id\": 2, \"tags\": [\"web\", \"css\"]}]",
+        "output": "[\"css\", \"js\", \"web\"]",
+        "explanation": "web appears twice but is listed once, and the result is sorted."
+      }
+    ],
+    "constraints": "0 <= records.length <= 1000. Each record has 0 to 20 tags. Tags are non-empty lowercase strings.",
+    "starter_code": "function solve(records) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(t log t)",
+    "tags": ["set", "arrays", "sorting"],
+    "hints": [
+      "Add every tag to a Set so duplicates disappear.",
+      "Spread the Set into an array with [...set] and call .sort() on it."
+    ],
+    "reference_solution": "function solve(records) {\n    const seen = new Set();\n    for (const { tags } of records) {\n        for (const tag of tags) seen.add(tag);\n    }\n    return [...seen].sort();\n}",
+    "tests": [
+      {"input": [[{"id": 1, "tags": ["js", "web"]}, {"id": 2, "tags": ["web", "css"]}]], "output": ["css", "js", "web"], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [[{"id": 1, "tags": []}]], "output": [], "hidden": false},
+      {"input": [[{"id": 1, "tags": ["b", "a", "b"]}, {"id": 2, "tags": ["c", "a"]}]], "output": ["a", "b", "c"], "hidden": true},
+      {"input": [[{"id": 9, "tags": ["zeta"]}, {"id": 8, "tags": ["alpha", "zeta"]}]], "output": ["alpha", "zeta"], "hidden": true}
+    ]
+  },
+  {
+    "title": "Deep Merge Objects",
+    "topic": "JavaScript Objects",
+    "difficulty": "medium",
+    "description": "Given two JSON objects a and b, return a new object that merges them deeply. If a key exists in both and both values are plain objects (not arrays, not null), merge those two values recursively. In every other case where a key exists in both, the value from b wins. Arrays are replaced, never concatenated. Keys that exist in only one object are kept as they are.",
+    "examples": [
+      {
+        "input": "a = {\"a\": 1, \"b\": {\"x\": 1, \"y\": 2}}, b = {\"b\": {\"y\": 3, \"z\": 4}, \"c\": 5}",
+        "output": "{\"a\": 1, \"b\": {\"x\": 1, \"y\": 3, \"z\": 4}, \"c\": 5}",
+        "explanation": "Key b is an object in both, so it is merged: y is taken from b and z is added. Keys a and c appear only once."
+      }
+    ],
+    "constraints": "Nesting depth is at most 10. Each object has at most 50 keys per level. Values are numbers, strings, booleans, null, arrays or objects.",
+    "starter_code": "function solve(a, b) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["objects", "recursion", "merge"],
+    "hints": [
+      "Write a small helper that tells whether a value is a plain object: not null, typeof 'object', and not an array.",
+      "Copy every key of a, then for each key of b either recurse (both plain objects) or overwrite."
+    ],
+    "reference_solution": "function solve(a, b) {\n    const isPlain = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);\n    const result = {};\n    for (const key of Object.keys(a)) result[key] = a[key];\n    for (const key of Object.keys(b)) {\n        const has = Object.prototype.hasOwnProperty.call(result, key);\n        if (has && isPlain(result[key]) && isPlain(b[key])) {\n            result[key] = solve(result[key], b[key]);\n        } else {\n            result[key] = b[key];\n        }\n    }\n    return result;\n}",
+    "tests": [
+      {"input": [{"a": 1, "b": {"x": 1, "y": 2}}, {"b": {"y": 3, "z": 4}, "c": 5}], "output": {"a": 1, "b": {"x": 1, "y": 3, "z": 4}, "c": 5}, "hidden": false},
+      {"input": [{}, {}], "output": {}, "hidden": false},
+      {"input": [{"list": [1, 2]}, {"list": [3]}], "output": {"list": [3]}, "hidden": false},
+      {"input": [{"a": {"b": {"c": 1}}}, {"a": {"b": {"d": 2}}}], "output": {"a": {"b": {"c": 1, "d": 2}}}, "hidden": true},
+      {"input": [{"k": {"x": 1}, "m": null}, {"k": 5, "m": {"y": 2}}], "output": {"k": 5, "m": {"y": 2}}, "hidden": true}
+    ]
+  },
+  {
+    "title": "Flatten Nested Object Keys",
+    "topic": "JavaScript Objects",
+    "difficulty": "medium",
+    "description": "Given a nested JSON object, return a flat object whose keys are the dotted paths to each leaf value. A leaf is any value that is not a plain object; arrays and null count as leaves and are kept unchanged. Nested objects are never empty, and no key contains a dot.",
+    "examples": [
+      {
+        "input": "obj = {\"a\": 1, \"b\": {\"c\": 2, \"d\": {\"e\": 3}}}",
+        "output": "{\"a\": 1, \"b.c\": 2, \"b.d.e\": 3}",
+        "explanation": "The path to the value 3 goes through b, then d, then e."
+      }
+    ],
+    "constraints": "Nesting depth is at most 10. The object has at most 200 leaves in total. Keys are non-empty strings without dots.",
+    "starter_code": "function solve(obj) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["objects", "recursion", "flatten"],
+    "hints": [
+      "Write a recursive helper that carries the path built so far.",
+      "When a value is a plain object, recurse with path + '.' + key. Otherwise store it under the full path."
+    ],
+    "reference_solution": "function solve(obj) {\n    const result = {};\n    const walk = (node, prefix) => {\n        for (const [key, value] of Object.entries(node)) {\n            const path = prefix === '' ? key : prefix + '.' + key;\n            if (value !== null && typeof value === 'object' && !Array.isArray(value)) {\n                walk(value, path);\n            } else {\n                result[path] = value;\n            }\n        }\n    };\n    walk(obj, '');\n    return result;\n}",
+    "tests": [
+      {"input": [{"a": 1, "b": {"c": 2, "d": {"e": 3}}}], "output": {"a": 1, "b.c": 2, "b.d.e": 3}, "hidden": false},
+      {"input": [{}], "output": {}, "hidden": false},
+      {"input": [{"x": [1, 2], "y": {"z": null}}], "output": {"x": [1, 2], "y.z": null}, "hidden": false},
+      {"input": [{"a": {"b": {"c": {"d": "deep"}}}}], "output": {"a.b.c.d": "deep"}, "hidden": true},
+      {"input": [{"p": true, "q": {"r": false, "s": 0}}], "output": {"p": true, "q.r": false, "q.s": 0}, "hidden": true}
+    ]
+  }
+]

@@ -1,0 +1,321 @@
+[
+  {
+    "title": "Happy Number",
+    "topic": "Python Sets",
+    "difficulty": "medium",
+    "description": "Start with a positive integer n. Replace it with the sum of the squares of its digits, and repeat. If the process reaches 1, n is a happy number. If it loops forever in a cycle that does not include 1, it is not happy. Return True if n is happy, otherwise False.",
+    "examples": [
+      {"input": "n = 19", "output": "True", "explanation": "19 -> 82 -> 68 -> 100 -> 1."},
+      {"input": "n = 2", "output": "False", "explanation": "2 -> 4 -> 16 -> 37 -> 58 -> 89 -> 145 -> 42 -> 20 -> 4, which loops without reaching 1."}
+    ],
+    "constraints": "1 <= n <= 2^31 - 1",
+    "starter_code": "def solve(n):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "About O(log n) time per step, O(1) extra space in practice",
+    "tags": ["set", "cycle detection", "math"],
+    "hints": [
+      "Write a small step: turn n into the sum of the squares of its digits.",
+      "If a number appears a second time, you are in a loop and it will never reach 1.",
+      "Keep a set of numbers you have already seen. Stop when n == 1 (happy) or when n is already in the set (not happy)."
+    ],
+    "reference_solution": "def solve(n):\n    seen = set()\n    while n != 1 and n not in seen:\n        seen.add(n)\n        n = sum(int(d) ** 2 for d in str(n))\n    return n == 1\n",
+    "tests": [
+      {"input": [19], "output": true, "hidden": false},
+      {"input": [2], "output": false, "hidden": false},
+      {"input": [1], "output": true, "hidden": true},
+      {"input": [7], "output": true, "hidden": true},
+      {"input": [116], "output": false, "hidden": true},
+      {"input": [100], "output": true, "hidden": true}
+    ]
+  },
+  {
+    "title": "Pairs With Given Difference",
+    "topic": "Python Sets",
+    "difficulty": "medium",
+    "description": "Given a list of integers nums and a non-negative integer k, return the number of unique pairs of values (a, b) such that b - a == k. Count pairs by value, not by position, so repeated numbers do not create extra pairs. When k is 0, a pair means a value that appears at least twice, and each such value counts once.",
+    "examples": [
+      {"input": "nums = [1, 5, 3, 4, 2], k = 2", "output": "3", "explanation": "The pairs are (1, 3), (2, 4) and (3, 5)."},
+      {"input": "nums = [1, 1, 1, 1], k = 0", "output": "1", "explanation": "Only the value 1 appears at least twice."}
+    ],
+    "constraints": "1 <= len(nums) <= 10^5; -10^7 <= nums[i] <= 10^7; 0 <= k <= 10^7",
+    "starter_code": "def solve(nums, k):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time, O(n) space",
+    "tags": ["set", "hash map", "counting"],
+    "hints": [
+      "Duplicates should not count twice, so think about the set of distinct values.",
+      "For k > 0, a value x starts a pair if x + k is also in the set.",
+      "For k == 0 you need to know how many times each value appears. Count the values whose count is at least 2."
+    ],
+    "reference_solution": "from collections import Counter\n\ndef solve(nums, k):\n    counts = Counter(nums)\n    if k == 0:\n        return sum(1 for c in counts.values() if c >= 2)\n    return sum(1 for x in counts if x + k in counts)\n",
+    "tests": [
+      {"input": [[1, 5, 3, 4, 2], 2], "output": 3, "hidden": false},
+      {"input": [[1, 1, 1, 1], 0], "output": 1, "hidden": false},
+      {"input": [[1, 3, 1, 5, 4], 0], "output": 1, "hidden": true},
+      {"input": [[3, 1, 4, 1, 5], 2], "output": 2, "hidden": true},
+      {"input": [[10], 5], "output": 0, "hidden": true},
+      {"input": [[-1, -3, -5, 1, 3], 2], "output": 4, "hidden": true}
+    ]
+  },
+  {
+    "title": "Count Primes Below N",
+    "topic": "Python Numbers",
+    "difficulty": "medium",
+    "description": "Given a non-negative integer n, return how many prime numbers are strictly less than n. A prime is a number greater than 1 that has no divisors other than 1 and itself. Checking every number one by one is too slow for large n, so try the Sieve of Eratosthenes.",
+    "examples": [
+      {"input": "n = 10", "output": "4", "explanation": "The primes below 10 are 2, 3, 5 and 7."},
+      {"input": "n = 20", "output": "8", "explanation": "The primes below 20 are 2, 3, 5, 7, 11, 13, 17 and 19."}
+    ],
+    "constraints": "0 <= n <= 10^6",
+    "starter_code": "def solve(n):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log log n) time, O(n) space",
+    "tags": ["sieve", "primes", "math"],
+    "hints": [
+      "Make a list of True values, one for each number from 0 to n - 1. Set 0 and 1 to False.",
+      "For each number i that is still True, mark its multiples i*i, i*i + i, i*i + 2i, ... as False.",
+      "You only need to do this while i * i < n. At the end, count the True values."
+    ],
+    "reference_solution": "def solve(n):\n    if n < 3:\n        return 0\n    sieve = [True] * n\n    sieve[0] = sieve[1] = False\n    i = 2\n    while i * i < n:\n        if sieve[i]:\n            for j in range(i * i, n, i):\n                sieve[j] = False\n        i += 1\n    return sum(sieve)\n",
+    "tests": [
+      {"input": [10], "output": 4, "hidden": false},
+      {"input": [20], "output": 8, "hidden": false},
+      {"input": [2], "output": 0, "hidden": true},
+      {"input": [30], "output": 10, "hidden": true},
+      {"input": [100], "output": 25, "hidden": true},
+      {"input": [1000], "output": 168, "hidden": true}
+    ]
+  },
+  {
+    "title": "Integer to Roman",
+    "topic": "Python Conditions",
+    "difficulty": "medium",
+    "description": "Convert an integer num to a Roman numeral string. Use the standard symbols I=1, V=5, X=10, L=50, C=100, D=500, M=1000, and the subtractive forms IV=4, IX=9, XL=40, XC=90, CD=400, CM=900. Write the numeral with the largest possible symbols first.",
+    "examples": [
+      {"input": "num = 58", "output": "LVIII", "explanation": "L = 50, V = 5, III = 3."},
+      {"input": "num = 1994", "output": "MCMXCIV", "explanation": "M = 1000, CM = 900, XC = 90, IV = 4."}
+    ],
+    "constraints": "1 <= num <= 3999",
+    "starter_code": "def solve(num):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(1) time, O(1) space",
+    "tags": ["greedy", "strings", "conversion"],
+    "hints": [
+      "Make a list of (value, symbol) pairs from largest to smallest, including the special ones like (900, 'CM') and (4, 'IV').",
+      "Go through the list. While num is at least the current value, add the symbol to the answer and subtract the value.",
+      "Join the collected symbols into one string at the end."
+    ],
+    "reference_solution": "def solve(num):\n    values = [(1000, 'M'), (900, 'CM'), (500, 'D'), (400, 'CD'), (100, 'C'), (90, 'XC'), (50, 'L'), (40, 'XL'), (10, 'X'), (9, 'IX'), (5, 'V'), (4, 'IV'), (1, 'I')]\n    result = []\n    for value, symbol in values:\n        while num >= value:\n            result.append(symbol)\n            num -= value\n    return ''.join(result)\n",
+    "tests": [
+      {"input": [3], "output": "III", "hidden": false},
+      {"input": [58], "output": "LVIII", "hidden": false},
+      {"input": [1994], "output": "MCMXCIV", "hidden": true},
+      {"input": [4], "output": "IV", "hidden": true},
+      {"input": [3999], "output": "MMMCMXCIX", "hidden": true},
+      {"input": [444], "output": "CDXLIV", "hidden": true}
+    ]
+  },
+  {
+    "title": "Spiral Matrix Order",
+    "topic": "Python Loops",
+    "difficulty": "medium",
+    "description": "Given a matrix (a list of rows) with m rows and n columns, return all its elements in spiral order as one flat list. Start at the top-left cell and move clockwise: right along the top row, down the right column, left along the bottom row, then up the left column, and then continue inside.",
+    "examples": [
+      {"input": "matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]", "output": "[1, 2, 3, 6, 9, 8, 7, 4, 5]", "explanation": "Go around the outside first, then the middle cell."},
+      {"input": "matrix = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]", "output": "[1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]", "explanation": "After the outer ring, the inner row 6, 7 is read."}
+    ],
+    "constraints": "1 <= m, n <= 10; -100 <= matrix[i][j] <= 100",
+    "starter_code": "def solve(matrix):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(m * n) time, O(1) extra space",
+    "tags": ["matrix", "simulation", "loops"],
+    "hints": [
+      "Keep four boundaries: top, bottom, left and right.",
+      "Read the top row, then move top down by one. Read the right column, then move right left by one.",
+      "Before reading the bottom row and the left column, check that top <= bottom and left <= right, so a single row or column is not read twice."
+    ],
+    "reference_solution": "def solve(matrix):\n    if not matrix:\n        return []\n    result = []\n    top, bottom = 0, len(matrix) - 1\n    left, right = 0, len(matrix[0]) - 1\n    while top <= bottom and left <= right:\n        for c in range(left, right + 1):\n            result.append(matrix[top][c])\n        top += 1\n        for r in range(top, bottom + 1):\n            result.append(matrix[r][right])\n        right -= 1\n        if top <= bottom:\n            for c in range(right, left - 1, -1):\n                result.append(matrix[bottom][c])\n            bottom -= 1\n        if left <= right:\n            for r in range(bottom, top - 1, -1):\n                result.append(matrix[r][left])\n            left += 1\n    return result\n",
+    "tests": [
+      {"input": [[[1, 2, 3], [4, 5, 6], [7, 8, 9]]], "output": [1, 2, 3, 6, 9, 8, 7, 4, 5], "hidden": false},
+      {"input": [[[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]], "output": [1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7], "hidden": false},
+      {"input": [[[1]]], "output": [1], "hidden": true},
+      {"input": [[[1, 2, 3]]], "output": [1, 2, 3], "hidden": true},
+      {"input": [[[1], [2], [3]]], "output": [1, 2, 3], "hidden": true},
+      {"input": [[[1, 2], [3, 4], [5, 6]]], "output": [1, 2, 4, 6, 5, 3], "hidden": true}
+    ]
+  },
+  {
+    "title": "Binomial Coefficient Modulo",
+    "topic": "Python Numbers",
+    "difficulty": "hard",
+    "description": "Given integers n and k with 0 <= k <= n, return C(n, k) modulo 1000000007, where C(n, k) = n! / (k! * (n - k)!) is the number of ways to choose k items from n. The exact value can be huge, so you must reduce with the modulus while you compute. Because 1000000007 is prime, you can divide by using a modular inverse (Fermat's little theorem).",
+    "examples": [
+      {"input": "n = 5, k = 2", "output": "10", "explanation": "C(5, 2) = 5 * 4 / (2 * 1) = 10."},
+      {"input": "n = 10, k = 3", "output": "120", "explanation": "C(10, 3) = 10 * 9 * 8 / 6 = 120."}
+    ],
+    "constraints": "0 <= k <= n <= 10^6",
+    "starter_code": "def solve(n, k):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(k log MOD) time, O(1) space",
+    "tags": ["modular arithmetic", "combinatorics", "math"],
+    "hints": [
+      "C(n, k) equals C(n, n - k), so you can replace k by min(k, n - k) to do fewer steps.",
+      "The numerator is n * (n - 1) * ... * (n - k + 1) and the denominator is k!. Take both modulo 1000000007 at every multiplication.",
+      "For the division, multiply by pow(denominator, MOD - 2, MOD), which is the modular inverse when MOD is prime."
+    ],
+    "reference_solution": "MOD = 10 ** 9 + 7\n\ndef solve(n, k):\n    k = min(k, n - k)\n    num = 1\n    den = 1\n    for i in range(k):\n        num = num * (n - i) % MOD\n        den = den * (i + 1) % MOD\n    return num * pow(den, MOD - 2, MOD) % MOD\n",
+    "tests": [
+      {"input": [5, 2], "output": 10, "hidden": false},
+      {"input": [10, 3], "output": 120, "hidden": false},
+      {"input": [52, 5], "output": 2598960, "hidden": true},
+      {"input": [40, 20], "output": 846527861, "hidden": true},
+      {"input": [34, 17], "output": 333606206, "hidden": true},
+      {"input": [1000000, 999999], "output": 1000000, "hidden": true}
+    ]
+  },
+  {
+    "title": "Number to English Words",
+    "topic": "Python Basics",
+    "difficulty": "hard",
+    "description": "Convert a non-negative integer num into its English words. Use capitalized words separated by single spaces, and do not use 'and' or hyphens. For example, 123 becomes 'One Hundred Twenty Three'. The number 0 becomes 'Zero'. Numbers up to 999999 must be supported, so you will need the word 'Thousand'.",
+    "examples": [
+      {"input": "num = 123", "output": "One Hundred Twenty Three", "explanation": "1 hundred, 2 tens (Twenty) and 3 ones."},
+      {"input": "num = 12345", "output": "Twelve Thousand Three Hundred Forty Five", "explanation": "The thousands part is 12, the rest is 345."}
+    ],
+    "constraints": "0 <= num <= 999999",
+    "starter_code": "def solve(num):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(1) time, O(1) space",
+    "tags": ["strings", "math", "conversion"],
+    "hints": [
+      "Handle 0 first, because it is the only number that has no other words.",
+      "Write a helper that turns a number from 1 to 999 into words: hundreds, then tens, then ones (numbers 1 to 19 have their own words).",
+      "Split num into num // 1000 and num % 1000. Convert each part with the helper, add 'Thousand' after the first part when it is not empty, and join with spaces."
+    ],
+    "reference_solution": "ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen']\ntens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety']\n\ndef three(n):\n    words = []\n    if n >= 100:\n        words += [ones[n // 100], 'Hundred']\n        n %= 100\n    if n >= 20:\n        words.append(tens[n // 10])\n        n %= 10\n    if n > 0:\n        words.append(ones[n])\n    return words\n\ndef solve(num):\n    if num == 0:\n        return 'Zero'\n    words = []\n    if num >= 1000:\n        words += three(num // 1000) + ['Thousand']\n    words += three(num % 1000)\n    return ' '.join(words)\n",
+    "tests": [
+      {"input": [123], "output": "One Hundred Twenty Three", "hidden": false},
+      {"input": [0], "output": "Zero", "hidden": false},
+      {"input": [12345], "output": "Twelve Thousand Three Hundred Forty Five", "hidden": true},
+      {"input": [100000], "output": "One Hundred Thousand", "hidden": true},
+      {"input": [999999], "output": "Nine Hundred Ninety Nine Thousand Nine Hundred Ninety Nine", "hidden": true},
+      {"input": [1010], "output": "One Thousand Ten", "hidden": true}
+    ]
+  },
+  {
+    "title": "Basic Calculator With Parentheses",
+    "topic": "Python Functions",
+    "difficulty": "hard",
+    "description": "Given a string expression, evaluate it and return the result as an integer. The expression contains non-negative integers, the operators + - * /, parentheses, and optional spaces. There are no unary operators (no '-3' or '(-3)'). Normal precedence applies: parentheses first, then * and /, then + and -. Integer division truncates toward zero (7 / 2 = 3 and -7 / 2 = -3). You can assume the expression is valid and never divides by zero.",
+    "examples": [
+      {"input": "expression = '3+2*2'", "output": "7", "explanation": "Multiplication comes first: 3 + 4 = 7."},
+      {"input": "expression = '2*(5+5*2)/3+(6/2+8)'", "output": "21", "explanation": "2 * 15 / 3 = 10, and (3 + 8) = 11, so the total is 21."}
+    ],
+    "constraints": "1 <= len(expression) <= 500; numbers fit in a normal integer; the expression is valid",
+    "starter_code": "def solve(expression):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time, O(n) space",
+    "tags": ["parsing", "recursion", "stack", "expressions"],
+    "hints": [
+      "Remove the spaces first. Then split the work into three small functions: one for + and -, one for * and /, and one for a number or a parenthesized group.",
+      "The + and - function calls the * and / function to get each term. The * and / function calls the number/parentheses function to get each factor.",
+      "When the number/parentheses function sees '(', it calls the + and - function again, then skips the ')'. For division, compute abs(a) // abs(b) and give it the correct sign to truncate toward zero."
+    ],
+    "reference_solution": "def solve(expression):\n    s = expression.replace(' ', '')\n    pos = [0]\n\n    def parse_expr():\n        val = parse_term()\n        while pos[0] < len(s) and s[pos[0]] in '+-':\n            op = s[pos[0]]\n            pos[0] += 1\n            rhs = parse_term()\n            val = val + rhs if op == '+' else val - rhs\n        return val\n\n    def parse_term():\n        val = parse_factor()\n        while pos[0] < len(s) and s[pos[0]] in '*/':\n            op = s[pos[0]]\n            pos[0] += 1\n            rhs = parse_factor()\n            if op == '*':\n                val *= rhs\n            else:\n                q = abs(val) // abs(rhs)\n                val = q if (val >= 0) == (rhs >= 0) else -q\n        return val\n\n    def parse_factor():\n        if s[pos[0]] == '(':\n            pos[0] += 1\n            val = parse_expr()\n            pos[0] += 1\n            return val\n        start = pos[0]\n        while pos[0] < len(s) and s[pos[0]].isdigit():\n            pos[0] += 1\n        return int(s[start:pos[0]])\n\n    return parse_expr()\n",
+    "tests": [
+      {"input": ["3+2*2"], "output": 7, "hidden": false},
+      {"input": ["2*(5+5*2)/3+(6/2+8)"], "output": 21, "hidden": false},
+      {"input": [" 3/2 "], "output": 1, "hidden": true},
+      {"input": ["(1-4)/2"], "output": -1, "hidden": true},
+      {"input": ["10-(2+3)*(4-1)"], "output": -5, "hidden": true},
+      {"input": ["2*(3+(4-1)*2)"], "output": 18, "hidden": true}
+    ]
+  },
+  {
+    "title": "Reverse Nodes in K-Group",
+    "topic": "Python Linked Lists",
+    "difficulty": "hard",
+    "description": "A linked list is given as a plain list of node values, from head to tail. Reverse the nodes of the list k at a time and return the new list of values. If the number of nodes left at the end is less than k, leave those last nodes in their original order. Only the order of nodes changes, never the values.",
+    "examples": [
+      {"input": "values = [1, 2, 3, 4, 5], k = 2", "output": "[2, 1, 4, 3, 5]", "explanation": "Groups (1, 2) and (3, 4) are reversed. The last node 5 is alone, so it stays."},
+      {"input": "values = [1, 2, 3, 4, 5], k = 3", "output": "[3, 2, 1, 4, 5]", "explanation": "Only (1, 2, 3) is a full group. The last two nodes stay as they are."}
+    ],
+    "constraints": "1 <= len(values) <= 5000; 1 <= k <= 5000; 0 <= values[i] <= 1000",
+    "starter_code": "def solve(values, k):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n) time, O(n) space for the returned list",
+    "tags": ["linked list", "reversal", "groups"],
+    "hints": [
+      "Work out how many full groups of k there are: len(values) // k. Only the first full * k values get reversed.",
+      "Process the list in steps of k. Reverse each slice values[i:i + k] and add it to the answer.",
+      "After the last full group, add the remaining values without changing them."
+    ],
+    "reference_solution": "def solve(values, k):\n    result = []\n    full = len(values) // k * k\n    for i in range(0, full, k):\n        result.extend(reversed(values[i:i + k]))\n    result.extend(values[full:])\n    return result\n",
+    "tests": [
+      {"input": [[1, 2, 3, 4, 5], 2], "output": [2, 1, 4, 3, 5], "hidden": false},
+      {"input": [[1, 2, 3, 4, 5], 3], "output": [3, 2, 1, 4, 5], "hidden": false},
+      {"input": [[1], 1], "output": [1], "hidden": true},
+      {"input": [[1, 2, 3, 4], 4], "output": [4, 3, 2, 1], "hidden": true},
+      {"input": [[1, 2, 3], 5], "output": [1, 2, 3], "hidden": true},
+      {"input": [[1, 2, 3, 4, 5, 6, 7], 3], "output": [3, 2, 1, 6, 5, 4, 7], "hidden": true}
+    ]
+  },
+  {
+    "title": "Word Break Sentences",
+    "topic": "Python Recursion",
+    "difficulty": "hard",
+    "description": "Given a string s and a list of distinct words, return every sentence that can be made by splitting s into a sequence of dictionary words. A word may be used more than once. Each sentence is the words joined by single spaces. Return the sentences sorted in ascending order as strings. If s cannot be split, return an empty list.",
+    "examples": [
+      {"input": "s = 'catsanddog', words = ['cat', 'cats', 'and', 'sand', 'dog']", "output": "['cat sand dog', 'cats and dog']", "explanation": "There are two valid ways to split the string. They are listed in ascending string order."},
+      {"input": "s = 'catsandog', words = ['cats', 'dog', 'sand', 'and', 'cat']", "output": "[]", "explanation": "No way to split the whole string exists."}
+    ],
+    "constraints": "1 <= len(s) <= 20; 1 <= len(words) <= 30; words are distinct, lowercase, and 1 to 10 letters long",
+    "starter_code": "def solve(s, words):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "Exponential in the worst case; memoization helps",
+    "tags": ["recursion", "backtracking", "memoization", "strings"],
+    "hints": [
+      "Write a recursive function dfs(i) that returns all sentences for the part of s that starts at index i.",
+      "Try every end position j. If s[i:j] is a word, combine it with each sentence returned by dfs(j). When i reaches len(s), return a list with one empty sentence.",
+      "Save the result for each i in a dictionary so you do not repeat work. Sort the final list before returning it."
+    ],
+    "reference_solution": "def solve(s, words):\n    wordset = set(words)\n    maxlen = max(len(w) for w in words) if words else 0\n    memo = {}\n\n    def dfs(i):\n        if i == len(s):\n            return ['']\n        if i in memo:\n            return memo[i]\n        res = []\n        for j in range(i + 1, min(len(s), i + maxlen) + 1):\n            w = s[i:j]\n            if w in wordset:\n                for rest in dfs(j):\n                    res.append(w if rest == '' else w + ' ' + rest)\n        memo[i] = res\n        return res\n\n    return sorted(dfs(0))\n",
+    "tests": [
+      {"input": ["catsanddog", ["cat", "cats", "and", "sand", "dog"]], "output": ["cat sand dog", "cats and dog"], "hidden": false},
+      {"input": ["pineapplepenapple", ["apple", "pen", "applepen", "pine", "pineapple"]], "output": ["pine apple pen apple", "pine applepen apple", "pineapple pen apple"], "hidden": false},
+      {"input": ["catsandog", ["cats", "dog", "sand", "and", "cat"]], "output": [], "hidden": true},
+      {"input": ["a", ["a"]], "output": ["a"], "hidden": true},
+      {"input": ["aaa", ["a", "aa"]], "output": ["a a a", "a aa", "aa a"], "hidden": true},
+      {"input": ["abcd", ["a", "abc", "b", "cd"]], "output": ["a b cd"], "hidden": true}
+    ]
+  },
+  {
+    "title": "Split Array Largest Sum",
+    "topic": "Python Searching",
+    "difficulty": "hard",
+    "description": "Given a list nums of non-negative integers and an integer k, split nums into exactly k non-empty contiguous parts. Each part has a sum. Return the smallest possible value of the largest part sum, over all ways to split. Hint: binary search on the answer instead of trying every split.",
+    "examples": [
+      {"input": "nums = [7, 2, 5, 10, 8], k = 2", "output": "18", "explanation": "Split into [7, 2, 5] and [10, 8]. The sums are 14 and 18, so the largest is 18. No split does better."},
+      {"input": "nums = [1, 2, 3, 4, 5], k = 2", "output": "9", "explanation": "Split into [1, 2, 3] and [4, 5]. The sums are 6 and 9."}
+    ],
+    "constraints": "1 <= len(nums) <= 1000; 0 <= nums[i] <= 10^6; 1 <= k <= len(nums)",
+    "starter_code": "def solve(nums, k):\n    # Write your code here\n    pass\n",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log(sum)) time, O(1) space",
+    "tags": ["binary search", "greedy", "binary search on answer"],
+    "hints": [
+      "The answer is at least max(nums) and at most sum(nums). Binary search between those two values.",
+      "For a guess 'limit', walk through nums and start a new part whenever adding the next number would go above limit. Count the parts.",
+      "If the count is at most k, the limit is big enough, so try smaller. Otherwise try bigger."
+    ],
+    "reference_solution": "def solve(nums, k):\n    lo, hi = max(nums), sum(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        parts = 1\n        cur = 0\n        for x in nums:\n            if cur + x > mid:\n                parts += 1\n                cur = x\n            else:\n                cur += x\n        if parts <= k:\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\n",
+    "tests": [
+      {"input": [[7, 2, 5, 10, 8], 2], "output": 18, "hidden": false},
+      {"input": [[1, 2, 3, 4, 5], 2], "output": 9, "hidden": false},
+      {"input": [[1, 4, 4], 3], "output": 4, "hidden": true},
+      {"input": [[2, 3, 1, 2, 4, 3], 5], "output": 4, "hidden": true},
+      {"input": [[1, 2, 3, 4, 5], 1], "output": 15, "hidden": true},
+      {"input": [[7, 2, 5, 10, 8], 3], "output": 14, "hidden": true}
+    ]
+  }
+]

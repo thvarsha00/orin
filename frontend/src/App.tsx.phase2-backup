@@ -1,0 +1,39 @@
+import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { AppLayout } from "./layouts/AppLayout";
+import { ComingSoon } from "./components/ComingSoon";
+import AuthPage from "./pages/AuthPage";
+import Dashboard from "./pages/Dashboard";
+import Tutor from "./pages/Tutor";
+import Documents from "./pages/Documents";
+import DocumentChat from "./pages/DocumentChat";
+import Settings from "./pages/Settings";
+
+const Practice = () => <ComingSoon title="Practice" phase="Phase 8" note="Coding problems, the Monaco editor and test results land here." />;
+const PracticeDetail = () => { const { id } = useParams(); return <ComingSoon title={`Problem #${id}`} phase="Phase 8" note="Problem statement, editor, hints and AI feedback." />; };
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<AuthPage mode="login" />} />
+          <Route path="/register" element={<AuthPage mode="register" />} />
+          <Route element={<AppLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/tutor" element={<Tutor />} />
+            <Route path="/code" element={<ComingSoon title="Orin Code" phase="Phase 6" note="Explain, debug and review your code." />} />
+            <Route path="/practice" element={<Practice />} />
+            <Route path="/practice/:id" element={<PracticeDetail />} />
+            <Route path="/documents" element={<Documents />} />
+            <Route path="/documents/ask" element={<DocumentChat />} />
+            <Route path="/documents/:id/ask" element={<DocumentChat />} />
+            <Route path="/progress" element={<ComingSoon title="Progress" phase="Phase 9" note="Topic mastery, weak topics and recommendations." />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}

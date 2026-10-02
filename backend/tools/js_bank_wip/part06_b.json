@@ -1,0 +1,272 @@
+[
+  {
+    "title": "Text Editor Undo/Redo Simulation",
+    "topic": "JavaScript Stacks",
+    "difficulty": "medium",
+    "description": "Simulate a text editor that starts with empty text. Each operation is [\"type\", text] (append text to the end), [\"delete\", n] (remove the last n characters, or everything if there are fewer than n), [\"undo\"], [\"redo\"] or [\"read\"]. Every type and delete is one action, even if it changes nothing. Undo reverts the latest action that has not been undone, and does nothing if there is none. Redo re-applies the most recently undone action, and does nothing if there is none. A new type or delete discards everything that could still have been redone. Return the text at each read, in order.",
+    "examples": [
+      {
+        "input": "operations = [[\"type\", \"ab\"], [\"type\", \"cd\"], [\"read\"], [\"undo\"], [\"read\"], [\"redo\"], [\"read\"], [\"delete\", 1], [\"read\"]]",
+        "output": "[\"abcd\", \"ab\", \"abcd\", \"abc\"]",
+        "explanation": "Undo removes cd, redo brings it back, and delete 1 removes the final d."
+      }
+    ],
+    "constraints": "0 <= operations.length <= 1000. Typed text has 1 to 20 lowercase letters. 0 <= n <= 20.",
+    "starter_code": "function solve(operations) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(total characters)",
+    "tags": ["stack", "design", "simulation", "undo-redo"],
+    "hints": [
+      "Keep an undo stack of past actions and a redo stack of undone actions, or simply a list of text snapshots with a pointer to the current one.",
+      "Undo and redo only move between snapshots. A new type or delete cuts off everything after the pointer before adding the new snapshot."
+    ],
+    "reference_solution": "function solve(operations) {\n    const history = [''];\n    let at = 0;\n    const out = [];\n    for (const op of operations) {\n        if (op[0] === 'type') {\n            history.length = at + 1;\n            history.push(history[at] + op[1]);\n            at += 1;\n        } else if (op[0] === 'delete') {\n            history.length = at + 1;\n            const cur = history[at];\n            history.push(op[1] >= cur.length ? '' : cur.slice(0, cur.length - op[1]));\n            at += 1;\n        } else if (op[0] === 'undo') {\n            if (at > 0) at -= 1;\n        } else if (op[0] === 'redo') {\n            if (at < history.length - 1) at += 1;\n        } else {\n            out.push(history[at]);\n        }\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [[["type", "ab"], ["type", "cd"], ["read"], ["undo"], ["read"], ["redo"], ["read"], ["delete", 1], ["read"]]], "output": ["abcd", "ab", "abcd", "abc"], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [[["read"]]], "output": [""], "hidden": false},
+      {"input": [[["type", "a"], ["undo"], ["type", "b"], ["redo"], ["read"]]], "output": ["b"], "hidden": true},
+      {"input": [[["type", "hello"], ["delete", 2], ["undo"], ["undo"], ["undo"], ["read"], ["redo"], ["redo"], ["redo"], ["read"]]], "output": ["", "hel"], "hidden": true}
+    ]
+  },
+  {
+    "title": "Circular Queue Simulation",
+    "topic": "JavaScript Queues",
+    "difficulty": "medium",
+    "description": "Simulate a queue with a fixed capacity that reuses its space (a circular queue). Each operation is [\"enqueue\", x] (add x at the back and return true, or return false if the queue is full), [\"dequeue\"] (remove the front item and return true, or return false if the queue is empty), [\"front\"] (the front item, or -1 if empty), [\"rear\"] (the back item, or -1 if empty), [\"isEmpty\"] or [\"isFull\"]. Return the result of every operation, in order.",
+    "examples": [
+      {
+        "input": "capacity = 2, operations = [[\"enqueue\", 1], [\"enqueue\", 2], [\"enqueue\", 3], [\"dequeue\"], [\"enqueue\", 3], [\"rear\"]]",
+        "output": "[true, true, false, true, true, 3]",
+        "explanation": "The third enqueue fails because the queue is full. After a dequeue there is room again, and 3 becomes the rear."
+      }
+    ],
+    "constraints": "1 <= capacity <= 100. 0 <= operations.length <= 1000. Items are integers between 0 and 10^6.",
+    "starter_code": "function solve(capacity, operations) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(1) per operation",
+    "tags": ["queue", "design", "circular-buffer", "simulation"],
+    "hints": [
+      "Use a fixed-size array, a head index and a size counter.",
+      "The back position is (head + size) % capacity. Dequeue moves head forward by one with the same wrap-around."
+    ],
+    "reference_solution": "function solve(capacity, operations) {\n    const buf = new Array(capacity).fill(0);\n    let head = 0;\n    let size = 0;\n    const out = [];\n    for (const op of operations) {\n        const type = op[0];\n        if (type === 'enqueue') {\n            if (size === capacity) {\n                out.push(false);\n            } else {\n                buf[(head + size) % capacity] = op[1];\n                size += 1;\n                out.push(true);\n            }\n        } else if (type === 'dequeue') {\n            if (size === 0) {\n                out.push(false);\n            } else {\n                head = (head + 1) % capacity;\n                size -= 1;\n                out.push(true);\n            }\n        } else if (type === 'front') {\n            out.push(size === 0 ? -1 : buf[head]);\n        } else if (type === 'rear') {\n            out.push(size === 0 ? -1 : buf[(head + size - 1) % capacity]);\n        } else if (type === 'isEmpty') {\n            out.push(size === 0);\n        } else {\n            out.push(size === capacity);\n        }\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [3, [["enqueue", 1], ["enqueue", 2], ["enqueue", 3], ["enqueue", 4], ["rear"], ["isFull"], ["dequeue"], ["enqueue", 4], ["rear"], ["front"]]], "output": [true, true, true, false, 3, true, true, true, 4, 2], "hidden": false},
+      {"input": [2, [["front"], ["rear"], ["isEmpty"], ["dequeue"]]], "output": [-1, -1, true, false], "hidden": false},
+      {"input": [1, [["enqueue", 7], ["isFull"], ["dequeue"], ["isEmpty"], ["front"]]], "output": [true, true, true, true, -1], "hidden": false},
+      {"input": [2, [["enqueue", 1], ["enqueue", 2], ["dequeue"], ["enqueue", 3], ["front"], ["rear"], ["isFull"]]], "output": [true, true, true, true, 2, 3, true], "hidden": true},
+      {"input": [3, [["enqueue", 1], ["enqueue", 2], ["enqueue", 3], ["dequeue"], ["dequeue"], ["enqueue", 4], ["enqueue", 5], ["front"], ["rear"], ["isFull"], ["enqueue", 6]]], "output": [true, true, true, true, true, true, true, 3, 5, true, false], "hidden": true}
+    ]
+  },
+  {
+    "title": "Sort Words by Custom Alphabet",
+    "topic": "JavaScript Sorting",
+    "difficulty": "medium",
+    "description": "You are given an array of words and a string order of 26 distinct lowercase letters, which defines a new alphabet order (the first letter of order is the smallest). Return the words sorted in that order. When one word is a prefix of another, the shorter word comes first. Equal words keep their original order.",
+    "examples": [
+      {
+        "input": "words = [\"word\", \"world\", \"row\"], order = \"worldabcefghijkmnpqstuvxyz\"",
+        "output": "[\"world\", \"word\", \"row\"]",
+        "explanation": "In this alphabet w < o < r < l < d. world and word share wor, and then l comes before d. row starts with r, which comes after w."
+      }
+    ],
+    "constraints": "0 <= words.length <= 1000. Each word has 1 to 20 lowercase letters. order contains each of the 26 lowercase letters exactly once.",
+    "starter_code": "function solve(words, order) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n * k)",
+    "tags": ["sorting", "comparator", "strings", "custom-order"],
+    "hints": [
+      "Build an object that maps each letter to its position in order.",
+      "In the comparator, find the first position where the words differ and compare the ranks of those two letters. If one word is a prefix of the other, compare lengths."
+    ],
+    "reference_solution": "function solve(words, order) {\n    const rank = {};\n    for (let i = 0; i < order.length; i++) rank[order[i]] = i;\n    const compare = (a, b) => {\n        const n = Math.min(a.length, b.length);\n        for (let i = 0; i < n; i++) {\n            if (a[i] !== b[i]) return rank[a[i]] - rank[b[i]];\n        }\n        return a.length - b.length;\n    };\n    return [...words].sort(compare);\n}",
+    "tests": [
+      {"input": [["hello", "leetcode"], "hlabcdefgijkmnopqrstuvwxyz"], "output": ["hello", "leetcode"], "hidden": false},
+      {"input": [["word", "world", "row"], "worldabcefghijkmnpqstuvxyz"], "output": ["world", "word", "row"], "hidden": false},
+      {"input": [[], "abcdefghijklmnopqrstuvwxyz"], "output": [], "hidden": false},
+      {"input": [["apple", "app"], "abcdefghijklmnopqrstuvwxyz"], "output": ["app", "apple"], "hidden": true},
+      {"input": [["ba", "ab", "b", "a"], "zyxwvutsrqponmlkjihgfedcba"], "output": ["b", "ba", "a", "ab"], "hidden": true}
+    ]
+  },
+  {
+    "title": "Event Loop Output Order Simulation",
+    "topic": "JavaScript Queues",
+    "difficulty": "hard",
+    "description": "Simulate how a JavaScript program prints its logs. A program is an array of statements: [\"log\", text] prints the text, [\"timeout\", delay, statements] schedules a timer that runs the inner statements, and [\"microtask\", statements] queues a microtask that runs the inner statements. The main program runs first, top to bottom. After it ends, all microtasks run in the order they were queued, including microtasks queued while microtasks run, until none is left. Then the timer that is due first runs (a timer is due at the virtual time it was scheduled plus its delay, and ties go to the timer scheduled first), and the virtual time becomes its due time. After every timer, all queued microtasks run again before the next timer. Statements inside a timer or microtask follow the same rules, so they can schedule more timers and microtasks. Return the logged texts in order.",
+    "examples": [
+      {
+        "input": "program = [[\"log\", \"start\"], [\"timeout\", 0, [[\"log\", \"timeout\"]]], [\"microtask\", [[\"log\", \"micro\"]]], [\"log\", \"end\"]]",
+        "output": "[\"start\", \"end\", \"micro\", \"timeout\"]",
+        "explanation": "The main program logs start and end. Then the microtask runs, and only after that does the timer run."
+      }
+    ],
+    "constraints": "At most 100 statements in total, including nested ones. Nesting depth is at most 5. Delays are integers between 0 and 1000. Texts are non-empty strings.",
+    "starter_code": "function solve(program) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n^2)",
+    "tags": ["event-loop", "queue", "simulation", "scheduling"],
+    "hints": [
+      "Keep a log array, a FIFO microtask queue and a list of timers, each with its due time and a sequence number for tie-breaks.",
+      "Write a function that runs a list of statements, and a function that drains the microtask queue. After the main program and after each timer, drain the microtasks. Pick the next timer by smallest due time, then smallest sequence number."
+    ],
+    "reference_solution": "function solve(program) {\n    const logs = [];\n    const microtasks = [];\n    const timers = [];\n    let now = 0;\n    let seq = 0;\n    const run = (statements) => {\n        for (const st of statements) {\n            if (st[0] === 'log') {\n                logs.push(st[1]);\n            } else if (st[0] === 'timeout') {\n                timers.push({ due: now + st[1], seq: seq++, body: st[2] });\n            } else if (st[0] === 'microtask') {\n                microtasks.push(st[1]);\n            }\n        }\n    };\n    const drain = () => {\n        while (microtasks.length > 0) run(microtasks.shift());\n    };\n    run(program);\n    drain();\n    while (timers.length > 0) {\n        let best = 0;\n        for (let i = 1; i < timers.length; i++) {\n            const t = timers[i];\n            const b = timers[best];\n            if (t.due < b.due || (t.due === b.due && t.seq < b.seq)) best = i;\n        }\n        const timer = timers.splice(best, 1)[0];\n        now = timer.due;\n        run(timer.body);\n        drain();\n    }\n    return logs;\n}",
+    "tests": [
+      {"input": [[["log", "start"], ["timeout", 0, [["log", "timeout"]]], ["microtask", [["log", "micro"]]], ["log", "end"]]], "output": ["start", "end", "micro", "timeout"], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [[["timeout", 20, [["log", "B"]]], ["timeout", 10, [["log", "A"]]], ["log", "main"]]], "output": ["main", "A", "B"], "hidden": false},
+      {"input": [[["microtask", [["log", "m1"], ["microtask", [["log", "m2"]]]]], ["microtask", [["log", "m3"]]], ["log", "sync"]]], "output": ["sync", "m1", "m3", "m2"], "hidden": true},
+      {"input": [[["timeout", 5, [["log", "t5"], ["timeout", 0, [["log", "t5+0"]]], ["microtask", [["log", "mt"]]]]], ["timeout", 5, [["log", "t5b"]]], ["timeout", 3, [["log", "t3"]]]]], "output": ["t3", "t5", "mt", "t5b", "t5+0"], "hidden": true}
+    ]
+  },
+  {
+    "title": "Concurrency-Limited Task Pool Timeline",
+    "topic": "JavaScript Heaps",
+    "difficulty": "hard",
+    "description": "A pool runs tasks, with at most limit tasks running at the same time. Task i is given as [duration, deps], where deps lists the indexes of tasks that must finish before task i can start. The pool works like this: at time 0, and again whenever a task finishes, every free slot is filled with the ready task that has the smallest index, where a task is ready when all of its dependencies have finished (a task that ends at time t lets its dependents start at time t). A task with duration 0 finishes at the moment it starts. Return, for each task in input order, its [start, end] times. A task that can never start, because it is part of a dependency cycle or depends on one, gets [-1, -1].",
+    "examples": [
+      {
+        "input": "limit = 2, tasks = [[3, []], [2, []], [1, [0]]]",
+        "output": "[[0, 3], [0, 2], [3, 4]]",
+        "explanation": "Tasks 0 and 1 start at time 0. Task 2 needs task 0, which ends at time 3, so it starts at 3."
+      }
+    ],
+    "constraints": "1 <= limit <= 10. 0 <= tasks.length <= 100. 0 <= duration <= 1000. Every dependency is a valid task index different from the task itself, with no repeats.",
+    "starter_code": "function solve(limit, tasks) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n^2)",
+    "tags": ["simulation", "scheduling", "topological-sort", "greedy"],
+    "hints": [
+      "Keep the current time, the list of running tasks with their end times, and which tasks have started and finished.",
+      "At the current time, first mark the finished tasks, then start ready tasks (smallest index first) while a slot is free. Repeat this at the same time to catch zero-duration tasks, then jump to the earliest end time of a running task."
+    ],
+    "reference_solution": "function solve(limit, tasks) {\n    const n = tasks.length;\n    const result = tasks.map(() => [-1, -1]);\n    const started = new Array(n).fill(false);\n    const finished = new Array(n).fill(false);\n    let running = [];\n    let time = 0;\n    while (true) {\n        let changed = true;\n        while (changed) {\n            changed = false;\n            const still = [];\n            for (const r of running) {\n                if (r.end <= time) {\n                    finished[r.index] = true;\n                    changed = true;\n                } else {\n                    still.push(r);\n                }\n            }\n            running = still;\n            while (running.length < limit) {\n                let pick = -1;\n                for (let i = 0; i < n; i++) {\n                    if (!started[i] && tasks[i][1].every((d) => finished[d])) {\n                        pick = i;\n                        break;\n                    }\n                }\n                if (pick === -1) break;\n                started[pick] = true;\n                result[pick] = [time, time + tasks[pick][0]];\n                running.push({ index: pick, end: time + tasks[pick][0] });\n                changed = true;\n            }\n        }\n        if (running.length === 0) break;\n        time = Math.min(...running.map((r) => r.end));\n    }\n    return result;\n}",
+    "tests": [
+      {"input": [2, [[3, []], [2, []], [1, [0]]]], "output": [[0, 3], [0, 2], [3, 4]], "hidden": false},
+      {"input": [1, []], "output": [], "hidden": false},
+      {"input": [2, [[1, [1]], [1, [0]], [2, []]]], "output": [[-1, -1], [-1, -1], [0, 2]], "hidden": false},
+      {"input": [2, [[2, []], [2, []], [2, [0, 1]], [1, [2]]]], "output": [[0, 2], [0, 2], [2, 4], [4, 5]], "hidden": true},
+      {"input": [1, [[0, []], [3, [0]], [1, []]]], "output": [[0, 0], [0, 3], [3, 4]], "hidden": true}
+    ]
+  },
+  {
+    "title": "Reactive Spreadsheet Cell Recalculation",
+    "topic": "JavaScript Graphs",
+    "difficulty": "hard",
+    "description": "A spreadsheet is an object that maps cell names to definitions. A definition is either an integer, or an array [op, arg1, arg2, ...] with at least one argument, where op is \"sum\", \"product\", \"max\" or \"min\" and every argument is an integer or the name of another cell. A cell's value is op applied to the values of its arguments. A cell's value is null if any argument names a cell that does not exist or has the value null, or if the cell depends on itself through a cycle. You are given the spreadsheet and a list of updates, each [name, definition] that sets (or adds) one cell. After each update, recompute all values and report which cells changed compared with the values just before that update. A cell that did not exist before the update and exists now counts as changed, even if its value is null. Going from null to a number, or from a number to null, is a change. Return one array per update, holding the changed cell names sorted in default string order.",
+    "examples": [
+      {
+        "input": "cells = {\"A\": 1, \"B\": 2, \"C\": [\"sum\", \"A\", \"B\"]}, updates = [[\"A\", 5]]",
+        "output": "[[\"A\", \"C\"]]",
+        "explanation": "Setting A to 5 changes A itself and C (from 3 to 7). B does not depend on A."
+      }
+    ],
+    "constraints": "0 <= number of cells <= 50. 0 <= updates.length <= 50. Cell names are non-empty strings. Integers are between -1000 and 1000.",
+    "starter_code": "function solve(cells, updates) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(updates * cells * args)",
+    "tags": ["graph", "dependency", "memoization", "cycle-detection"],
+    "hints": [
+      "Write one function that computes the values of all cells with a depth-first search, remembering results and marking cells that are currently being visited so you can detect cycles.",
+      "Keep the previous values. After each update compute the new values and collect every cell whose value is different or that did not exist before, then sort the names."
+    ],
+    "reference_solution": "function solve(cells, updates) {\n    const defs = new Map(Object.entries(cells));\n    const evaluate = () => {\n        const values = new Map();\n        const state = new Map();\n        const calc = (name) => {\n            if (values.has(name)) return values.get(name);\n            if (!defs.has(name)) return null;\n            if (state.get(name) === 'visiting') return null;\n            state.set(name, 'visiting');\n            const def = defs.get(name);\n            let result;\n            if (typeof def === 'number') {\n                result = def;\n            } else {\n                const op = def[0];\n                const nums = [];\n                let ok = true;\n                for (const arg of def.slice(1)) {\n                    const v = typeof arg === 'number' ? arg : calc(arg);\n                    if (v === null) {\n                        ok = false;\n                        break;\n                    }\n                    nums.push(v);\n                }\n                if (!ok) result = null;\n                else if (op === 'sum') result = nums.reduce((a, b) => a + b, 0);\n                else if (op === 'product') result = nums.reduce((a, b) => a * b, 1);\n                else if (op === 'max') result = Math.max(...nums);\n                else result = Math.min(...nums);\n            }\n            values.set(name, result);\n            state.set(name, 'done');\n            return result;\n        };\n        for (const name of defs.keys()) calc(name);\n        return values;\n    };\n    let prev = evaluate();\n    const out = [];\n    for (const [name, def] of updates) {\n        defs.set(name, def);\n        const cur = evaluate();\n        const changed = [];\n        for (const [n, v] of cur) {\n            if (!prev.has(n) || prev.get(n) !== v) changed.push(n);\n        }\n        changed.sort();\n        out.push(changed);\n        prev = cur;\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [{"A": 1, "B": 2, "C": ["sum", "A", "B"]}, [["A", 5]]], "output": [["A", "C"]], "hidden": false},
+      {"input": [{"A": 1, "B": 2, "C": ["sum", "A", "B"]}, [["B", 2]]], "output": [[]], "hidden": false},
+      {"input": [{"A": 1}, []], "output": [], "hidden": false},
+      {"input": [{"A": 2, "B": ["product", "A", 3], "C": ["max", "B", "A", 4]}, [["A", 1], ["B", ["sum", 10]]]], "output": [["A", "B", "C"], ["B", "C"]], "hidden": true},
+      {"input": [{"A": 1, "B": ["sum", "A"]}, [["A", ["sum", "B"]], ["A", 7], ["C", ["sum", "Z"]]]], "output": [["A", "B"], ["A", "B"], ["C"]], "hidden": true}
+    ]
+  },
+  {
+    "title": "The Skyline Problem",
+    "topic": "JavaScript Intervals",
+    "difficulty": "hard",
+    "description": "Each building is [left, right, height] and stands on the ground from x = left up to (but not including) x = right. Seen from far away, the buildings form a skyline. Return its key points: the points [x, height] where the height of the skyline changes, listed from left to right, where x is the position at which the new height starts. The last key point always has height 0. A key point is only listed when the height actually changes, so two touching buildings of the same height do not produce a key point between them.",
+    "examples": [
+      {
+        "input": "buildings = [[2, 9, 10], [3, 7, 15], [5, 12, 12], [15, 20, 10], [19, 24, 8]]",
+        "output": "[[2, 10], [3, 15], [7, 12], [12, 0], [15, 10], [20, 8], [24, 0]]",
+        "explanation": "The skyline rises to 10 at x = 2, to 15 at x = 3, drops to 12 at x = 7, and falls to the ground at x = 12. The pattern repeats for the two buildings on the right."
+      }
+    ],
+    "constraints": "0 <= buildings.length <= 50. 0 <= left < right <= 10^4. 1 <= height <= 10^4. Buildings may overlap.",
+    "starter_code": "function solve(buildings) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": ["intervals", "sweep-line", "heap", "sorting"],
+    "hints": [
+      "The height can only change at a building's left or right edge, so only those x positions matter.",
+      "At each such x, the skyline height is the tallest building that covers it (left <= x < right), or 0. Record a point whenever that height differs from the previous one. A max-heap makes this fast for large inputs."
+    ],
+    "reference_solution": "function solve(buildings) {\n    const xs = [...new Set(buildings.flatMap(([l, r]) => [l, r]))].sort((a, b) => a - b);\n    const out = [];\n    let last = 0;\n    for (const x of xs) {\n        let h = 0;\n        for (const [l, r, height] of buildings) {\n            if (l <= x && x < r && height > h) h = height;\n        }\n        if (h !== last) {\n            out.push([x, h]);\n            last = h;\n        }\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [[[2, 9, 10], [3, 7, 15], [5, 12, 12], [15, 20, 10], [19, 24, 8]]], "output": [[2, 10], [3, 15], [7, 12], [12, 0], [15, 10], [20, 8], [24, 0]], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [[[0, 2, 3], [2, 5, 3]]], "output": [[0, 3], [5, 0]], "hidden": false},
+      {"input": [[[1, 2, 1], [1, 2, 2], [1, 2, 3]]], "output": [[1, 3], [2, 0]], "hidden": true},
+      {"input": [[[0, 5, 3], [1, 2, 4], [3, 4, 1]]], "output": [[0, 3], [1, 4], [2, 3], [5, 0]], "hidden": true}
+    ]
+  },
+  {
+    "title": "Word Search II",
+    "topic": "JavaScript Tries",
+    "difficulty": "hard",
+    "description": "Given a board of letters and a list of words, return every word from the list that can be built from the board. A word is built by moving between neighbouring cells (up, down, left or right), and the same cell cannot be used twice within one word. Return each found word once, sorted in default string order.",
+    "examples": [
+      {
+        "input": "board = [[\"o\", \"a\", \"a\", \"n\"], [\"e\", \"t\", \"a\", \"e\"], [\"i\", \"h\", \"k\", \"r\"], [\"i\", \"f\", \"l\", \"v\"]], words = [\"oath\", \"pea\", \"eat\", \"rain\"]",
+        "output": "[\"eat\", \"oath\"]",
+        "explanation": "oath is built along the top-left cells and eat uses the e on the right edge. pea has no p on the board, and rain cannot be traced through neighbouring cells."
+      }
+    ],
+    "constraints": "1 <= rows, cols <= 6. 0 <= words.length <= 20. Each word has 1 to 12 lowercase letters. The board contains lowercase letters only.",
+    "starter_code": "function solve(board, words) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(cells * 4^L)",
+    "tags": ["trie", "backtracking", "dfs", "grid"],
+    "hints": [
+      "Put all the words into a trie, so that one depth-first search from each cell can follow every word at once.",
+      "Prune the search when the current letter is not a child of the current trie node. Mark the cell as used while exploring from it, and unmark it when you backtrack."
+    ],
+    "reference_solution": "function solve(board, words) {\n    const rows = board.length;\n    if (rows === 0) return [];\n    const cols = board[0].length;\n    const root = { children: new Map(), word: null };\n    for (const w of words) {\n        let node = root;\n        for (const ch of w) {\n            if (!node.children.has(ch)) node.children.set(ch, { children: new Map(), word: null });\n            node = node.children.get(ch);\n        }\n        node.word = w;\n    }\n    const found = new Set();\n    const seen = board.map((row) => row.map(() => false));\n    const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];\n    const dfs = (r, c, node) => {\n        const next = node.children.get(board[r][c]);\n        if (!next) return;\n        if (next.word !== null) found.add(next.word);\n        seen[r][c] = true;\n        for (const [dr, dc] of dirs) {\n            const nr = r + dr;\n            const nc = c + dc;\n            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && !seen[nr][nc]) dfs(nr, nc, next);\n        }\n        seen[r][c] = false;\n    };\n    for (let r = 0; r < rows; r++) {\n        for (let c = 0; c < cols; c++) dfs(r, c, root);\n    }\n    return [...found].sort();\n}",
+    "tests": [
+      {"input": [[["o", "a", "a", "n"], ["e", "t", "a", "e"], ["i", "h", "k", "r"], ["i", "f", "l", "v"]], ["oath", "pea", "eat", "rain"]], "output": ["eat", "oath"], "hidden": false},
+      {"input": [[["a", "b"], ["c", "d"]], ["abcb"]], "output": [], "hidden": false},
+      {"input": [[["a"]], ["a"]], "output": ["a"], "hidden": false},
+      {"input": [[["a", "a"]], ["aaa"]], "output": [], "hidden": true},
+      {"input": [[["a", "b"], ["c", "d"]], ["ab", "cb", "ad", "bd", "ac", "ca", "da", "bc", "abdc"]], "output": ["ab", "abdc", "ac", "bd", "ca"], "hidden": true}
+    ]
+  },
+  {
+    "title": "Critical Connections in a Network",
+    "topic": "JavaScript Graphs",
+    "difficulty": "hard",
+    "description": "A network has n servers numbered 0 to n - 1, connected by undirected cables given as pairs [a, b]. A cable is critical if removing it increases the number of separate groups of servers (so some servers could no longer reach each other). Return all critical cables, each written as [smaller, larger], sorted by the first number and then the second. The network may be disconnected, and there are no repeated cables.",
+    "examples": [
+      {
+        "input": "n = 4, connections = [[0, 1], [1, 2], [2, 0], [1, 3]]",
+        "output": "[[1, 3]]",
+        "explanation": "Servers 0, 1 and 2 form a triangle, so removing any one of its cables keeps them connected. Removing [1, 3] cuts server 3 off."
+      }
+    ],
+    "constraints": "1 <= n <= 100. 0 <= connections.length <= 300. Every cable joins two different servers.",
+    "starter_code": "function solve(n, connections) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(V + E)",
+    "tags": ["graph", "dfs", "bridges", "tarjan"],
+    "hints": [
+      "For every server record its discovery time in a depth-first search, and the lowest discovery time that can be reached from its subtree using one back edge (its low value).",
+      "A tree edge from u to a child v is critical when low[v] is greater than disc[u], because the subtree of v cannot reach u or anything above it by another route. Do not treat the edge back to the parent as a back edge."
+    ],
+    "reference_solution": "function solve(n, connections) {\n    const adj = Array.from({ length: n }, () => []);\n    for (const [a, b] of connections) {\n        adj[a].push(b);\n        adj[b].push(a);\n    }\n    const disc = new Array(n).fill(-1);\n    const low = new Array(n).fill(0);\n    let timer = 0;\n    const bridges = [];\n    const dfs = (u, parent) => {\n        disc[u] = timer;\n        low[u] = timer;\n        timer += 1;\n        for (const v of adj[u]) {\n            if (v === parent) continue;\n            if (disc[v] === -1) {\n                dfs(v, u);\n                low[u] = Math.min(low[u], low[v]);\n                if (low[v] > disc[u]) bridges.push([Math.min(u, v), Math.max(u, v)]);\n            } else {\n                low[u] = Math.min(low[u], disc[v]);\n            }\n        }\n    };\n    for (let i = 0; i < n; i++) {\n        if (disc[i] === -1) dfs(i, -1);\n    }\n    bridges.sort((x, y) => x[0] - y[0] || x[1] - y[1]);\n    return bridges;\n}",
+    "tests": [
+      {"input": [4, [[0, 1], [1, 2], [2, 0], [1, 3]]], "output": [[1, 3]], "hidden": false},
+      {"input": [2, [[0, 1]]], "output": [[0, 1]], "hidden": false},
+      {"input": [3, [[0, 1], [1, 2], [2, 0]]], "output": [], "hidden": false},
+      {"input": [5, [[0, 1], [1, 2], [2, 0], [1, 3], [3, 4]]], "output": [[1, 3], [3, 4]], "hidden": true},
+      {"input": [6, [[0, 1], [1, 2], [2, 3], [3, 1], [3, 4], [4, 5]]], "output": [[0, 1], [3, 4], [4, 5]], "hidden": true}
+    ]
+  }
+]

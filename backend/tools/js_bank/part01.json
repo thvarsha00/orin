@@ -1,0 +1,1512 @@
+[
+  {
+    "title": "Sum of Array",
+    "topic": "JavaScript Basics",
+    "difficulty": "easy",
+    "description": "Given an array of numbers, return the sum of all elements. The sum of an empty array is 0.",
+    "examples": [
+      {
+        "input": "nums = [1, 2, 3, 4]",
+        "output": "10",
+        "explanation": "1 + 2 + 3 + 4 = 10"
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each number is between -10^6 and 10^6.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "arrays",
+      "loops",
+      "sum"
+    ],
+    "hints": [
+      "Keep a running total that starts at 0.",
+      "Loop over every element and add it to the total."
+    ],
+    "reference_solution": "function solve(nums) {\n    let total = 0;\n    for (const x of nums) total += x;\n    return total;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            3,
+            4
+          ]
+        ],
+        "output": 10,
+        "hidden": false
+      },
+      {
+        "input": [
+          []
+        ],
+        "output": 0,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            -2,
+            5,
+            7
+          ]
+        ],
+        "output": 10,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            100,
+            200,
+            300
+          ]
+        ],
+        "output": 600,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            -10,
+            -20,
+            -30
+          ]
+        ],
+        "output": -60,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Clamp Value",
+    "topic": "JavaScript Basics",
+    "difficulty": "easy",
+    "description": "Return n limited to the range from lo to hi (inclusive). If n is below lo return lo, if n is above hi return hi, otherwise return n.",
+    "examples": [
+      {
+        "input": "n = 15, lo = 0, hi = 10",
+        "output": "10",
+        "explanation": "15 is above the maximum, so the result is 10."
+      }
+    ],
+    "constraints": "-10^9 <= n, lo, hi <= 10^9 and lo <= hi.",
+    "starter_code": "function solve(n, lo, hi) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(1)",
+    "tags": [
+      "numbers",
+      "conditionals"
+    ],
+    "hints": [
+      "Compare n with lo first.",
+      "Then compare n with hi. If neither limit applies, return n unchanged."
+    ],
+    "reference_solution": "function solve(n, lo, hi) {\n    if (n < lo) return lo;\n    if (n > hi) return hi;\n    return n;\n}",
+    "tests": [
+      {
+        "input": [
+          5,
+          1,
+          10
+        ],
+        "output": 5,
+        "hidden": false
+      },
+      {
+        "input": [
+          -3,
+          0,
+          10
+        ],
+        "output": 0,
+        "hidden": false
+      },
+      {
+        "input": [
+          15,
+          0,
+          10
+        ],
+        "output": 10,
+        "hidden": true
+      },
+      {
+        "input": [
+          7,
+          7,
+          7
+        ],
+        "output": 7,
+        "hidden": false
+      },
+      {
+        "input": [
+          0,
+          -5,
+          -1
+        ],
+        "output": -1,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Leap Year Check",
+    "topic": "JavaScript Basics",
+    "difficulty": "easy",
+    "description": "Return true if the given year is a leap year in the Gregorian calendar. A year is a leap year if it is divisible by 4, except years divisible by 100, unless the year is also divisible by 400.",
+    "examples": [
+      {
+        "input": "year = 1900",
+        "output": "false",
+        "explanation": "1900 is divisible by 100 but not by 400."
+      },
+      {
+        "input": "year = 2000",
+        "output": "true",
+        "explanation": "2000 is divisible by 400."
+      }
+    ],
+    "constraints": "1 <= year <= 9999.",
+    "starter_code": "function solve(year) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(1)",
+    "tags": [
+      "numbers",
+      "conditionals",
+      "math"
+    ],
+    "hints": [
+      "Start with the divisible-by-4 rule.",
+      "Handle the century exceptions: divisible by 100 is not a leap year unless divisible by 400."
+    ],
+    "reference_solution": "function solve(year) {\n    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;\n}",
+    "tests": [
+      {
+        "input": [
+          2024
+        ],
+        "output": true,
+        "hidden": false
+      },
+      {
+        "input": [
+          1900
+        ],
+        "output": false,
+        "hidden": false
+      },
+      {
+        "input": [
+          2000
+        ],
+        "output": true,
+        "hidden": true
+      },
+      {
+        "input": [
+          2023
+        ],
+        "output": false,
+        "hidden": false
+      },
+      {
+        "input": [
+          2100
+        ],
+        "output": false,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Digital Root",
+    "topic": "JavaScript Basics",
+    "difficulty": "easy",
+    "description": "Repeatedly replace n with the sum of its digits until it has only one digit, then return that digit.",
+    "examples": [
+      {
+        "input": "n = 38",
+        "output": "2",
+        "explanation": "3 + 8 = 11, then 1 + 1 = 2."
+      }
+    ],
+    "constraints": "0 <= n <= 10^9.",
+    "starter_code": "function solve(n) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(log n)",
+    "tags": [
+      "numbers",
+      "loops",
+      "math"
+    ],
+    "hints": [
+      "Extract digits with n % 10 and Math.floor(n / 10).",
+      "Repeat the digit sum while the number still has two or more digits."
+    ],
+    "reference_solution": "function solve(n) {\n    while (n >= 10) {\n        let s = 0;\n        while (n > 0) {\n            s += n % 10;\n            n = Math.floor(n / 10);\n        }\n        n = s;\n    }\n    return n;\n}",
+    "tests": [
+      {
+        "input": [
+          38
+        ],
+        "output": 2,
+        "hidden": false
+      },
+      {
+        "input": [
+          0
+        ],
+        "output": 0,
+        "hidden": false
+      },
+      {
+        "input": [
+          9
+        ],
+        "output": 9,
+        "hidden": false
+      },
+      {
+        "input": [
+          999999999
+        ],
+        "output": 9,
+        "hidden": true
+      },
+      {
+        "input": [
+          12345
+        ],
+        "output": 6,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Greatest Common Divisor",
+    "topic": "JavaScript Basics",
+    "difficulty": "easy",
+    "description": "Return the greatest common divisor of two non-negative integers a and b. gcd(a, 0) is a.",
+    "examples": [
+      {
+        "input": "a = 12, b = 18",
+        "output": "6",
+        "explanation": "6 is the largest number dividing both 12 and 18."
+      }
+    ],
+    "constraints": "0 <= a, b <= 10^9 and a, b are not both 0.",
+    "starter_code": "function solve(a, b) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(log(min(a, b)))",
+    "tags": [
+      "numbers",
+      "math",
+      "loops"
+    ],
+    "hints": [
+      "Euclid's idea: gcd(a, b) equals gcd(b, a % b).",
+      "Stop when the second number becomes 0."
+    ],
+    "reference_solution": "function solve(a, b) {\n    while (b !== 0) {\n        const t = a % b;\n        a = b;\n        b = t;\n    }\n    return a;\n}",
+    "tests": [
+      {
+        "input": [
+          12,
+          18
+        ],
+        "output": 6,
+        "hidden": false
+      },
+      {
+        "input": [
+          17,
+          5
+        ],
+        "output": 1,
+        "hidden": false
+      },
+      {
+        "input": [
+          0,
+          9
+        ],
+        "output": 9,
+        "hidden": true
+      },
+      {
+        "input": [
+          100,
+          75
+        ],
+        "output": 25,
+        "hidden": false
+      },
+      {
+        "input": [
+          1000000000,
+          999999999
+        ],
+        "output": 1,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Ordinal Suffix",
+    "topic": "JavaScript Basics",
+    "difficulty": "easy",
+    "description": "Return the number followed by its English ordinal suffix, for example 1 becomes \"1st\", 2 becomes \"2nd\", 3 becomes \"3rd\" and 4 becomes \"4th\". Numbers ending in 11, 12 or 13 always use \"th\".",
+    "examples": [
+      {
+        "input": "n = 11",
+        "output": "\"11th\"",
+        "explanation": "11 is a special case and uses th."
+      },
+      {
+        "input": "n = 22",
+        "output": "\"22nd\"",
+        "explanation": "Ends in 2 and is not 12."
+      }
+    ],
+    "constraints": "0 <= n <= 10^6.",
+    "starter_code": "function solve(n) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(1)",
+    "tags": [
+      "numbers",
+      "strings",
+      "conditionals"
+    ],
+    "hints": [
+      "Look at n % 100 first to catch 11, 12 and 13.",
+      "Otherwise use n % 10: 1 is st, 2 is nd, 3 is rd, everything else is th."
+    ],
+    "reference_solution": "function solve(n) {\n    const m100 = n % 100;\n    let suffix = \"th\";\n    if (m100 < 11 || m100 > 13) {\n        const m10 = n % 10;\n        if (m10 === 1) suffix = \"st\";\n        else if (m10 === 2) suffix = \"nd\";\n        else if (m10 === 3) suffix = \"rd\";\n    }\n    return n + suffix;\n}",
+    "tests": [
+      {
+        "input": [
+          1
+        ],
+        "output": "1st",
+        "hidden": false
+      },
+      {
+        "input": [
+          11
+        ],
+        "output": "11th",
+        "hidden": false
+      },
+      {
+        "input": [
+          22
+        ],
+        "output": "22nd",
+        "hidden": true
+      },
+      {
+        "input": [
+          103
+        ],
+        "output": "103rd",
+        "hidden": true
+      },
+      {
+        "input": [
+          112
+        ],
+        "output": "112th",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Base Converter",
+    "topic": "JavaScript Basics",
+    "difficulty": "medium",
+    "description": "Convert a non-negative integer n to its representation in the given base (2 to 16). Use uppercase letters A-F for digits above 9. Do not add prefixes or leading zeros; 0 is \"0\".",
+    "examples": [
+      {
+        "input": "n = 255, base = 16",
+        "output": "\"FF\"",
+        "explanation": "255 = 15 * 16 + 15, and 15 is F."
+      }
+    ],
+    "constraints": "0 <= n <= 10^9 and 2 <= base <= 16.",
+    "starter_code": "function solve(n, base) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(log n)",
+    "tags": [
+      "numbers",
+      "strings",
+      "math"
+    ],
+    "hints": [
+      "Repeatedly take n % base to get the lowest digit.",
+      "Build the string from the right, dividing n by the base each time, and special-case 0."
+    ],
+    "reference_solution": "function solve(n, base) {\n    if (n === 0) return \"0\";\n    const digits = \"0123456789ABCDEF\";\n    let out = \"\";\n    while (n > 0) {\n        out = digits[n % base] + out;\n        n = Math.floor(n / base);\n    }\n    return out;\n}",
+    "tests": [
+      {
+        "input": [
+          10,
+          2
+        ],
+        "output": "1010",
+        "hidden": false
+      },
+      {
+        "input": [
+          255,
+          16
+        ],
+        "output": "FF",
+        "hidden": false
+      },
+      {
+        "input": [
+          0,
+          8
+        ],
+        "output": "0",
+        "hidden": true
+      },
+      {
+        "input": [
+          100,
+          7
+        ],
+        "output": "202",
+        "hidden": true
+      },
+      {
+        "input": [
+          4095,
+          16
+        ],
+        "output": "FFF",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Trailing Zeros in Factorial",
+    "topic": "JavaScript Basics",
+    "difficulty": "medium",
+    "description": "Return the number of trailing zeros in n! (n factorial). n can be large, so do not compute the factorial.",
+    "examples": [
+      {
+        "input": "n = 25",
+        "output": "6",
+        "explanation": "25! has 6 factors of 5 (5, 10, 15, 20 and 25 counts twice), giving 6 trailing zeros."
+      }
+    ],
+    "constraints": "0 <= n <= 10^9.",
+    "starter_code": "function solve(n) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(log n)",
+    "tags": [
+      "math",
+      "numbers",
+      "loops"
+    ],
+    "hints": [
+      "A trailing zero comes from a factor of 10 = 2 * 5, and factors of 2 are plentiful.",
+      "Count factors of 5: add n/5, n/25, n/125, ... (integer division)."
+    ],
+    "reference_solution": "function solve(n) {\n    let count = 0;\n    while (n >= 5) {\n        n = Math.floor(n / 5);\n        count += n;\n    }\n    return count;\n}",
+    "tests": [
+      {
+        "input": [
+          5
+        ],
+        "output": 1,
+        "hidden": false
+      },
+      {
+        "input": [
+          0
+        ],
+        "output": 0,
+        "hidden": false
+      },
+      {
+        "input": [
+          25
+        ],
+        "output": 6,
+        "hidden": false
+      },
+      {
+        "input": [
+          100
+        ],
+        "output": 24,
+        "hidden": true
+      },
+      {
+        "input": [
+          1000000000
+        ],
+        "output": 249999998,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Title Case Words",
+    "topic": "JavaScript Strings",
+    "difficulty": "easy",
+    "description": "Return the string with the first letter of every word uppercased and the remaining letters lowercased. Words are separated by single spaces; keep all spaces exactly as they appear in the input.",
+    "examples": [
+      {
+        "input": "s = \"jAVAscript IS fun\"",
+        "output": "\"Javascript Is Fun\"",
+        "explanation": "Each word starts with a capital and the rest is lowercase."
+      }
+    ],
+    "constraints": "0 <= s.length <= 1000. s contains letters and spaces only.",
+    "starter_code": "function solve(s) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "strings",
+      "split",
+      "map"
+    ],
+    "hints": [
+      "Split on \" \" so that extra spaces produce empty pieces you can keep.",
+      "For each non-empty word combine word[0].toUpperCase() with word.slice(1).toLowerCase(), then join with \" \"."
+    ],
+    "reference_solution": "function solve(s) {\n    return s.split(\" \").map(w => w ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w).join(\" \");\n}",
+    "tests": [
+      {
+        "input": [
+          "hello world"
+        ],
+        "output": "Hello World",
+        "hidden": false
+      },
+      {
+        "input": [
+          "jAVAscript IS fun"
+        ],
+        "output": "Javascript Is Fun",
+        "hidden": false
+      },
+      {
+        "input": [
+          ""
+        ],
+        "output": "",
+        "hidden": true
+      },
+      {
+        "input": [
+          "a"
+        ],
+        "output": "A",
+        "hidden": true
+      },
+      {
+        "input": [
+          "multiple   spaces here"
+        ],
+        "output": "Multiple   Spaces Here",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Camel to Snake Case",
+    "topic": "JavaScript Strings",
+    "difficulty": "easy",
+    "description": "Convert a camelCase identifier to snake_case: before every uppercase letter that is not the first character insert an underscore, then lowercase every letter.",
+    "examples": [
+      {
+        "input": "s = \"myVarName\"",
+        "output": "\"my_var_name\"",
+        "explanation": "Underscores go before V and N."
+      }
+    ],
+    "constraints": "1 <= s.length <= 100. s contains letters only.",
+    "starter_code": "function solve(s) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "strings",
+      "loops",
+      "case"
+    ],
+    "hints": [
+      "Walk through the characters one at a time.",
+      "An uppercase letter at index 0 gets no underscore; later ones get \"_\" plus the lowercase letter."
+    ],
+    "reference_solution": "function solve(s) {\n    let out = \"\";\n    for (let i = 0; i < s.length; i++) {\n        const c = s[i];\n        if (c >= \"A\" && c <= \"Z\") {\n            if (i > 0) out += \"_\";\n            out += c.toLowerCase();\n        } else {\n            out += c;\n        }\n    }\n    return out;\n}",
+    "tests": [
+      {
+        "input": [
+          "myVarName"
+        ],
+        "output": "my_var_name",
+        "hidden": false
+      },
+      {
+        "input": [
+          "simple"
+        ],
+        "output": "simple",
+        "hidden": false
+      },
+      {
+        "input": [
+          "aB"
+        ],
+        "output": "a_b",
+        "hidden": true
+      },
+      {
+        "input": [
+          "Hello"
+        ],
+        "output": "hello",
+        "hidden": true
+      },
+      {
+        "input": [
+          "toJSON"
+        ],
+        "output": "to_j_s_o_n",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Caesar Cipher",
+    "topic": "JavaScript Strings",
+    "difficulty": "easy",
+    "description": "Shift every letter of s forward in the alphabet by shift positions, wrapping around from z to a. shift may be negative (shift backward). Keep the case of each letter and leave non-letters unchanged.",
+    "examples": [
+      {
+        "input": "s = \"Hello, World!\", shift = 3",
+        "output": "\"Khoor, Zruog!\"",
+        "explanation": "H becomes K, e becomes h, and so on; punctuation is unchanged."
+      }
+    ],
+    "constraints": "0 <= s.length <= 1000 and -1000 <= shift <= 1000.",
+    "starter_code": "function solve(s, shift) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "strings",
+      "char-codes",
+      "modulo"
+    ],
+    "hints": [
+      "Use charCodeAt and String.fromCharCode, working relative to \"a\" or \"A\".",
+      "JavaScript's % can be negative, so normalise with ((x % 26) + 26) % 26."
+    ],
+    "reference_solution": "function solve(s, shift) {\n    let out = \"\";\n    for (const c of s) {\n        const code = c.charCodeAt(0);\n        let base = -1;\n        if (code >= 97 && code <= 122) base = 97;\n        else if (code >= 65 && code <= 90) base = 65;\n        if (base < 0) {\n            out += c;\n        } else {\n            const k = (((code - base + shift) % 26) + 26) % 26;\n            out += String.fromCharCode(base + k);\n        }\n    }\n    return out;\n}",
+    "tests": [
+      {
+        "input": [
+          "abc",
+          1
+        ],
+        "output": "bcd",
+        "hidden": false
+      },
+      {
+        "input": [
+          "Hello, World!",
+          3
+        ],
+        "output": "Khoor, Zruog!",
+        "hidden": false
+      },
+      {
+        "input": [
+          "xyz",
+          3
+        ],
+        "output": "abc",
+        "hidden": true
+      },
+      {
+        "input": [
+          "Abc",
+          -1
+        ],
+        "output": "Zab",
+        "hidden": true
+      },
+      {
+        "input": [
+          "Zoo!",
+          -27
+        ],
+        "output": "Ynn!",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Isogram Check",
+    "topic": "JavaScript Strings",
+    "difficulty": "easy",
+    "description": "Return true if no letter appears more than once in s. Ignore case (A and a are the same letter) and ignore every character that is not a letter. The empty string is an isogram.",
+    "examples": [
+      {
+        "input": "s = \"lumberjacks\"",
+        "output": "true",
+        "explanation": "Every letter is different."
+      },
+      {
+        "input": "s = \"isograms\"",
+        "output": "false",
+        "explanation": "The letter s appears twice."
+      }
+    ],
+    "constraints": "0 <= s.length <= 1000.",
+    "starter_code": "function solve(s) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "strings",
+      "set",
+      "hashing"
+    ],
+    "hints": [
+      "A Set remembers which letters you have already seen.",
+      "Lowercase the string and skip characters outside a-z."
+    ],
+    "reference_solution": "function solve(s) {\n    const seen = new Set();\n    for (const c of s.toLowerCase()) {\n        if (c >= \"a\" && c <= \"z\") {\n            if (seen.has(c)) return false;\n            seen.add(c);\n        }\n    }\n    return true;\n}",
+    "tests": [
+      {
+        "input": [
+          "lumberjacks"
+        ],
+        "output": true,
+        "hidden": false
+      },
+      {
+        "input": [
+          "background"
+        ],
+        "output": true,
+        "hidden": false
+      },
+      {
+        "input": [
+          "isograms"
+        ],
+        "output": false,
+        "hidden": false
+      },
+      {
+        "input": [
+          "six-year-old"
+        ],
+        "output": true,
+        "hidden": true
+      },
+      {
+        "input": [
+          "Alphabet"
+        ],
+        "output": false,
+        "hidden": true
+      },
+      {
+        "input": [
+          ""
+        ],
+        "output": true,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Version Number Compare",
+    "topic": "JavaScript Strings",
+    "difficulty": "medium",
+    "description": "Compare two version strings made of dot-separated non-negative integers. Return -1 if v1 is older than v2, 1 if v1 is newer, and 0 if they are equal. Compare segment by segment as numbers (so \"1.10\" is newer than \"1.2\"), and treat missing segments as 0.",
+    "examples": [
+      {
+        "input": "v1 = \"1.2\", v2 = \"1.10\"",
+        "output": "-1",
+        "explanation": "2 < 10 in the second segment."
+      },
+      {
+        "input": "v1 = \"1.0\", v2 = \"1\"",
+        "output": "0",
+        "explanation": "The missing segment counts as 0."
+      }
+    ],
+    "constraints": "Each version has 1 to 10 segments; each segment is an integer between 0 and 10^6 and may have leading zeros.",
+    "starter_code": "function solve(v1, v2) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "strings",
+      "split",
+      "comparison"
+    ],
+    "hints": [
+      "Split both strings on \".\" and convert the pieces to numbers.",
+      "Loop to the longer length, using 0 when a version has run out of segments."
+    ],
+    "reference_solution": "function solve(v1, v2) {\n    const a = v1.split(\".\").map(Number);\n    const b = v2.split(\".\").map(Number);\n    const n = Math.max(a.length, b.length);\n    for (let i = 0; i < n; i++) {\n        const x = i < a.length ? a[i] : 0;\n        const y = i < b.length ? b[i] : 0;\n        if (x < y) return -1;\n        if (x > y) return 1;\n    }\n    return 0;\n}",
+    "tests": [
+      {
+        "input": [
+          "1.2",
+          "1.10"
+        ],
+        "output": -1,
+        "hidden": false
+      },
+      {
+        "input": [
+          "1.0",
+          "1"
+        ],
+        "output": 0,
+        "hidden": false
+      },
+      {
+        "input": [
+          "2.0.1",
+          "2.0"
+        ],
+        "output": 1,
+        "hidden": true
+      },
+      {
+        "input": [
+          "1.01",
+          "1.001"
+        ],
+        "output": 0,
+        "hidden": true
+      },
+      {
+        "input": [
+          "0.1",
+          "1.1"
+        ],
+        "output": -1,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Decode Bracketed Repeats",
+    "topic": "JavaScript Strings",
+    "difficulty": "medium",
+    "description": "An encoded string uses the rule k[text], meaning text repeated k times. Rules can be nested. Return the decoded string. k is a positive integer and the input is always valid.",
+    "examples": [
+      {
+        "input": "s = \"3[a2[c]]\"",
+        "output": "\"accaccacc\"",
+        "explanation": "2[c] is cc, so a2[c] is acc, repeated 3 times."
+      }
+    ],
+    "constraints": "1 <= s.length <= 100. s has lowercase letters, digits and brackets. The decoded length is at most 1000.",
+    "starter_code": "function solve(s) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(output length)",
+    "tags": [
+      "strings",
+      "stack",
+      "nesting"
+    ],
+    "hints": [
+      "Use two stacks: one for repeat counts and one for the strings built so far.",
+      "On \"[\" push the current count and string and start fresh; on \"]\" pop and append the current string repeated count times."
+    ],
+    "reference_solution": "function solve(s) {\n    const countStack = [];\n    const strStack = [];\n    let cur = \"\";\n    let num = 0;\n    for (const c of s) {\n        if (c >= \"0\" && c <= \"9\") {\n            num = num * 10 + Number(c);\n        } else if (c === \"[\") {\n            countStack.push(num);\n            strStack.push(cur);\n            num = 0;\n            cur = \"\";\n        } else if (c === \"]\") {\n            const times = countStack.pop();\n            cur = strStack.pop() + cur.repeat(times);\n        } else {\n            cur += c;\n        }\n    }\n    return cur;\n}",
+    "tests": [
+      {
+        "input": [
+          "3[a]2[bc]"
+        ],
+        "output": "aaabcbc",
+        "hidden": false
+      },
+      {
+        "input": [
+          "3[a2[c]]"
+        ],
+        "output": "accaccacc",
+        "hidden": false
+      },
+      {
+        "input": [
+          "abc"
+        ],
+        "output": "abc",
+        "hidden": true
+      },
+      {
+        "input": [
+          "2[ab]cd"
+        ],
+        "output": "ababcd",
+        "hidden": false
+      },
+      {
+        "input": [
+          "10[x]"
+        ],
+        "output": "xxxxxxxxxx",
+        "hidden": true
+      },
+      {
+        "input": [
+          "2[a2[b]]c"
+        ],
+        "output": "abbabbc",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Longest Palindromic Substring",
+    "topic": "JavaScript Strings",
+    "difficulty": "medium",
+    "description": "Return the longest substring of s that reads the same forwards and backwards. If several have the same length, return the one that starts earliest.",
+    "examples": [
+      {
+        "input": "s = \"babad\"",
+        "output": "\"bab\"",
+        "explanation": "\"bab\" and \"aba\" both work; \"bab\" starts first."
+      }
+    ],
+    "constraints": "1 <= s.length <= 1000. s contains lowercase letters.",
+    "starter_code": "function solve(s) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n^2)",
+    "tags": [
+      "strings",
+      "palindrome",
+      "expand-around-center"
+    ],
+    "hints": [
+      "Every palindrome grows outward from a center: a character or the gap between two characters.",
+      "Try each center, expand while both ends match, and keep the result only when it is strictly longer."
+    ],
+    "reference_solution": "function solve(s) {\n    let bestStart = 0, bestLen = 0;\n    const n = s.length;\n    for (let c = 0; c < n; c++) {\n        for (let type = 0; type < 2; type++) {\n            let l = c, r = c + type;\n            while (l >= 0 && r < n && s[l] === s[r]) { l--; r++; }\n            const len = r - l - 1;\n            if (len > bestLen) { bestLen = len; bestStart = l + 1; }\n        }\n    }\n    return s.slice(bestStart, bestStart + bestLen);\n}",
+    "tests": [
+      {
+        "input": [
+          "babad"
+        ],
+        "output": "bab",
+        "hidden": false
+      },
+      {
+        "input": [
+          "cbbd"
+        ],
+        "output": "bb",
+        "hidden": false
+      },
+      {
+        "input": [
+          "a"
+        ],
+        "output": "a",
+        "hidden": false
+      },
+      {
+        "input": [
+          "forgeeksskeegfor"
+        ],
+        "output": "geeksskeeg",
+        "hidden": true
+      },
+      {
+        "input": [
+          "abc"
+        ],
+        "output": "a",
+        "hidden": true
+      },
+      {
+        "input": [
+          "racecarxyz"
+        ],
+        "output": "racecar",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Text Justification",
+    "topic": "JavaScript Strings",
+    "difficulty": "hard",
+    "description": "Format an array of words into lines of exactly maxWidth characters, fully justified. Pack as many words as fit on each line (one space minimum between words). Distribute extra spaces between words as evenly as possible, giving the leftmost gaps the extra ones. The last line, and any line with a single word, is left-justified and padded with spaces on the right. Return the array of lines.",
+    "examples": [
+      {
+        "input": "words = [\"This\",\"is\",\"an\",\"example\",\"of\",\"text\",\"justification.\"], maxWidth = 16",
+        "output": "[\"This    is    an\",\"example  of text\",\"justification.  \"]",
+        "explanation": "The first line has 3 gaps sharing 8 extra spaces evenly."
+      }
+    ],
+    "constraints": "1 <= words.length <= 300, 1 <= words[i].length <= maxWidth <= 100. Words contain no spaces.",
+    "starter_code": "function solve(words, maxWidth) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(total characters)",
+    "tags": [
+      "strings",
+      "greedy",
+      "simulation"
+    ],
+    "hints": [
+      "Greedily pick the words for a line while total length plus minimum single spaces stays within maxWidth.",
+      "For a full line compute spaces = maxWidth - letters, base = floor(spaces / gaps), and the first (spaces % gaps) gaps get one more."
+    ],
+    "reference_solution": "function solve(words, maxWidth) {\n    const lines = [];\n    let i = 0;\n    while (i < words.length) {\n        let j = i, total = words[i].length;\n        while (j + 1 < words.length && total + 1 + words[j + 1].length <= maxWidth) {\n            j++;\n            total += 1 + words[j].length;\n        }\n        const count = j - i + 1;\n        let line;\n        if (j === words.length - 1 || count === 1) {\n            line = words.slice(i, j + 1).join(\" \");\n            line += \" \".repeat(maxWidth - line.length);\n        } else {\n            const letters = total - (count - 1);\n            const spaces = maxWidth - letters;\n            const gaps = count - 1;\n            const base = Math.floor(spaces / gaps);\n            const extra = spaces % gaps;\n            line = \"\";\n            for (let k = i; k <= j; k++) {\n                line += words[k];\n                if (k < j) line += \" \".repeat(base + (k - i < extra ? 1 : 0));\n            }\n        }\n        lines.push(line);\n        i = j + 1;\n    }\n    return lines;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            "This",
+            "is",
+            "an",
+            "example",
+            "of",
+            "text",
+            "justification."
+          ],
+          16
+        ],
+        "output": [
+          "This    is    an",
+          "example  of text",
+          "justification.  "
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            "What",
+            "must",
+            "be",
+            "acknowledgment",
+            "shall",
+            "be"
+          ],
+          16
+        ],
+        "output": [
+          "What   must   be",
+          "acknowledgment  ",
+          "shall be        "
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            "Science",
+            "is",
+            "what",
+            "we",
+            "understand",
+            "well",
+            "enough",
+            "to",
+            "explain",
+            "to",
+            "a",
+            "computer.",
+            "Art",
+            "is",
+            "everything",
+            "else",
+            "we",
+            "do"
+          ],
+          20
+        ],
+        "output": [
+          "Science  is  what we",
+          "understand      well",
+          "enough to explain to",
+          "a  computer.  Art is",
+          "everything  else  we",
+          "do                  "
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            "a",
+            "b",
+            "c"
+          ],
+          3
+        ],
+        "output": [
+          "a b",
+          "c  "
+        ],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            "ab",
+            "cd"
+          ],
+          4
+        ],
+        "output": [
+          "ab  ",
+          "cd  "
+        ],
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Shortest Palindrome by Prepending",
+    "topic": "JavaScript Strings",
+    "difficulty": "hard",
+    "description": "You may add characters only in front of string s. Return the shortest palindrome you can obtain this way.",
+    "examples": [
+      {
+        "input": "s = \"abcd\"",
+        "output": "\"dcbabcd\"",
+        "explanation": "Adding \"dcb\" in front gives a palindrome, and nothing shorter works."
+      }
+    ],
+    "constraints": "0 <= s.length <= 5000. s contains lowercase letters.",
+    "starter_code": "function solve(s) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "strings",
+      "palindrome",
+      "kmp"
+    ],
+    "hints": [
+      "The answer is reverse(part that is not covered) + s, so find the longest palindromic prefix of s.",
+      "Build s + \"#\" + reverse(s) and use a prefix-function (KMP failure table) to find the longest prefix matching a suffix."
+    ],
+    "reference_solution": "function solve(s) {\n    if (s.length === 0) return \"\";\n    const rev = s.split(\"\").reverse().join(\"\");\n    const t = s + \"#\" + rev;\n    const fail = new Array(t.length).fill(0);\n    for (let i = 1; i < t.length; i++) {\n        let k = fail[i - 1];\n        while (k > 0 && t[i] !== t[k]) k = fail[k - 1];\n        if (t[i] === t[k]) k++;\n        fail[i] = k;\n    }\n    const keep = fail[t.length - 1];\n    return rev.slice(0, s.length - keep) + s;\n}",
+    "tests": [
+      {
+        "input": [
+          "aacecaaa"
+        ],
+        "output": "aaacecaaa",
+        "hidden": false
+      },
+      {
+        "input": [
+          "abcd"
+        ],
+        "output": "dcbabcd",
+        "hidden": false
+      },
+      {
+        "input": [
+          ""
+        ],
+        "output": "",
+        "hidden": true
+      },
+      {
+        "input": [
+          "a"
+        ],
+        "output": "a",
+        "hidden": true
+      },
+      {
+        "input": [
+          "abb"
+        ],
+        "output": "bbabb",
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Count Positive Numbers",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Given an array of integers, return the number of positive integers in the array.",
+    "examples": [
+      {
+        "input": "[1, -2, 3, 0, 5]",
+        "output": "3",
+        "explanation": "There are three positive numbers."
+      }
+    ],
+    "constraints": "1 <= nums.length <= 1000",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "arrays",
+      "counting",
+      "loops"
+    ],
+    "hints": [
+      "Zero is not positive, so use a strict comparison.",
+      "Keep a counter and increase it for every element greater than 0."
+    ],
+    "reference_solution": "function solve(nums) {\n    let count = 0;\n    for (const x of nums) {\n        if (x > 0) count++;\n    }\n    return count;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            -2,
+            3,
+            0,
+            5
+          ]
+        ],
+        "output": 3,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            -1,
+            -2,
+            -3
+          ]
+        ],
+        "output": 0,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            5,
+            10,
+            15
+          ]
+        ],
+        "output": 3,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            0,
+            -5,
+            2,
+            7
+          ]
+        ],
+        "output": 2,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Alternating Sign Sum",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Return nums[0] - nums[1] + nums[2] - nums[3] + ... , alternating the sign starting with plus. The result for an empty array is 0.",
+    "examples": [
+      {
+        "input": "nums = [1, 2, 3, 4]",
+        "output": "-2",
+        "explanation": "1 - 2 + 3 - 4 = -2"
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each number is between -10^6 and 10^6.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "arrays",
+      "loops",
+      "sum"
+    ],
+    "hints": [
+      "The sign depends on whether the index is even or odd.",
+      "Add nums[i] at even indices and subtract it at odd indices."
+    ],
+    "reference_solution": "function solve(nums) {\n    let total = 0;\n    for (let i = 0; i < nums.length; i++) {\n        total += i % 2 === 0 ? nums[i] : -nums[i];\n    }\n    return total;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            2,
+            3,
+            4
+          ]
+        ],
+        "output": -2,
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            5
+          ]
+        ],
+        "output": 5,
+        "hidden": false
+      },
+      {
+        "input": [
+          []
+        ],
+        "output": 0,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            10,
+            -3,
+            4
+          ]
+        ],
+        "output": 17,
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            -1,
+            -1,
+            -1
+          ]
+        ],
+        "output": -1,
+        "hidden": true
+      }
+    ]
+  },
+  {
+    "title": "Peak Elements",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Return, in increasing order, the indices of all peaks in nums. An element is a peak if it is strictly greater than both its left and right neighbours. The first and last elements are never peaks.",
+    "examples": [
+      {
+        "input": "nums = [1, 3, 2, 4, 1]",
+        "output": "[1, 3]",
+        "explanation": "3 > 1 and 3 > 2; 4 > 2 and 4 > 1."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each number is between -10^6 and 10^6.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": [
+      "arrays",
+      "neighbors",
+      "loops"
+    ],
+    "hints": [
+      "Only indices 1 to n-2 can be peaks.",
+      "Compare nums[i] with nums[i-1] and nums[i+1] using strict greater-than."
+    ],
+    "reference_solution": "function solve(nums) {\n    const out = [];\n    for (let i = 1; i < nums.length - 1; i++) {\n        if (nums[i] > nums[i - 1] && nums[i] > nums[i + 1]) out.push(i);\n    }\n    return out;\n}",
+    "tests": [
+      {
+        "input": [
+          [
+            1,
+            3,
+            2,
+            4,
+            1
+          ]
+        ],
+        "output": [
+          1,
+          3
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            1,
+            2,
+            3
+          ]
+        ],
+        "output": [],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            5,
+            1,
+            5,
+            1,
+            5
+          ]
+        ],
+        "output": [
+          2
+        ],
+        "hidden": false
+      },
+      {
+        "input": [
+          [
+            2,
+            2,
+            2
+          ]
+        ],
+        "output": [],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            1,
+            5,
+            5,
+            2
+          ]
+        ],
+        "output": [],
+        "hidden": true
+      },
+      {
+        "input": [
+          [
+            0,
+            4,
+            0,
+            3,
+            0,
+            7,
+            -1
+          ]
+        ],
+        "output": [
+          1,
+          3,
+          5
+        ],
+        "hidden": true
+      }
+    ]
+  }
+]

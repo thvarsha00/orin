@@ -1,0 +1,692 @@
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, ArrowRight, Code2, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
+
+import { EmptyState } from "../components/dashboard/EmptyState";
+import {
+  listProblems,
+  type CodingLanguage,
+  type ProblemSummary,
+} from "../lib/coding";
+
+const LEVELS = [
+  {
+    number: 1,
+    title: "Foundations",
+    description: "Arrays, strings, basic logic and core syntax.",
+    difficulty: "easy",
+  },
+  {
+    number: 2,
+    title: "Core Problem Solving",
+    description: "Iteration, conditions, objects and data handling.",
+    difficulty: "easy",
+  },
+  {
+    number: 3,
+    title: "Patterns",
+    description: "Recognize common patterns and simplify problems.",
+    difficulty: "easy",
+  },
+  {
+    number: 4,
+    title: "Intermediate Basics",
+    description: "Combine techniques to solve less direct problems.",
+    difficulty: "easy",
+  },
+  {
+    number: 5,
+    title: "Algorithms I",
+    description: "Searching, sorting and efficient array techniques.",
+    difficulty: "medium",
+  },
+  {
+    number: 6,
+    title: "Algorithms II",
+    description: "Trees, graphs, recursion and structured problem solving.",
+    difficulty: "medium",
+  },
+  {
+    number: 7,
+    title: "Optimization",
+    description: "Improve solutions with stronger algorithmic approaches.",
+    difficulty: "medium",
+  },
+  {
+    number: 8,
+    title: "Advanced Patterns",
+    description: "Work with problems requiring multiple techniques.",
+    difficulty: "medium",
+  },
+  {
+    number: 9,
+    title: "Advanced Algorithms",
+    description: "More demanding algorithmic problem solving.",
+    difficulty: "medium",
+  },
+  {
+    number: 10,
+    title: "Advanced I",
+    description: "Challenging problems with deeper reasoning.",
+    difficulty: "hard",
+  },
+  {
+    number: 11,
+    title: "Advanced II",
+    description: "Complex data structures and algorithmic techniques.",
+    difficulty: "hard",
+  },
+  {
+    number: 12,
+    title: "Expert Problems",
+    description: "The most demanding problems currently available.",
+    difficulty: "hard",
+  },
+] as const;
+
+const LANGUAGES: {
+  id: CodingLanguage;
+  name: string;
+  shortName: string;
+}[] = [
+  {
+    id: "javascript",
+    name: "JavaScript",
+    shortName: "JS",
+  },
+  {
+    id: "python",
+    name: "Python",
+    shortName: "PY",
+  },
+];
+
+const DIFFICULTY_ORDER: Record<string, number> = {
+  easy: 0,
+  medium: 1,
+  hard: 2,
+};
+
+function splitIntoLevels(problems: ProblemSummary[]) {
+  const sorted = [...problems].sort((a, b) => {
+    const difficultyDifference =
+      (DIFFICULTY_ORDER[a.difficulty] ?? 99) -
+      (DIFFICULTY_ORDER[b.difficulty] ?? 99);
+
+    if (difficultyDifference !== 0) {
+      return difficultyDifference;
+    }
+
+    return a.id - b.id;
+  });
+
+  return LEVELS.map((level, index) => ({
+    ...level,
+    problems: sorted.slice(index * 10, index * 10 + 10),
+  }));
+}
+
+function difficultyClass(difficulty: string) {
+  if (difficulty === "hard") {
+    return "text-red-400";
+  }
+
+  if (difficulty === "medium") {
+    return "text-amber-400";
+  }
+
+  return "text-emerald-400";
+}
+
+function difficultyDot(difficulty: string) {
+  if (difficulty === "hard") {
+    return "bg-red-400";
+  }
+
+  if (difficulty === "medium") {
+    return "bg-amber-400";
+  }
+
+  return "bg-emerald-400";
+}
+
+function difficultyLabel(difficulty: string) {
+  return (
+    difficulty.charAt(0).toUpperCase() +
+    difficulty.slice(1)
+  );
+}
+
+export default function Code() {
+  const [language, setLanguage] =
+    useState<CodingLanguage | null>(null);
+
+  const [problems, setProblems] =
+    useState<ProblemSummary[] | null>(null);
+
+  const [error, setError] = useState("");
+
+  const [selectedLevel, setSelectedLevel] =
+    useState<number | null>(null);
+
+  useEffect(() => {
+    if (!language) {
+      setProblems(null);
+      setError("");
+      setSelectedLevel(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    setProblems(null);
+    setError("");
+    setSelectedLevel(null);
+
+    listProblems(language)
+      .then((items) => {
+        if (!cancelled) {
+          setProblems(items);
+        }
+      })
+      .catch((e: Error) => {
+        if (!cancelled) {
+          setError(e.message);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [language]);
+
+  const levels = useMemo(
+    () => splitIntoLevels(problems ?? []),
+    [problems],
+  );
+
+  const selectedLanguage = LANGUAGES.find(
+    (item) => item.id === language,
+  );
+
+  const difficultyCounts = useMemo(
+    () => ({
+      easy: (problems ?? []).filter(
+        (problem) => problem.difficulty === "easy",
+      ).length,
+      medium: (problems ?? []).filter(
+        (problem) => problem.difficulty === "medium",
+      ).length,
+      hard: (problems ?? []).filter(
+        (problem) => problem.difficulty === "hard",
+      ).length,
+    }),
+    [problems],
+  );
+
+  /*
+   * LANGUAGE SELECT
+   */
+
+  if (!language) {
+    return (
+      <div className="mx-auto w-full max-w-6xl px-5 py-6 md:px-8 md:py-8">
+        <div className="mb-8">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03]">
+              <Code2
+                size={18}
+                className="text-accent"
+              />
+            </div>
+
+            <div>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
+                Orin
+              </p>
+
+              <h1 className="text-xl font-semibold text-white">
+                Code
+              </h1>
+            </div>
+          </div>
+
+          <p className="mt-5 max-w-2xl text-sm leading-6 text-slate-500">
+            Solve coding problems, test your solutions,
+            and strengthen your problem-solving skills.
+          </p>
+        </div>
+
+        <div className="border-y border-white/[0.07]">
+          <div className="flex items-center justify-between py-4">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-slate-500">
+                Language
+              </p>
+
+              <p className="mt-1 text-sm text-slate-300">
+                Select a programming language
+              </p>
+            </div>
+          </div>
+
+          <div className="grid border-t border-white/[0.06] md:grid-cols-2">
+            {LANGUAGES.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setLanguage(item.id)}
+                className={`group flex items-center gap-4 px-4 py-5 text-left transition hover:bg-white/[0.025] ${
+                  index === 0
+                    ? "border-b border-white/[0.06] md:border-b-0 md:border-r"
+                    : ""
+                }`}
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 bg-white/[0.025] text-xs font-bold text-slate-300 transition group-hover:border-accent/30 group-hover:text-accent">
+                  {item.shortName}
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-slate-200 group-hover:text-white">
+                    {item.name}
+                  </p>
+
+                  <p className="mt-1 text-xs text-slate-600">
+                    Open {item.name} problem set
+                  </p>
+                </div>
+
+                <ArrowRight
+                  size={16}
+                  className="text-slate-700 transition group-hover:translate-x-1 group-hover:text-accent"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /*
+   * LOADING / ERROR
+   */
+
+  if (problems === null) {
+    return (
+      <div className="mx-auto w-full max-w-6xl px-5 py-6 md:px-8 md:py-8">
+        <button
+          type="button"
+          onClick={() => setLanguage(null)}
+          className="inline-flex items-center gap-2 text-sm text-slate-500 transition hover:text-slate-200"
+        >
+          <ArrowLeft size={16} />
+          Change language
+        </button>
+
+        <div className="flex min-h-[420px] items-center justify-center">
+          {error ? (
+            <div className="w-full max-w-md border border-red-500/20 bg-red-500/[0.04] p-5">
+              <p className="text-sm text-red-300">
+                {error}
+              </p>
+
+              <button
+                type="button"
+                onClick={() => setLanguage(null)}
+                className="mt-4 text-xs font-medium text-slate-400 hover:text-white"
+              >
+                Change language
+              </button>
+            </div>
+          ) : (
+            <div className="text-center">
+              <div className="mx-auto h-5 w-5 animate-spin rounded-full border-2 border-white/10 border-t-accent" />
+
+              <p className="mt-4 text-sm text-slate-600">
+                Loading {selectedLanguage?.name} problems…
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  /*
+   * EMPTY
+   */
+
+  if (problems.length === 0) {
+    return (
+      <div className="mx-auto w-full max-w-6xl px-5 py-6 md:px-8 md:py-8">
+        <button
+          type="button"
+          onClick={() => setLanguage(null)}
+          className="mb-8 inline-flex items-center gap-2 text-sm text-slate-500 transition hover:text-slate-200"
+        >
+          <ArrowLeft size={16} />
+          Change language
+        </button>
+
+        <div className="border border-white/[0.07] bg-panel p-6">
+          <EmptyState
+            icon={Code2}
+            title="No coding problems"
+            text={`There are currently no ${selectedLanguage?.name} problems available.`}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  /*
+   * LEVEL DETAIL
+   */
+
+  if (selectedLevel !== null) {
+    const level = levels[selectedLevel];
+
+    if (!level) {
+      return null;
+    }
+
+    return (
+      <div className="mx-auto w-full max-w-5xl px-5 py-6 md:px-8 md:py-8">
+        <button
+          type="button"
+          onClick={() => setSelectedLevel(null)}
+          className="mb-7 inline-flex items-center gap-2 text-sm text-slate-500 transition hover:text-slate-200"
+        >
+          <ArrowLeft size={16} />
+          Problem sets
+        </button>
+
+        <div className="border border-white/[0.07] bg-panel">
+          <div className="border-b border-white/[0.07] px-5 py-5 md:px-7">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-xs text-slate-600">
+                    {String(level.number).padStart(2, "0")}
+                  </span>
+
+                  <span className="h-px w-5 bg-white/10" />
+
+                  <span
+                    className={`text-xs font-medium ${difficultyClass(
+                      level.difficulty,
+                    )}`}
+                  >
+                    {difficultyLabel(level.difficulty)}
+                  </span>
+                </div>
+
+                <h1 className="mt-3 text-2xl font-semibold tracking-tight text-white">
+                  {level.title}
+                </h1>
+
+                <p className="mt-2 max-w-2xl text-sm text-slate-500">
+                  {level.description}
+                </p>
+              </div>
+
+              <div className="text-left sm:text-right">
+                <p className="text-lg font-semibold text-slate-200">
+                  {level.problems.length}
+                </p>
+
+                <p className="text-[10px] uppercase tracking-[0.14em] text-slate-600">
+                  Problems
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            {level.problems.length === 0 ? (
+              <div className="p-8 text-center">
+                <p className="text-sm text-slate-600">
+                  No problems are currently assigned to
+                  this set.
+                </p>
+              </div>
+            ) : (
+              level.problems.map((problem, index) => (
+                <Link
+                  key={problem.id}
+                  to={`/code/${problem.id}`}
+                  className="group flex min-h-[68px] items-center gap-4 border-b border-white/[0.05] px-5 transition last:border-b-0 hover:bg-white/[0.025] md:px-7"
+                >
+                  <span className="w-7 shrink-0 font-mono text-xs text-slate-700">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-slate-300 transition group-hover:text-white">
+                      {problem.title}
+                    </p>
+
+                    <p className="mt-1 truncate text-xs text-slate-600">
+                      {problem.topic}
+                    </p>
+                  </div>
+
+                  <div className="hidden items-center gap-4 sm:flex">
+                    <span
+                      className={`text-[11px] font-medium ${difficultyClass(
+                        problem.difficulty,
+                      )}`}
+                    >
+                      {difficultyLabel(
+                        problem.difficulty,
+                      )}
+                    </span>
+
+                    <ChevronRight
+                      size={15}
+                      className="text-slate-700 transition group-hover:translate-x-1 group-hover:text-slate-300"
+                    />
+                  </div>
+
+                  <ChevronRight
+                    size={15}
+                    className="text-slate-700 sm:hidden"
+                  />
+                </Link>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /*
+   * MAIN CODE PAGE
+   */
+
+  return (
+    <div className="mx-auto w-full max-w-6xl px-5 py-6 md:px-8 md:py-8">
+      {/* Top bar */}
+      <div className="flex flex-col gap-5 border-b border-white/[0.07] pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-accent/20 bg-accent/[0.06]">
+              <Code2
+                size={17}
+                className="text-accent"
+              />
+            </div>
+
+            <div>
+              <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-slate-600">
+                Orin Code
+              </p>
+
+              <h1 className="text-2xl font-semibold tracking-tight text-white">
+                {selectedLanguage?.name}
+              </h1>
+            </div>
+          </div>
+
+          <p className="mt-3 max-w-2xl text-sm text-slate-500">
+            Solve problems and test your solutions against
+            real test cases.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setLanguage(null)}
+          className="inline-flex h-9 items-center gap-2 self-start border border-white/10 px-3 text-xs font-medium text-slate-400 transition hover:border-white/20 hover:text-white sm:self-auto"
+        >
+          {selectedLanguage?.shortName}
+          <span className="text-slate-700">·</span>
+          Change language
+        </button>
+      </div>
+
+      {/* Overview */}
+      <div className="grid border-b border-white/[0.07] sm:grid-cols-4">
+        <div className="border-b border-white/[0.06] px-4 py-5 sm:border-b-0 sm:border-r">
+          <p className="text-[10px] uppercase tracking-[0.14em] text-slate-600">
+            Problems
+          </p>
+
+          <p className="mt-1 text-xl font-semibold text-white">
+            {problems.length}
+          </p>
+        </div>
+
+        <div className="border-b border-white/[0.06] px-4 py-5 sm:border-b-0 sm:border-r">
+          <p className="text-[10px] uppercase tracking-[0.14em] text-slate-600">
+            Easy
+          </p>
+
+          <p className="mt-1 text-xl font-semibold text-emerald-400">
+            {difficultyCounts.easy}
+          </p>
+        </div>
+
+        <div className="border-b border-white/[0.06] px-4 py-5 sm:border-b-0 sm:border-r">
+          <p className="text-[10px] uppercase tracking-[0.14em] text-slate-600">
+            Medium
+          </p>
+
+          <p className="mt-1 text-xl font-semibold text-amber-400">
+            {difficultyCounts.medium}
+          </p>
+        </div>
+
+        <div className="px-4 py-5">
+          <p className="text-[10px] uppercase tracking-[0.14em] text-slate-600">
+            Hard
+          </p>
+
+          <p className="mt-1 text-xl font-semibold text-red-400">
+            {difficultyCounts.hard}
+          </p>
+        </div>
+      </div>
+
+      {/* Problem sets */}
+      <div className="mt-9">
+        <div className="mb-4 flex items-end justify-between">
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-slate-600">
+              Problem sets
+            </p>
+
+            <h2 className="mt-1 text-lg font-semibold text-white">
+              Choose a set
+            </h2>
+          </div>
+
+          <p className="hidden text-xs text-slate-700 sm:block">
+            {levels.filter(
+              (level) => level.problems.length > 0,
+            ).length}{" "}
+            available sets
+          </p>
+        </div>
+
+        <div className="border-y border-white/[0.07]">
+          {levels.map((level, index) => {
+            const hasProblems =
+              level.problems.length > 0;
+
+            return (
+              <button
+                key={level.number}
+                type="button"
+                disabled={!hasProblems}
+                onClick={() => {
+                  if (hasProblems) {
+                    setSelectedLevel(index);
+                  }
+                }}
+                className="group flex w-full items-center gap-4 border-b border-white/[0.05] px-4 py-5 text-left transition last:border-b-0 hover:bg-white/[0.025] disabled:cursor-not-allowed disabled:opacity-40 md:px-5"
+              >
+                <span className="w-8 shrink-0 font-mono text-xs text-slate-700">
+                  {String(level.number).padStart(2, "0")}
+                </span>
+
+                <div
+                  className={`h-1.5 w-1.5 shrink-0 rounded-full ${difficultyDot(
+                    level.difficulty,
+                  )}`}
+                />
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-sm font-medium text-slate-300 transition group-hover:text-white">
+                      {level.title}
+                    </h3>
+
+                    <span className="hidden text-[10px] text-slate-700 sm:inline">
+                      {difficultyLabel(
+                        level.difficulty,
+                      )}
+                    </span>
+                  </div>
+
+                  <p className="mt-1 truncate text-xs text-slate-600">
+                    {level.description}
+                  </p>
+                </div>
+
+                <div className="hidden text-right sm:block">
+                  <p className="text-sm font-medium text-slate-400">
+                    {level.problems.length}
+                  </p>
+
+                  <p className="text-[9px] uppercase tracking-[0.12em] text-slate-700">
+                    problems
+                  </p>
+                </div>
+
+                <ChevronRight
+                  size={16}
+                  className="shrink-0 text-slate-700 transition group-hover:translate-x-1 group-hover:text-slate-300"
+                />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-8 flex flex-col gap-2 border-t border-white/[0.05] pt-5 text-xs text-slate-700 sm:flex-row sm:items-center sm:justify-between">
+        <span>
+          {problems.length} {selectedLanguage?.name}{" "}
+          problems available
+        </span>
+
+        <span>
+          Problems are grouped by difficulty
+        </span>
+      </div>
+    </div>
+  );
+}

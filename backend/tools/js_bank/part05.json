@@ -1,0 +1,602 @@
+[
+  {
+    "title": "Combination Sum",
+    "topic": "JavaScript Backtracking",
+    "difficulty": "medium",
+    "description": "Given an array of distinct positive integers and a target, return every unique combination of the numbers that adds up to the target. A number may be used any number of times. Write each combination in ascending order, and return the combinations sorted lexicographically (compare the first numbers, then the second, and so on). If there is none, return an empty array.",
+    "examples": [
+      {
+        "input": "candidates = [2, 3, 6, 7], target = 7",
+        "output": "[[2, 2, 3], [7]]",
+        "explanation": "2 + 2 + 3 = 7 and 7 = 7 are the only combinations."
+      }
+    ],
+    "constraints": "1 <= candidates.length <= 8. Each candidate is an integer between 2 and 20, and all are distinct. 1 <= target <= 30.",
+    "starter_code": "function solve(candidates, target) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(number of combinations * length)",
+    "tags": ["backtracking", "recursion", "combinations"],
+    "hints": [
+      "Sort the candidates first so that combinations come out in ascending order.",
+      "Recurse with a start index. You may pick the same index again, but never an earlier index, which avoids repeated combinations. Stop a branch when the remaining sum would go below 0."
+    ],
+    "reference_solution": "function solve(candidates, target) {\n    const nums = [...candidates].sort((a, b) => a - b);\n    const result = [];\n    const path = [];\n    const dfs = (start, remaining) => {\n        if (remaining === 0) {\n            result.push([...path]);\n            return;\n        }\n        for (let i = start; i < nums.length && nums[i] <= remaining; i++) {\n            path.push(nums[i]);\n            dfs(i, remaining - nums[i]);\n            path.pop();\n        }\n    };\n    dfs(0, target);\n    return result;\n}",
+    "tests": [
+      {"input": [[2, 3, 6, 7], 7], "output": [[2, 2, 3], [7]], "hidden": false},
+      {"input": [[2, 3, 5], 8], "output": [[2, 2, 2, 2], [2, 3, 3], [3, 5]], "hidden": false},
+      {"input": [[2], 1], "output": [], "hidden": false},
+      {"input": [[4, 2, 8], 8], "output": [[2, 2, 2, 2], [2, 2, 4], [4, 4], [8]], "hidden": true},
+      {"input": [[3], 9], "output": [[3, 3, 3]], "hidden": true}
+    ]
+  },
+  {
+    "title": "Letter Combinations of a Phone Number",
+    "topic": "JavaScript Backtracking",
+    "difficulty": "medium",
+    "description": "On a phone keypad the digits map to letters: 2 = abc, 3 = def, 4 = ghi, 5 = jkl, 6 = mno, 7 = pqrs, 8 = tuv, 9 = wxyz. Given a string of digits from 2 to 9, return every letter combination it could spell, one letter per digit, sorted in alphabetical order. If the string is empty, return an empty array.",
+    "examples": [
+      {
+        "input": "digits = \"23\"",
+        "output": "[\"ad\", \"ae\", \"af\", \"bd\", \"be\", \"bf\", \"cd\", \"ce\", \"cf\"]",
+        "explanation": "Each letter of 2 is paired with each letter of 3."
+      }
+    ],
+    "constraints": "0 <= digits.length <= 4. Each character is a digit from 2 to 9.",
+    "starter_code": "function solve(digits) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(4^n * n)",
+    "tags": ["backtracking", "strings", "cartesian-product"],
+    "hints": [
+      "Store the letters of each digit in an object, and handle the empty string first.",
+      "Build the answer one digit at a time: for every existing prefix, append each letter of the next digit. Taking the letters in keypad order keeps the result alphabetical."
+    ],
+    "reference_solution": "function solve(digits) {\n    if (digits.length === 0) return [];\n    const map = { 2: 'abc', 3: 'def', 4: 'ghi', 5: 'jkl', 6: 'mno', 7: 'pqrs', 8: 'tuv', 9: 'wxyz' };\n    let result = [''];\n    for (const d of digits) {\n        const next = [];\n        for (const prefix of result) {\n            for (const ch of map[d]) next.push(prefix + ch);\n        }\n        result = next;\n    }\n    return result;\n}",
+    "tests": [
+      {"input": ["23"], "output": ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"], "hidden": false},
+      {"input": [""], "output": [], "hidden": false},
+      {"input": ["7"], "output": ["p", "q", "r", "s"], "hidden": false},
+      {"input": ["92"], "output": ["wa", "wb", "wc", "xa", "xb", "xc", "ya", "yb", "yc", "za", "zb", "zc"], "hidden": true},
+      {"input": ["78"], "output": ["pt", "pu", "pv", "qt", "qu", "qv", "rt", "ru", "rv", "st", "su", "sv"], "hidden": true}
+    ]
+  },
+  {
+    "title": "Palindrome Partitioning",
+    "topic": "JavaScript Backtracking",
+    "difficulty": "medium",
+    "description": "Given a string, return every way to split it into consecutive pieces so that every piece is a palindrome. Each way is an array of the pieces in order. List the ways so that a split whose first piece is shorter comes first, and ties are decided by the next piece, and so on.",
+    "examples": [
+      {
+        "input": "s = \"aab\"",
+        "output": "[[\"a\", \"a\", \"b\"], [\"aa\", \"b\"]]",
+        "explanation": "Both splits use only palindromic pieces, and the one that starts with the shorter piece a comes first."
+      }
+    ],
+    "constraints": "1 <= s.length <= 12. s contains lowercase letters only.",
+    "starter_code": "function solve(s) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n * 2^n)",
+    "tags": ["backtracking", "strings", "palindrome"],
+    "hints": [
+      "Recurse on the start position. For each end position, take the piece s[start..end] only if it is a palindrome.",
+      "Trying end positions from the shortest piece to the longest gives the required order automatically."
+    ],
+    "reference_solution": "function solve(s) {\n    const result = [];\n    const path = [];\n    const isPal = (l, r) => {\n        while (l < r) {\n            if (s[l] !== s[r]) return false;\n            l += 1;\n            r -= 1;\n        }\n        return true;\n    };\n    const dfs = (start) => {\n        if (start === s.length) {\n            result.push([...path]);\n            return;\n        }\n        for (let end = start; end < s.length; end++) {\n            if (isPal(start, end)) {\n                path.push(s.slice(start, end + 1));\n                dfs(end + 1);\n                path.pop();\n            }\n        }\n    };\n    dfs(0);\n    return result;\n}",
+    "tests": [
+      {"input": ["aab"], "output": [["a", "a", "b"], ["aa", "b"]], "hidden": false},
+      {"input": ["a"], "output": [["a"]], "hidden": false},
+      {"input": ["aba"], "output": [["a", "b", "a"], ["aba"]], "hidden": false},
+      {"input": ["aaa"], "output": [["a", "a", "a"], ["a", "aa"], ["aa", "a"], ["aaa"]], "hidden": true},
+      {"input": ["abba"], "output": [["a", "b", "b", "a"], ["a", "bb", "a"], ["abba"]], "hidden": true}
+    ]
+  },
+  {
+    "title": "Rotate Matrix Clockwise",
+    "topic": "JavaScript Matrices",
+    "difficulty": "medium",
+    "description": "Given a matrix (an array of equal-length rows, not necessarily square), return a new matrix that is the original rotated 90 degrees clockwise. The first row of the input becomes the last column of the result. An empty matrix returns an empty array.",
+    "examples": [
+      {
+        "input": "matrix = [[1, 2, 3], [4, 5, 6]]",
+        "output": "[[4, 1], [5, 2], [6, 3]]",
+        "explanation": "The first row 1, 2, 3 becomes the last column, read from top to bottom."
+      }
+    ],
+    "constraints": "0 <= rows <= 20. Every row has the same length, between 1 and 20. Items are integers.",
+    "starter_code": "function solve(matrix) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(rows * cols)",
+    "tags": ["matrix", "rotation", "index-mapping"],
+    "hints": [
+      "A matrix with R rows and C columns turns into one with C rows and R columns.",
+      "Result item [r][c] comes from the original item [R - 1 - c][r]."
+    ],
+    "reference_solution": "function solve(matrix) {\n    const rows = matrix.length;\n    if (rows === 0) return [];\n    const cols = matrix[0].length;\n    return Array.from({ length: cols }, (_, r) =>\n        Array.from({ length: rows }, (_, c) => matrix[rows - 1 - c][r])\n    );\n}",
+    "tests": [
+      {"input": [[[1, 2, 3], [4, 5, 6]]], "output": [[4, 1], [5, 2], [6, 3]], "hidden": false},
+      {"input": [[[1]]], "output": [[1]], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [[[1, 2], [3, 4]]], "output": [[3, 1], [4, 2]], "hidden": true},
+      {"input": [[[1], [2], [3]]], "output": [[3, 2, 1]], "hidden": true}
+    ]
+  },
+  {
+    "title": "Set Matrix Zeroes",
+    "topic": "JavaScript Matrices",
+    "difficulty": "medium",
+    "description": "Given a matrix of integers, return a new matrix in which every row and every column that contains a 0 in the original is filled entirely with 0s. Do not change the input matrix. An empty matrix returns an empty array.",
+    "examples": [
+      {
+        "input": "matrix = [[1, 1, 1], [1, 0, 1], [1, 1, 1]]",
+        "output": "[[1, 0, 1], [0, 0, 0], [1, 0, 1]]",
+        "explanation": "The 0 sits in row 1 and column 1, so that whole row and that whole column become 0."
+      }
+    ],
+    "constraints": "0 <= rows <= 20. Every row has the same length, between 1 and 20. Items are integers between -1000 and 1000.",
+    "starter_code": "function solve(matrix) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(rows * cols)",
+    "tags": ["matrix", "set", "simulation"],
+    "hints": [
+      "First find all rows and columns that contain a 0, using the original matrix only.",
+      "Then build the result, writing 0 wherever the row or the column was marked."
+    ],
+    "reference_solution": "function solve(matrix) {\n    const rows = matrix.length;\n    if (rows === 0) return [];\n    const cols = matrix[0].length;\n    const zeroRows = new Set();\n    const zeroCols = new Set();\n    for (let r = 0; r < rows; r++) {\n        for (let c = 0; c < cols; c++) {\n            if (matrix[r][c] === 0) {\n                zeroRows.add(r);\n                zeroCols.add(c);\n            }\n        }\n    }\n    return matrix.map((row, r) => row.map((v, c) => (zeroRows.has(r) || zeroCols.has(c) ? 0 : v)));\n}",
+    "tests": [
+      {"input": [[[1, 1, 1], [1, 0, 1], [1, 1, 1]]], "output": [[1, 0, 1], [0, 0, 0], [1, 0, 1]], "hidden": false},
+      {"input": [[[0, 1, 2, 0], [3, 4, 5, 2], [1, 3, 1, 5]]], "output": [[0, 0, 0, 0], [0, 4, 5, 0], [0, 3, 1, 0]], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [[[1, 2], [3, 4]]], "output": [[1, 2], [3, 4]], "hidden": true},
+      {"input": [[[1, 0], [0, 1]]], "output": [[0, 0], [0, 0]], "hidden": true}
+    ]
+  },
+  {
+    "title": "Interval List Intersections",
+    "topic": "JavaScript Intervals",
+    "difficulty": "medium",
+    "description": "You are given two lists of closed intervals [start, end]. Inside each list the intervals are disjoint and sorted by start. Return the list of intersections between the two lists, sorted. The intersection of two closed intervals is either empty or an interval, and a single shared point such as [5, 5] counts.",
+    "examples": [
+      {
+        "input": "a = [[1, 3], [5, 9]], b = [[2, 6], [8, 10]]",
+        "output": "[[2, 3], [5, 6], [8, 9]]",
+        "explanation": "[1, 3] and [2, 6] overlap on [2, 3], [5, 9] and [2, 6] on [5, 6], and [5, 9] and [8, 10] on [8, 9]."
+      }
+    ],
+    "constraints": "0 <= a.length, b.length <= 100. Every interval has start <= end, and values are integers between 0 and 10^6.",
+    "starter_code": "function solve(a, b) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n + m)",
+    "tags": ["intervals", "two-pointers", "arrays"],
+    "hints": [
+      "Use one pointer into each list. The overlap of the two current intervals is [max of starts, min of ends], and it is valid when start <= end.",
+      "After checking, move forward the pointer of the interval that ends first, because it cannot overlap anything else."
+    ],
+    "reference_solution": "function solve(a, b) {\n    const out = [];\n    let i = 0;\n    let j = 0;\n    while (i < a.length && j < b.length) {\n        const lo = Math.max(a[i][0], b[j][0]);\n        const hi = Math.min(a[i][1], b[j][1]);\n        if (lo <= hi) out.push([lo, hi]);\n        if (a[i][1] < b[j][1]) i += 1;\n        else j += 1;\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [[[0, 2], [5, 10], [13, 23], [24, 25]], [[1, 5], [8, 12], [15, 24], [25, 26]]], "output": [[1, 2], [5, 5], [8, 10], [15, 23], [24, 24], [25, 25]], "hidden": false},
+      {"input": [[], [[1, 2]]], "output": [], "hidden": false},
+      {"input": [[[1, 3]], [[4, 5]]], "output": [], "hidden": false},
+      {"input": [[[1, 7]], [[3, 10]]], "output": [[3, 7]], "hidden": true},
+      {"input": [[[1, 3], [5, 9]], [[2, 6], [8, 10]]], "output": [[2, 3], [5, 6], [8, 9]], "hidden": true}
+    ]
+  },
+  {
+    "title": "House Robber",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "medium",
+    "description": "Houses stand in a row, and house i holds nums[i] units of money. You may rob any set of houses, but you must not rob two houses that are next to each other. Return the largest total you can rob. An empty row gives 0.",
+    "examples": [
+      {
+        "input": "nums = [2, 7, 9, 3, 1]",
+        "output": "12",
+        "explanation": "Robbing the houses with 2, 9 and 1 gives 12, and no valid choice gives more."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each item is an integer between 0 and 1000.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["dynamic-programming", "arrays", "optimization"],
+    "hints": [
+      "At each house you either rob it (add its money to the best total up to two houses back) or skip it (keep the best total up to the previous house).",
+      "Two variables are enough: the best total when the last house is robbed, and the best total when it is skipped."
+    ],
+    "reference_solution": "function solve(nums) {\n    let take = 0;\n    let skip = 0;\n    for (const x of nums) {\n        const newTake = skip + x;\n        skip = Math.max(skip, take);\n        take = newTake;\n    }\n    return Math.max(take, skip);\n}",
+    "tests": [
+      {"input": [[1, 2, 3, 1]], "output": 4, "hidden": false},
+      {"input": [[]], "output": 0, "hidden": false},
+      {"input": [[2, 7, 9, 3, 1]], "output": 12, "hidden": false},
+      {"input": [[5]], "output": 5, "hidden": true},
+      {"input": [[2, 1, 1, 2]], "output": 4, "hidden": true}
+    ]
+  },
+  {
+    "title": "Longest Increasing Subsequence Length",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "medium",
+    "description": "Given an array of integers, return the length of the longest strictly increasing subsequence. A subsequence keeps the original order but does not have to be contiguous. An empty array gives 0.",
+    "examples": [
+      {
+        "input": "nums = [10, 9, 2, 5, 3, 7, 101, 18]",
+        "output": "4",
+        "explanation": "One longest subsequence is 2, 3, 7, 101 (or 2, 5, 7, 18)."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each item is an integer between -10^4 and 10^4.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": ["dynamic-programming", "binary-search", "subsequence"],
+    "hints": [
+      "A simple solution keeps, for every index, the length of the best subsequence that ends there, in O(n^2).",
+      "For O(n log n) keep an array tails where tails[k] is the smallest possible last value of an increasing subsequence of length k + 1, and place each number with a binary search."
+    ],
+    "reference_solution": "function solve(nums) {\n    const tails = [];\n    for (const x of nums) {\n        let lo = 0;\n        let hi = tails.length;\n        while (lo < hi) {\n            const mid = Math.floor((lo + hi) / 2);\n            if (tails[mid] < x) lo = mid + 1;\n            else hi = mid;\n        }\n        tails[lo] = x;\n    }\n    return tails.length;\n}",
+    "tests": [
+      {"input": [[10, 9, 2, 5, 3, 7, 101, 18]], "output": 4, "hidden": false},
+      {"input": [[]], "output": 0, "hidden": false},
+      {"input": [[0, 1, 0, 3, 2, 3]], "output": 4, "hidden": false},
+      {"input": [[7, 7, 7, 7]], "output": 1, "hidden": true},
+      {"input": [[4, 10, 4, 3, 8, 9]], "output": 3, "hidden": true}
+    ]
+  },
+  {
+    "title": "Unique Paths with Obstacles",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "medium",
+    "description": "A robot starts at the top-left cell of a grid and wants to reach the bottom-right cell. It can only move right or down. A cell with 1 is an obstacle that cannot be entered, and a cell with 0 is free. Return the number of different paths. If the start or the end is an obstacle, or the grid is empty, return 0.",
+    "examples": [
+      {
+        "input": "grid = [[0, 0, 0], [0, 1, 0], [0, 0, 0]]",
+        "output": "2",
+        "explanation": "The obstacle in the middle leaves two paths: right, right, down, down and down, down, right, right."
+      }
+    ],
+    "constraints": "0 <= rows <= 15. Every row has the same length, between 1 and 15. Each cell is 0 or 1.",
+    "starter_code": "function solve(grid) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(rows * cols)",
+    "tags": ["dynamic-programming", "grid", "counting"],
+    "hints": [
+      "The number of ways to reach a free cell is the ways to reach the cell above plus the ways to reach the cell on its left.",
+      "An obstacle cell has 0 ways. You can keep one row of counts and update it row by row."
+    ],
+    "reference_solution": "function solve(grid) {\n    const rows = grid.length;\n    if (rows === 0) return 0;\n    const cols = grid[0].length;\n    const ways = new Array(cols).fill(0);\n    ways[0] = grid[0][0] === 1 ? 0 : 1;\n    for (let r = 0; r < rows; r++) {\n        for (let c = 0; c < cols; c++) {\n            if (grid[r][c] === 1) ways[c] = 0;\n            else if (c > 0) ways[c] += ways[c - 1];\n        }\n    }\n    return ways[cols - 1];\n}",
+    "tests": [
+      {"input": [[[0, 0, 0], [0, 1, 0], [0, 0, 0]]], "output": 2, "hidden": false},
+      {"input": [[[0, 1], [0, 0]]], "output": 1, "hidden": false},
+      {"input": [[[1]]], "output": 0, "hidden": false},
+      {"input": [[[0]]], "output": 1, "hidden": true},
+      {"input": [[[0, 0, 0, 0], [0, 0, 0, 0]]], "output": 4, "hidden": true}
+    ]
+  },
+  {
+    "title": "Largest Number from Array",
+    "topic": "JavaScript Sorting",
+    "difficulty": "medium",
+    "description": "Given an array of non-negative integers, arrange them in an order that forms the largest possible number when their digits are written one after another. Return that number as a string, because it may be too large for a number. If the result would be all zeros, return \"0\".",
+    "examples": [
+      {
+        "input": "nums = [3, 30, 34, 5, 9]",
+        "output": "\"9534330\"",
+        "explanation": "The order 9, 5, 34, 3, 30 gives the largest value."
+      }
+    ],
+    "constraints": "1 <= nums.length <= 100. Each item is an integer between 0 and 10^9.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n * k)",
+    "tags": ["sorting", "comparator", "strings", "greedy"],
+    "hints": [
+      "Compare two numbers a and b as strings: a should come first when a + b is larger than b + a.",
+      "Sort with that comparator and join the pieces. If the first character of the result is 0, all numbers were zero."
+    ],
+    "reference_solution": "function solve(nums) {\n    const strs = nums.map(String);\n    strs.sort((a, b) => (b + a < a + b ? -1 : b + a > a + b ? 1 : 0));\n    const joined = strs.join('');\n    return joined[0] === '0' ? '0' : joined;\n}",
+    "tests": [
+      {"input": [[10, 2]], "output": "210", "hidden": false},
+      {"input": [[3, 30, 34, 5, 9]], "output": "9534330", "hidden": false},
+      {"input": [[0, 0]], "output": "0", "hidden": false},
+      {"input": [[121, 12]], "output": "12121", "hidden": true},
+      {"input": [[34323, 3432]], "output": "343234323", "hidden": true}
+    ]
+  },
+  {
+    "title": "Burst Balloons",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "hard",
+    "description": "A row of balloons has a number painted on each one. When you burst balloon i you earn nums[left] * nums[i] * nums[right] coins, where left and right are the nearest balloons that have not burst yet. A missing neighbour counts as a balloon with the number 1. You must burst every balloon, in an order you choose. Return the maximum total coins. An empty row gives 0.",
+    "examples": [
+      {
+        "input": "nums = [3, 1, 5, 8]",
+        "output": "167",
+        "explanation": "Burst 1, then 5, then 3, then 8: 3*1*5 + 3*5*8 + 1*3*8 + 1*8*1 = 15 + 120 + 24 + 8 = 167."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 50. Each number is an integer between 0 and 100.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n^3)",
+    "tags": ["dynamic-programming", "interval-dp", "arrays"],
+    "hints": [
+      "Add a 1 at both ends of the array. Instead of asking which balloon bursts first, ask which balloon in a stretch bursts last.",
+      "dp[i][j] is the best score for bursting everything strictly between positions i and j. If k bursts last there, its neighbours are the fixed ends i and j, so dp[i][j] = max over k of dp[i][k] + dp[k][j] + p[i] * p[k] * p[j]."
+    ],
+    "reference_solution": "function solve(nums) {\n    const p = [1, ...nums, 1];\n    const n = p.length;\n    const dp = Array.from({ length: n }, () => new Array(n).fill(0));\n    for (let len = 2; len < n; len++) {\n        for (let i = 0; i + len < n; i++) {\n            const j = i + len;\n            let best = 0;\n            for (let k = i + 1; k < j; k++) {\n                best = Math.max(best, dp[i][k] + dp[k][j] + p[i] * p[k] * p[j]);\n            }\n            dp[i][j] = best;\n        }\n    }\n    return dp[0][n - 1];\n}",
+    "tests": [
+      {"input": [[3, 1, 5, 8]], "output": 167, "hidden": false},
+      {"input": [[]], "output": 0, "hidden": false},
+      {"input": [[7]], "output": 7, "hidden": false},
+      {"input": [[1, 5]], "output": 10, "hidden": true},
+      {"input": [[4, 1, 5]], "output": 45, "hidden": true}
+    ]
+  },
+  {
+    "title": "Longest Valid Parentheses",
+    "topic": "JavaScript Stacks",
+    "difficulty": "hard",
+    "description": "Given a string made only of the characters ( and ), return the length of the longest contiguous substring that is a valid parentheses string, meaning every ( is closed by a matching ) in the correct order. Return 0 if there is no valid substring.",
+    "examples": [
+      {
+        "input": "s = \")()())\"",
+        "output": "4",
+        "explanation": "The longest valid substring is ()() in the middle."
+      }
+    ],
+    "constraints": "0 <= s.length <= 1000. s contains only ( and ).",
+    "starter_code": "function solve(s) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["stack", "strings", "dynamic-programming"],
+    "hints": [
+      "Keep a stack of indexes instead of characters, and start it with -1 as a marker for the position just before the current valid stretch.",
+      "Push the index of every (. On ), pop; if the stack becomes empty push the current index as the new marker, otherwise the valid length ending here is i minus the index now on top."
+    ],
+    "reference_solution": "function solve(s) {\n    const stack = [-1];\n    let best = 0;\n    for (let i = 0; i < s.length; i++) {\n        if (s[i] === '(') {\n            stack.push(i);\n        } else {\n            stack.pop();\n            if (stack.length === 0) stack.push(i);\n            else best = Math.max(best, i - stack[stack.length - 1]);\n        }\n    }\n    return best;\n}",
+    "tests": [
+      {"input": ["(()"], "output": 2, "hidden": false},
+      {"input": [")()())"], "output": 4, "hidden": false},
+      {"input": [""], "output": 0, "hidden": false},
+      {"input": ["(()())"], "output": 6, "hidden": true},
+      {"input": ["())((())"], "output": 4, "hidden": true}
+    ]
+  },
+  {
+    "title": "Distinct Subsequences",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "hard",
+    "description": "Given two strings s and t, return the number of distinct subsequences of s that are equal to t. Two subsequences are different when they use different sets of positions in s, even if the letters are the same. If t is longer than s, the answer is 0, and the empty string t has exactly one subsequence.",
+    "examples": [
+      {
+        "input": "s = \"rabbbit\", t = \"rabbit\"",
+        "output": "3",
+        "explanation": "Skipping any one of the three b's in rabbbit leaves rabbit, so there are 3 ways."
+      }
+    ],
+    "constraints": "0 <= s.length <= 30 and 0 <= t.length <= 30. Both strings contain lowercase letters only.",
+    "starter_code": "function solve(s, t) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n * m)",
+    "tags": ["dynamic-programming", "strings", "subsequence", "counting"],
+    "hints": [
+      "Let dp[j] be the number of ways to form the first j letters of t using the letters of s read so far. dp[0] is 1.",
+      "For each letter of s, go through j from high to low: if the letter equals t[j - 1], add dp[j - 1] to dp[j]. Going downwards stops a letter of s from being used twice."
+    ],
+    "reference_solution": "function solve(s, t) {\n    const dp = new Array(t.length + 1).fill(0);\n    dp[0] = 1;\n    for (let i = 0; i < s.length; i++) {\n        for (let j = t.length; j >= 1; j--) {\n            if (s[i] === t[j - 1]) dp[j] += dp[j - 1];\n        }\n    }\n    return dp[t.length];\n}",
+    "tests": [
+      {"input": ["rabbbit", "rabbit"], "output": 3, "hidden": false},
+      {"input": ["babgbag", "bag"], "output": 5, "hidden": false},
+      {"input": ["abc", ""], "output": 1, "hidden": false},
+      {"input": ["", "a"], "output": 0, "hidden": true},
+      {"input": ["aaa", "aa"], "output": 3, "hidden": true}
+    ]
+  },
+  {
+    "title": "Maximum Profit in Job Scheduling",
+    "topic": "JavaScript Intervals",
+    "difficulty": "hard",
+    "description": "You are given three arrays of equal length: startTime, endTime and profit. Job i runs from startTime[i] to endTime[i] and pays profit[i]. You may do any set of jobs that do not overlap in time, where a job that ends at time X does not overlap a job that starts at time X. Return the maximum total profit. With no jobs the answer is 0.",
+    "examples": [
+      {
+        "input": "startTime = [1, 2, 3, 3], endTime = [3, 4, 5, 6], profit = [50, 10, 40, 70]",
+        "output": "120",
+        "explanation": "Doing the job from 1 to 3 (profit 50) and then the job from 3 to 6 (profit 70) gives 120."
+      }
+    ],
+    "constraints": "0 <= startTime.length <= 1000. 1 <= startTime[i] < endTime[i] <= 10^6. 1 <= profit[i] <= 10^4.",
+    "starter_code": "function solve(startTime, endTime, profit) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n log n)",
+    "tags": ["intervals", "dynamic-programming", "binary-search", "sorting"],
+    "hints": [
+      "Sort the jobs by end time. Let best[i] be the best profit using only the first i jobs in that order.",
+      "For job i, either skip it (best[i]) or do it, adding its profit to best[c] where c is the number of earlier jobs that end at or before its start. Find c with a binary search over the end times."
+    ],
+    "reference_solution": "function solve(startTime, endTime, profit) {\n    const jobs = startTime.map((s, i) => [s, endTime[i], profit[i]]).sort((a, b) => a[1] - b[1]);\n    const ends = jobs.map((job) => job[1]);\n    const best = new Array(jobs.length + 1).fill(0);\n    for (let i = 0; i < jobs.length; i++) {\n        let lo = 0;\n        let hi = i;\n        while (lo < hi) {\n            const mid = Math.floor((lo + hi) / 2);\n            if (ends[mid] <= jobs[i][0]) lo = mid + 1;\n            else hi = mid;\n        }\n        best[i + 1] = Math.max(best[i], best[lo] + jobs[i][2]);\n    }\n    return best[jobs.length];\n}",
+    "tests": [
+      {"input": [[1, 2, 3, 3], [3, 4, 5, 6], [50, 10, 40, 70]], "output": 120, "hidden": false},
+      {"input": [[1, 2, 3, 4, 6], [3, 5, 10, 6, 9], [20, 20, 100, 70, 60]], "output": 150, "hidden": false},
+      {"input": [[], [], []], "output": 0, "hidden": false},
+      {"input": [[1, 1, 1], [2, 3, 4], [5, 6, 4]], "output": 6, "hidden": true},
+      {"input": [[1, 2], [2, 3], [3, 4]], "output": 7, "hidden": true}
+    ]
+  },
+  {
+    "title": "Longest Increasing Path in Matrix",
+    "topic": "JavaScript Matrices",
+    "difficulty": "hard",
+    "description": "Given a matrix of integers, return the length of the longest strictly increasing path. From a cell you may move up, down, left or right (no diagonals and no wrapping around the edges), and every step must go to a cell with a larger value. An empty matrix returns 0.",
+    "examples": [
+      {
+        "input": "matrix = [[9, 9, 4], [6, 6, 8], [2, 1, 1]]",
+        "output": "4",
+        "explanation": "The path 1, 2, 6, 9 goes through four cells."
+      }
+    ],
+    "constraints": "0 <= rows <= 30. Every row has the same length, between 1 and 30. Each value is an integer between -1000 and 1000.",
+    "starter_code": "function solve(matrix) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(rows * cols)",
+    "tags": ["matrix", "dfs", "memoization", "dynamic-programming"],
+    "hints": [
+      "Because every step must increase, a path never visits the same cell twice, so no visited set is needed.",
+      "Let longest(r, c) be the longest path that starts at cell (r, c). It is 1 plus the best longest(...) over larger neighbours. Cache each result so that every cell is computed once."
+    ],
+    "reference_solution": "function solve(matrix) {\n    const rows = matrix.length;\n    if (rows === 0) return 0;\n    const cols = matrix[0].length;\n    const memo = Array.from({ length: rows }, () => new Array(cols).fill(0));\n    const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];\n    const dfs = (r, c) => {\n        if (memo[r][c] > 0) return memo[r][c];\n        let best = 1;\n        for (const [dr, dc] of dirs) {\n            const nr = r + dr;\n            const nc = c + dc;\n            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && matrix[nr][nc] > matrix[r][c]) {\n                best = Math.max(best, 1 + dfs(nr, nc));\n            }\n        }\n        memo[r][c] = best;\n        return best;\n    };\n    let answer = 0;\n    for (let r = 0; r < rows; r++) {\n        for (let c = 0; c < cols; c++) answer = Math.max(answer, dfs(r, c));\n    }\n    return answer;\n}",
+    "tests": [
+      {"input": [[[9, 9, 4], [6, 6, 8], [2, 1, 1]]], "output": 4, "hidden": false},
+      {"input": [[[3, 4, 5], [3, 2, 6], [2, 2, 1]]], "output": 4, "hidden": false},
+      {"input": [[]], "output": 0, "hidden": false},
+      {"input": [[[1, 2], [4, 3]]], "output": 4, "hidden": true},
+      {"input": [[[7, 7], [7, 7]]], "output": 1, "hidden": true}
+    ]
+  },
+  {
+    "title": "Expression Add Operators",
+    "topic": "JavaScript Backtracking",
+    "difficulty": "hard",
+    "description": "Given a string num of digits and an integer target, insert the operators +, - or * between some of the digits (or nothing at all, which joins digits into a longer number) so that the expression evaluates to target. Normal precedence applies, so * is done before + and -. A number in the expression must not have a leading zero, so 05 is not allowed but 0 is, and 10 is allowed. Return every valid expression as a string, sorted in default string order.",
+    "examples": [
+      {
+        "input": "num = \"123\", target = 6",
+        "output": "[\"1*2*3\", \"1+2+3\"]",
+        "explanation": "1*2*3 and 1+2+3 both equal 6, and * comes before + in string order."
+      }
+    ],
+    "constraints": "1 <= num.length <= 8. num contains digits only. -10^6 <= target <= 10^6.",
+    "starter_code": "function solve(num, target) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(4^n)",
+    "tags": ["backtracking", "strings", "math", "recursion"],
+    "hints": [
+      "Recurse over the position in num. At each step choose the next number (one or more digits, but never a leading zero) and an operator in front of it.",
+      "Track the running value and the last term that was added or subtracted. For *, undo that last term and replace it with last * n, which respects precedence without building a parser."
+    ],
+    "reference_solution": "function solve(num, target) {\n    const result = [];\n    const dfs = (index, expr, value, last) => {\n        if (index === num.length) {\n            if (value === target) result.push(expr);\n            return;\n        }\n        for (let end = index + 1; end <= num.length; end++) {\n            if (end - index > 1 && num[index] === '0') break;\n            const part = num.slice(index, end);\n            const n = Number(part);\n            if (index === 0) {\n                dfs(end, part, n, n);\n            } else {\n                dfs(end, expr + '+' + part, value + n, n);\n                dfs(end, expr + '-' + part, value - n, -n);\n                dfs(end, expr + '*' + part, value - last + last * n, last * n);\n            }\n        }\n    };\n    dfs(0, '', 0, 0);\n    return result.sort();\n}",
+    "tests": [
+      {"input": ["123", 6], "output": ["1*2*3", "1+2+3"], "hidden": false},
+      {"input": ["232", 8], "output": ["2*3+2", "2+3*2"], "hidden": false},
+      {"input": ["105", 5], "output": ["1*0+5", "10-5"], "hidden": false},
+      {"input": ["00", 0], "output": ["0*0", "0+0", "0-0"], "hidden": true},
+      {"input": ["123", 15], "output": ["12+3"], "hidden": true}
+    ]
+  },
+  {
+    "title": "Super Egg Drop",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "hard",
+    "description": "You have k identical eggs and a building with n floors, numbered 1 to n. There is an unknown critical floor f with 0 <= f <= n: an egg dropped from a floor higher than f breaks, and an egg dropped from floor f or lower survives and can be used again. A broken egg cannot be used again. Return the minimum number of drops that is guaranteed to find f, whatever f turns out to be.",
+    "examples": [
+      {
+        "input": "k = 1, n = 2",
+        "output": "2",
+        "explanation": "With one egg you must go floor by floor: drop from floor 1, and if the egg survives, drop from floor 2."
+      }
+    ],
+    "constraints": "1 <= k <= 100. 1 <= n <= 10000.",
+    "starter_code": "function solve(k, n) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(k * answer)",
+    "tags": ["dynamic-programming", "math", "binary-search"],
+    "hints": [
+      "Flip the question: with e eggs and m drops, what is the largest number of floors you can handle?",
+      "That number is f(e, m) = f(e - 1, m - 1) + f(e, m - 1) + 1: one drop splits the building into the floors below (egg broke) and the floors above (egg survived). Increase m until f(k, m) >= n."
+    ],
+    "reference_solution": "function solve(k, n) {\n    const dp = new Array(k + 1).fill(0);\n    let moves = 0;\n    while (dp[k] < n) {\n        moves += 1;\n        for (let e = k; e >= 1; e--) dp[e] = dp[e] + dp[e - 1] + 1;\n    }\n    return moves;\n}",
+    "tests": [
+      {"input": [1, 2], "output": 2, "hidden": false},
+      {"input": [2, 6], "output": 3, "hidden": false},
+      {"input": [3, 14], "output": 4, "hidden": false},
+      {"input": [3, 25], "output": 5, "hidden": true},
+      {"input": [2, 10], "output": 4, "hidden": true}
+    ]
+  },
+  {
+    "title": "Minimum Number of Refueling Stops",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "hard",
+    "description": "A car starts at position 0 and must reach position target, using one unit of fuel per unit of distance. It starts with startFuel units. Gas stations are given as [position, fuel] pairs sorted by position. When the car reaches a station it may stop and add all of that station's fuel to its tank, which has no size limit. A car that arrives with exactly 0 fuel can still refuel at that station. Return the smallest number of stops needed to reach the target, or -1 if it cannot be reached.",
+    "examples": [
+      {
+        "input": "target = 100, startFuel = 10, stations = [[10, 60], [20, 30], [30, 30], [60, 40]]",
+        "output": "2",
+        "explanation": "Drive to 10 and take its 60 fuel. Drive to 60 with 10 fuel left and take 40 more, which is enough for the last 40 units. That is 2 stops."
+      }
+    ],
+    "constraints": "1 <= target <= 10^6. 0 <= startFuel <= 10^6. 0 <= stations.length <= 200. Station positions are strictly increasing and less than target. Each station has between 1 and 10^6 fuel.",
+    "starter_code": "function solve(target, startFuel, stations) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n^2)",
+    "tags": ["dynamic-programming", "greedy", "arrays"],
+    "hints": [
+      "Let dp[t] be the farthest distance you can reach using exactly t stops. dp[0] is startFuel.",
+      "Handle the stations in order. For station i and t from high to low, if dp[t] reaches the station, then dp[t + 1] can be dp[t] plus the station's fuel. The answer is the smallest t with dp[t] >= target."
+    ],
+    "reference_solution": "function solve(target, startFuel, stations) {\n    const n = stations.length;\n    const dp = new Array(n + 1).fill(0);\n    dp[0] = startFuel;\n    for (let i = 0; i < n; i++) {\n        for (let t = i; t >= 0; t--) {\n            if (dp[t] >= stations[i][0]) {\n                dp[t + 1] = Math.max(dp[t + 1], dp[t] + stations[i][1]);\n            }\n        }\n    }\n    for (let t = 0; t <= n; t++) {\n        if (dp[t] >= target) return t;\n    }\n    return -1;\n}",
+    "tests": [
+      {"input": [1, 1, []], "output": 0, "hidden": false},
+      {"input": [100, 1, [[10, 100]]], "output": -1, "hidden": false},
+      {"input": [100, 10, [[10, 60], [20, 30], [30, 30], [60, 40]]], "output": 2, "hidden": false},
+      {"input": [100, 50, [[25, 50], [50, 25]]], "output": 1, "hidden": true},
+      {"input": [100, 25, [[25, 25], [50, 25], [75, 25]]], "output": 3, "hidden": true}
+    ]
+  },
+  {
+    "title": "Scramble String",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "hard",
+    "description": "A string can be scrambled by this process: if its length is 1, stop. Otherwise split it at some position into two non-empty parts x and y, optionally swap them so the result is x + y or y + x, and then scramble x and y independently using the same process. Return true if s2 can be obtained from s1 this way. The two strings always have the same length.",
+    "examples": [
+      {
+        "input": "s1 = \"great\", s2 = \"rgeat\"",
+        "output": "true",
+        "explanation": "great splits into gr and eat. Scrambling gr into rg and keeping eat gives rgeat."
+      }
+    ],
+    "constraints": "1 <= s1.length = s2.length <= 12. Both strings contain lowercase letters only.",
+    "starter_code": "function solve(s1, s2) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n^4)",
+    "tags": ["dynamic-programming", "recursion", "memoization", "strings"],
+    "hints": [
+      "Define a function for a pair of equal-length substrings (one of s1, one of s2). Two equal substrings match immediately, and substrings that are not anagrams can never match.",
+      "Try every split point k. Either the first k letters of one match the first k of the other and the rests match, or the first k letters of one match the last k of the other (the swapped case) and the rests match. Cache results by start positions and length."
+    ],
+    "reference_solution": "function solve(s1, s2) {\n    if (s1.length !== s2.length) return false;\n    const memo = new Map();\n    const check = (i, j, len) => {\n        const key = i + ',' + j + ',' + len;\n        if (memo.has(key)) return memo.get(key);\n        const a = s1.slice(i, i + len);\n        const b = s2.slice(j, j + len);\n        let ok = false;\n        if (a === b) {\n            ok = true;\n        } else {\n            const count = new Array(26).fill(0);\n            for (let k = 0; k < len; k++) {\n                count[a.charCodeAt(k) - 97] += 1;\n                count[b.charCodeAt(k) - 97] -= 1;\n            }\n            if (count.every((x) => x === 0)) {\n                for (let k = 1; k < len && !ok; k++) {\n                    if (check(i, j, k) && check(i + k, j + k, len - k)) ok = true;\n                    else if (check(i, j + len - k, k) && check(i + k, j, len - k)) ok = true;\n                }\n            }\n        }\n        memo.set(key, ok);\n        return ok;\n    };\n    return check(0, 0, s1.length);\n}",
+    "tests": [
+      {"input": ["great", "rgeat"], "output": true, "hidden": false},
+      {"input": ["abcde", "caebd"], "output": false, "hidden": false},
+      {"input": ["a", "a"], "output": true, "hidden": false},
+      {"input": ["abc", "bca"], "output": true, "hidden": true},
+      {"input": ["abcd", "bdac"], "output": false, "hidden": true}
+    ]
+  },
+  {
+    "title": "Frog Jump",
+    "topic": "JavaScript Dynamic Programming",
+    "difficulty": "hard",
+    "description": "A frog crosses a river by jumping from stone to stone. You are given the positions of the stones as a sorted array of distinct non-negative integers, and the frog starts on the first stone, at position 0. The first jump must be exactly 1 unit. If the frog's previous jump was k units, its next jump must be k - 1, k or k + 1 units. The frog only jumps forward, and only onto stones. Return true if the frog can reach the last stone.",
+    "examples": [
+      {
+        "input": "stones = [0, 1, 3, 5, 6, 8, 12, 17]",
+        "output": "true",
+        "explanation": "Jumps of 1, 2, 2, 3, 4 and 5 units take the frog 0, 1, 3, 5, 8, 12, 17."
+      }
+    ],
+    "constraints": "1 <= stones.length <= 100. stones[0] = 0 and the positions are strictly increasing, each at most 10^4.",
+    "starter_code": "function solve(stones) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n^2)",
+    "tags": ["dynamic-programming", "hash-map", "set"],
+    "hints": [
+      "For every stone keep a Set of the jump sizes that can land the frog on it.",
+      "Go through the stones from left to right. For each jump size k stored on a stone, try k - 1, k and k + 1 (only positive sizes) and record the size on the stone you land on, if there is one."
+    ],
+    "reference_solution": "function solve(stones) {\n    const reach = new Map();\n    for (const s of stones) reach.set(s, new Set());\n    reach.get(stones[0]).add(0);\n    for (const s of stones) {\n        for (const k of reach.get(s)) {\n            for (const step of [k - 1, k, k + 1]) {\n                if (step > 0 && reach.has(s + step)) reach.get(s + step).add(step);\n            }\n        }\n    }\n    return reach.get(stones[stones.length - 1]).size > 0;\n}",
+    "tests": [
+      {"input": [[0, 1, 3, 5, 6, 8, 12, 17]], "output": true, "hidden": false},
+      {"input": [[0, 1, 2, 3, 4, 8, 9, 11]], "output": false, "hidden": false},
+      {"input": [[0]], "output": true, "hidden": false},
+      {"input": [[0, 2]], "output": false, "hidden": true},
+      {"input": [[0, 1, 3, 6, 10, 15, 21]], "output": true, "hidden": true}
+    ]
+  }
+]

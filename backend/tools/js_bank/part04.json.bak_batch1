@@ -1,0 +1,302 @@
+[
+  {
+    "title": "Reverse Vowels in String",
+    "topic": "JavaScript Two Pointers",
+    "difficulty": "easy",
+    "description": "Given a string, reverse the order of its vowels (a, e, i, o, u in lowercase or uppercase) and leave every other character exactly where it is. Each vowel keeps its own case when it moves.",
+    "examples": [
+      {
+        "input": "s = \"hello\"",
+        "output": "\"holle\"",
+        "explanation": "The vowels are e and o. Swapping their positions gives holle."
+      }
+    ],
+    "constraints": "0 <= s.length <= 1000. s contains only letters and spaces.",
+    "starter_code": "function solve(s) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["two-pointers", "strings", "swap"],
+    "hints": [
+      "Put one pointer at each end of the character array.",
+      "Move each pointer inward until it sits on a vowel, then swap the two vowels and move both pointers."
+    ],
+    "reference_solution": "function solve(s) {\n    const chars = s.split('');\n    const isVowel = (c) => 'aeiouAEIOU'.includes(c);\n    let i = 0;\n    let j = chars.length - 1;\n    while (i < j) {\n        if (!isVowel(chars[i])) i += 1;\n        else if (!isVowel(chars[j])) j -= 1;\n        else {\n            [chars[i], chars[j]] = [chars[j], chars[i]];\n            i += 1;\n            j -= 1;\n        }\n    }\n    return chars.join('');\n}",
+    "tests": [
+      {"input": ["hello"], "output": "holle", "hidden": false},
+      {"input": [""], "output": "", "hidden": false},
+      {"input": ["xyz"], "output": "xyz", "hidden": false},
+      {"input": ["leetcode"], "output": "leotcede", "hidden": true},
+      {"input": ["Aa Ee"], "output": "eE aA", "hidden": true}
+    ]
+  },
+  {
+    "title": "Squares of Sorted Array",
+    "topic": "JavaScript Two Pointers",
+    "difficulty": "easy",
+    "description": "Given an array of integers sorted in ascending order, return an array of the squares of each number, also sorted in ascending order. Aim for a solution that does not need a full sort.",
+    "examples": [
+      {
+        "input": "nums = [-4, -1, 0, 3, 10]",
+        "output": "[0, 1, 9, 16, 100]",
+        "explanation": "The squares are 16, 1, 0, 9, 100, and sorted they become 0, 1, 9, 16, 100."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each item is an integer between -10^4 and 10^4, and the array is sorted in ascending order.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["two-pointers", "arrays", "sorting"],
+    "hints": [
+      "The largest square is always at one of the two ends of the input.",
+      "Compare the absolute values at the two ends, and fill the result from the last position backwards."
+    ],
+    "reference_solution": "function solve(nums) {\n    const n = nums.length;\n    const out = new Array(n);\n    let l = 0;\n    let r = n - 1;\n    for (let k = n - 1; k >= 0; k--) {\n        if (Math.abs(nums[l]) > Math.abs(nums[r])) {\n            out[k] = nums[l] * nums[l];\n            l += 1;\n        } else {\n            out[k] = nums[r] * nums[r];\n            r -= 1;\n        }\n    }\n    return out;\n}",
+    "tests": [
+      {"input": [[-4, -1, 0, 3, 10]], "output": [0, 1, 9, 16, 100], "hidden": false},
+      {"input": [[]], "output": [], "hidden": false},
+      {"input": [[2]], "output": [4], "hidden": false},
+      {"input": [[-7, -3, 2, 3, 11]], "output": [4, 9, 9, 49, 121], "hidden": true},
+      {"input": [[-5, -4, -3]], "output": [9, 16, 25], "hidden": true}
+    ]
+  },
+  {
+    "title": "Is Subsequence",
+    "topic": "JavaScript Two Pointers",
+    "difficulty": "easy",
+    "description": "Given two strings s and t, return true if s is a subsequence of t, meaning s can be obtained from t by deleting zero or more characters without changing the order of the rest. The empty string is a subsequence of every string.",
+    "examples": [
+      {
+        "input": "s = \"ace\", t = \"abcde\"",
+        "output": "true",
+        "explanation": "Deleting b and d from abcde leaves ace."
+      }
+    ],
+    "constraints": "0 <= s.length <= 100. 0 <= t.length <= 1000. Both strings contain lowercase letters only.",
+    "starter_code": "function solve(s, t) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["two-pointers", "strings", "subsequence"],
+    "hints": [
+      "Walk through t once, keeping a pointer into s.",
+      "Move the pointer in s forward only when the current character of t matches it, then check whether the pointer reached the end of s."
+    ],
+    "reference_solution": "function solve(s, t) {\n    let i = 0;\n    for (let j = 0; j < t.length && i < s.length; j++) {\n        if (s[i] === t[j]) i += 1;\n    }\n    return i === s.length;\n}",
+    "tests": [
+      {"input": ["ace", "abcde"], "output": true, "hidden": false},
+      {"input": ["aec", "abcde"], "output": false, "hidden": false},
+      {"input": ["", "abc"], "output": true, "hidden": false},
+      {"input": ["abc", ""], "output": false, "hidden": true},
+      {"input": ["aaa", "aabaa"], "output": true, "hidden": true}
+    ]
+  },
+  {
+    "title": "Max Sum of K Consecutive Elements",
+    "topic": "JavaScript Sliding Window",
+    "difficulty": "easy",
+    "description": "Given an array of integers and a window size k, return the largest sum of any k consecutive elements. If the array has fewer than k elements, return 0.",
+    "examples": [
+      {
+        "input": "nums = [2, 1, 5, 1, 3, 2], k = 3",
+        "output": "9",
+        "explanation": "The window sums are 8, 7, 9 and 6, and the largest is 9 (from 5, 1, 3)."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. 1 <= k <= 1000. Each item is an integer between -10^4 and 10^4.",
+    "starter_code": "function solve(nums, k) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["sliding-window", "arrays", "sum"],
+    "hints": [
+      "Compute the sum of the first k items once.",
+      "Slide the window by adding the item that enters and subtracting the item that leaves, and keep the best sum seen."
+    ],
+    "reference_solution": "function solve(nums, k) {\n    if (k <= 0 || k > nums.length) return 0;\n    let sum = 0;\n    for (let i = 0; i < k; i++) sum += nums[i];\n    let best = sum;\n    for (let i = k; i < nums.length; i++) {\n        sum += nums[i] - nums[i - k];\n        if (sum > best) best = sum;\n    }\n    return best;\n}",
+    "tests": [
+      {"input": [[2, 1, 5, 1, 3, 2], 3], "output": 9, "hidden": false},
+      {"input": [[], 3], "output": 0, "hidden": false},
+      {"input": [[1, 2], 5], "output": 0, "hidden": false},
+      {"input": [[-1, -2, -3, -4], 2], "output": -3, "hidden": true},
+      {"input": [[4], 1], "output": 4, "hidden": true}
+    ]
+  },
+  {
+    "title": "Maximum Consecutive Ones",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Given an array containing only 0 and 1, return the length of the longest run of consecutive 1s. If there is no 1, return 0.",
+    "examples": [
+      {
+        "input": "nums = [1, 1, 0, 1, 1, 1]",
+        "output": "3",
+        "explanation": "The longest run of 1s is the last three items."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each item is 0 or 1.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["arrays", "counting", "loops"],
+    "hints": [
+      "Keep the length of the current run of 1s and the best run seen so far.",
+      "Add 1 to the current run on a 1, and reset it to 0 on a 0."
+    ],
+    "reference_solution": "function solve(nums) {\n    let best = 0;\n    let run = 0;\n    for (const x of nums) {\n        run = x === 1 ? run + 1 : 0;\n        if (run > best) best = run;\n    }\n    return best;\n}",
+    "tests": [
+      {"input": [[1, 1, 0, 1, 1, 1]], "output": 3, "hidden": false},
+      {"input": [[]], "output": 0, "hidden": false},
+      {"input": [[0, 0]], "output": 0, "hidden": false},
+      {"input": [[1, 0, 1, 1, 0, 1]], "output": 2, "hidden": true},
+      {"input": [[1, 1, 1, 1]], "output": 4, "hidden": true}
+    ]
+  },
+  {
+    "title": "Equilibrium Index",
+    "topic": "JavaScript Prefix Sums",
+    "difficulty": "easy",
+    "description": "Given an array of integers, return the leftmost index i such that the sum of the items to the left of i equals the sum of the items to the right of i. The item at i itself is not counted, and an empty side sums to 0. If no such index exists, return -1.",
+    "examples": [
+      {
+        "input": "nums = [1, 7, 3, 6, 5, 6]",
+        "output": "3",
+        "explanation": "Left of index 3 the sum is 1 + 7 + 3 = 11, and right of it the sum is 5 + 6 = 11."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each item is an integer between -1000 and 1000.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["prefix-sums", "arrays", "running-sum"],
+    "hints": [
+      "Compute the total sum first, then keep a running sum of the items to the left.",
+      "At index i the right sum is total - left - nums[i]."
+    ],
+    "reference_solution": "function solve(nums) {\n    const total = nums.reduce((a, b) => a + b, 0);\n    let left = 0;\n    for (let i = 0; i < nums.length; i++) {\n        if (left === total - left - nums[i]) return i;\n        left += nums[i];\n    }\n    return -1;\n}",
+    "tests": [
+      {"input": [[1, 7, 3, 6, 5, 6]], "output": 3, "hidden": false},
+      {"input": [[]], "output": -1, "hidden": false},
+      {"input": [[1, 2, 3]], "output": -1, "hidden": false},
+      {"input": [[2, 1, -1]], "output": 0, "hidden": true},
+      {"input": [[-1, -1, 0, 1, 1, 0]], "output": 5, "hidden": true}
+    ]
+  },
+  {
+    "title": "Minimum Start Value for Positive Prefix Sums",
+    "topic": "JavaScript Prefix Sums",
+    "difficulty": "easy",
+    "description": "Given an array of integers, find the smallest positive integer startValue such that the running total startValue + nums[0] + ... + nums[i] is at least 1 for every i. If the array is empty, the answer is 1.",
+    "examples": [
+      {
+        "input": "nums = [-3, 2, -3, 4, 2]",
+        "output": "5",
+        "explanation": "The prefix sums are -3, -1, -4, 0, 2 and the lowest is -4, so we need a start value of at least 5 to stay at 1 or above."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. Each item is an integer between -100 and 100.",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["prefix-sums", "arrays", "minimum"],
+    "hints": [
+      "Only the lowest prefix sum matters, because the start value is added to every prefix sum.",
+      "If the lowest prefix sum is m, the answer is the larger of 1 and 1 - m."
+    ],
+    "reference_solution": "function solve(nums) {\n    let sum = 0;\n    let min = 0;\n    for (const x of nums) {\n        sum += x;\n        if (sum < min) min = sum;\n    }\n    return Math.max(1, 1 - min);\n}",
+    "tests": [
+      {"input": [[-3, 2, -3, 4, 2]], "output": 5, "hidden": false},
+      {"input": [[]], "output": 1, "hidden": false},
+      {"input": [[1, 2]], "output": 1, "hidden": false},
+      {"input": [[1, -2, -3]], "output": 5, "hidden": true},
+      {"input": [[-1]], "output": 2, "hidden": true}
+    ]
+  },
+  {
+    "title": "Search Insert Position",
+    "topic": "JavaScript Binary Search",
+    "difficulty": "easy",
+    "description": "Given a sorted array of distinct integers and a target, return the index of the target if it is in the array. If it is not, return the index where it would be inserted to keep the array sorted.",
+    "examples": [
+      {
+        "input": "nums = [1, 3, 5, 6], target = 2",
+        "output": "1",
+        "explanation": "2 is not in the array, and inserting it at index 1 keeps the order 1, 2, 3, 5, 6."
+      }
+    ],
+    "constraints": "0 <= nums.length <= 1000. The items are distinct integers sorted in ascending order, between -10^4 and 10^4. The target is an integer in the same range.",
+    "starter_code": "function solve(nums, target) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(log n)",
+    "tags": ["binary-search", "arrays", "lower-bound"],
+    "hints": [
+      "Search for the first index whose value is greater than or equal to the target.",
+      "Keep lo and hi as a half-open range [lo, hi). If nums[mid] < target move lo to mid + 1, otherwise move hi to mid."
+    ],
+    "reference_solution": "function solve(nums, target) {\n    let lo = 0;\n    let hi = nums.length;\n    while (lo < hi) {\n        const mid = Math.floor((lo + hi) / 2);\n        if (nums[mid] < target) lo = mid + 1;\n        else hi = mid;\n    }\n    return lo;\n}",
+    "tests": [
+      {"input": [[1, 3, 5, 6], 5], "output": 2, "hidden": false},
+      {"input": [[1, 3, 5, 6], 2], "output": 1, "hidden": false},
+      {"input": [[], 7], "output": 0, "hidden": false},
+      {"input": [[1, 3, 5, 6], 7], "output": 4, "hidden": true},
+      {"input": [[1, 3, 5, 6], 0], "output": 0, "hidden": true}
+    ]
+  },
+  {
+    "title": "Integer Square Root",
+    "topic": "JavaScript Binary Search",
+    "difficulty": "easy",
+    "description": "Given a non-negative integer n, return the largest integer r such that r * r <= n (the square root rounded down). Solve it with binary search, without using Math.sqrt or the ** operator.",
+    "examples": [
+      {
+        "input": "n = 8",
+        "output": "2",
+        "explanation": "2 * 2 = 4 is at most 8, but 3 * 3 = 9 is more than 8."
+      }
+    ],
+    "constraints": "0 <= n <= 2147483647.",
+    "starter_code": "function solve(n) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(log n)",
+    "tags": ["binary-search", "math", "answer-space"],
+    "hints": [
+      "The answer lies between 0 and n, and mid * mid grows as mid grows.",
+      "Use the upper middle, mid = floor((lo + hi + 1) / 2). If mid * mid <= n keep it as a candidate with lo = mid, otherwise hi = mid - 1."
+    ],
+    "reference_solution": "function solve(n) {\n    let lo = 0;\n    let hi = n;\n    while (lo < hi) {\n        const mid = Math.floor((lo + hi + 1) / 2);\n        if (mid * mid <= n) lo = mid;\n        else hi = mid - 1;\n    }\n    return lo;\n}",
+    "tests": [
+      {"input": [8], "output": 2, "hidden": false},
+      {"input": [0], "output": 0, "hidden": false},
+      {"input": [1], "output": 1, "hidden": false},
+      {"input": [2147395599], "output": 46339, "hidden": true},
+      {"input": [15], "output": 3, "hidden": true}
+    ]
+  },
+  {
+    "title": "Remove Adjacent Duplicates",
+    "topic": "JavaScript Stacks",
+    "difficulty": "easy",
+    "description": "Given a string, repeatedly remove a pair of two equal neighbouring characters until no such pair is left, and return the final string. The result does not depend on the order in which pairs are removed.",
+    "examples": [
+      {
+        "input": "s = \"abbaca\"",
+        "output": "\"ca\"",
+        "explanation": "Removing bb gives aaca, then removing aa gives ca, which has no equal neighbours."
+      }
+    ],
+    "constraints": "0 <= s.length <= 1000. s contains lowercase letters only.",
+    "starter_code": "function solve(s) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tags": ["stack", "strings", "simulation"],
+    "hints": [
+      "Use an array as a stack of the characters kept so far.",
+      "For each character, pop the stack if its top equals the character, otherwise push the character."
+    ],
+    "reference_solution": "function solve(s) {\n    const stack = [];\n    for (const ch of s) {\n        if (stack.length > 0 && stack[stack.length - 1] === ch) stack.pop();\n        else stack.push(ch);\n    }\n    return stack.join('');\n}",
+    "tests": [
+      {"input": ["abbaca"], "output": "ca", "hidden": false},
+      {"input": [""], "output": "", "hidden": false},
+      {"input": ["abc"], "output": "abc", "hidden": false},
+      {"input": ["azxxzy"], "output": "ay", "hidden": true},
+      {"input": ["aaa"], "output": "a", "hidden": true}
+    ]
+  }
+]

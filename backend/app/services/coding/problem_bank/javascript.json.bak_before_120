@@ -1,0 +1,41 @@
+[
+  {
+    "title": "Count Positive Numbers",
+    "topic": "JavaScript Arrays",
+    "difficulty": "easy",
+    "description": "Given an array of integers, return the number of positive integers in the array.",
+    "examples": [
+      {
+        "input": "[1, -2, 3, 0, 5]",
+        "output": "3",
+        "explanation": "There are three positive numbers."
+      }
+    ],
+    "constraints": "1 <= nums.length <= 1000",
+    "starter_code": "function solve(nums) {\n    // write your code here\n}",
+    "entry_function": "solve",
+    "expected_complexity": "O(n)",
+    "tests": [
+      {
+        "input": [[1, -2, 3, 0, 5]],
+        "output": 3,
+        "hidden": false
+      },
+      {
+        "input": [[-1, -2, -3]],
+        "output": 0,
+        "hidden": false
+      },
+      {
+        "input": [[5, 10, 15]],
+        "output": 3,
+        "hidden": true
+      },
+      {
+        "input": [[0, -5, 2, 7]],
+        "output": 2,
+        "hidden": true
+      }
+    ]
+  }
+]
